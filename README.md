@@ -43,7 +43,19 @@ flowchart LR
 - `inventory_agent/agents`：需求、规划、修复、经验和报告 Agent。
 - `inventory_agent/workflow`：LangGraph 闭环编排。
 
-旧的 `time_series_agent/` 仅作为原型来源保留，新功能全部位于 `inventory_agent/`。
+项目已从旧时序预测原型独立重构，所有核心功能均位于 `inventory_agent/`。
+
+当前目录职责如下：
+
+```text
+inventory_agent/   核心 Python 包
+tests/             自动化测试
+scripts/           数据准备与项目验收脚本
+docs/              设计文档与需求追踪
+knowledge/         版本化基础知识图谱
+examples/          可复现的演示数据与结果
+data/              本地原始/处理中间数据（仅保留占位文件）
+```
 
 ## 3. 能力知识图谱 schema 和示例
 
@@ -202,15 +214,3 @@ uv run ruff check inventory_agent tests scripts
 - 加入安全库存、在途库存和提前期，输出最终补货量。
 - 增加 Streamlit 图谱和预测报告可视化。
 - 将子进程执行升级为容器级资源和网络隔离沙箱。
-
-## Git 与 GitHub
-
-不需要先创建 GitHub 仓库。本地分支和提交可以独立工作。当前仓库的 `origin` 指向上游 TimeSeriesScientist，因此创建自己的空仓库后建议：
-
-```bash
-git remote rename origin upstream
-git remote add origin https://github.com/YOUR_NAME/inventory-capability-factory.git
-git push -u origin inventory-capability-factory:main
-```
-
-不要在 GitHub 页面初始化 README、License 或 `.gitignore`，否则首次推送可能产生无意义冲突。
