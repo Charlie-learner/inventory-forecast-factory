@@ -33,6 +33,15 @@ def forecast(history: list[float], horizon: int) -> list[float]:
     series = pd.Series(history, dtype=float)
     model = default_registry().create(MODEL_NAME)
     return model.predict(series, horizon).tolist()
+
+
+def build_inventory_target(history: list[float], horizon: int) -> dict[str, object]:
+    """Return explainable daily demand and the horizon-total target inventory."""
+    daily_forecast = forecast(history, horizon)
+    return {{
+        "daily_forecast": daily_forecast,
+        "target_inventory": float(sum(daily_forecast)),
+    }}
 '''
 
     def generate(self, model: str, output_dir: str | Path) -> GeneratedCapability:
@@ -44,4 +53,3 @@ def forecast(history: list[float], horizon: int) -> list[float]:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(source, encoding="utf-8")
         return GeneratedCapability(model, source, output)
-

@@ -17,6 +17,8 @@ venv/
 .uv-cache/
 
 # Runtime artifacts and large/raw data
+data/*.csv
+data/*.zip
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*

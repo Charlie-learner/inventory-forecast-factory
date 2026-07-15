@@ -33,6 +33,11 @@
     {
       "type": "Metric",
       "name": "inventory_cost",
+      "evaluation_unit": "horizon_total",
+      "formula": "A*max(D-T,0) + B*max(T-D,0)",
+      "scenario": "inventory_forecasting",
+      "cost_a": "understock",
+      "cost_b": "overstock",
       "id": "metric:inventory_cost"
     },
     {
@@ -61,6 +66,16 @@
       "description": "Estimates demand size and interval separately.",
       "min_history": 14,
       "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
       "id": "algorithm:croston"
     },
     {
@@ -74,6 +89,16 @@
       "description": "Repeats the last observed demand.",
       "min_history": 1,
       "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
       "id": "algorithm:last_value"
     },
     {
@@ -87,6 +112,16 @@
       "description": "Uses the recent 14-day demand average.",
       "min_history": 7,
       "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
       "id": "algorithm:moving_average"
     },
     {
@@ -96,6 +131,16 @@
       "min_history": 30,
       "dependencies": [
         "scikit-learn"
+      ],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
       ],
       "id": "algorithm:ridge_lag"
     },
@@ -110,6 +155,16 @@
       "description": "Repeats the most recent weekly demand pattern.",
       "min_history": 14,
       "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
       "id": "algorithm:seasonal_naive"
     }
   ],

@@ -8,7 +8,7 @@ Gephi and other graph tools.
 
 | Type | Purpose | Key properties |
 |---|---|---|
-| `Algorithm` | Executable forecast capability | name, description, min_history, dependencies |
+| `Algorithm` | Executable forecast capability | name, description, min_history, dependencies, input_contract, output_contract, locations |
 | `DemandProfile` | Data condition suited to an algorithm | name |
 | `Metric` | Validation or business objective | name |
 | `ValidationRun` | Historical execution evidence | item_id, store_code, status, metrics, timestamp |
@@ -26,3 +26,7 @@ Gephi and other graph tools.
 Runtime validation runs are written under `artifacts/knowledge/`, which is ignored by Git.
 The repository's `knowledge/base_capability_graph.*` files are deterministic bootstrap artifacts.
 
+The `inventory_cost` metric node is scenario-specific knowledge for inventory forecasting. It
+records the horizon-total formula and the semantic mapping `A=understock`, `B=overstock`.
+`ValidationRun` and `RepairStrategy` nodes are runtime extensions; they are not present in a
+freshly bootstrapped base graph.

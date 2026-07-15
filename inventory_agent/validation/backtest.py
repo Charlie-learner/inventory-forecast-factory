@@ -51,9 +51,10 @@ class RollingBacktester:
                 forecast_metrics(actual, prediction, overstock_cost, understock_cost)
             )
 
-        aggregated = {
-            key: float(np.mean([fold[key] for fold in fold_results])) for key in fold_results[0]
-        }
+        aggregated = {}
+        for key in fold_results[0]:
+            output_key = f"mean_{key}" if key in {"actual_total", "target_inventory"} else key
+            aggregated[output_key] = float(np.mean([fold[key] for fold in fold_results]))
         return BacktestResult(model.name, available_folds, aggregated, tuple(fold_results))
 
     @staticmethod
@@ -61,4 +62,3 @@ class RollingBacktester:
         if not results:
             raise ValueError("At least one backtest result is required")
         return min(results, key=lambda item: (item.metrics["inventory_cost"], item.metrics["wape"], item.model))
-

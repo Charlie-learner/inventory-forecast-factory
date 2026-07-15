@@ -1,9 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key id="d6" for="edge" attr.name="relation" attr.type="string" />
-  <key id="d5" for="node" attr.name="dependencies" attr.type="string" />
-  <key id="d4" for="node" attr.name="min_history" attr.type="long" />
-  <key id="d3" for="node" attr.name="description" attr.type="string" />
+  <key id="d14" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d13" for="node" attr.name="locations" attr.type="string" />
+  <key id="d12" for="node" attr.name="output_contract" attr.type="string" />
+  <key id="d11" for="node" attr.name="input_contract" attr.type="string" />
+  <key id="d10" for="node" attr.name="dependencies" attr.type="string" />
+  <key id="d9" for="node" attr.name="min_history" attr.type="long" />
+  <key id="d8" for="node" attr.name="description" attr.type="string" />
+  <key id="d7" for="node" attr.name="cost_b" attr.type="string" />
+  <key id="d6" for="node" attr.name="cost_a" attr.type="string" />
+  <key id="d5" for="node" attr.name="scenario" attr.type="string" />
+  <key id="d4" for="node" attr.name="formula" attr.type="string" />
+  <key id="d3" for="node" attr.name="evaluation_unit" attr.type="string" />
   <key id="d2" for="node" attr.name="name" attr.type="string" />
   <key id="d1" for="node" attr.name="type" attr.type="string" />
   <key id="d0" for="graph" attr.name="schema_version" attr.type="string" />
@@ -31,6 +39,11 @@
     <node id="metric:inventory_cost">
       <data key="d1">Metric</data>
       <data key="d2">inventory_cost</data>
+      <data key="d3">horizon_total</data>
+      <data key="d4">A*max(D-T,0) + B*max(T-D,0)</data>
+      <data key="d5">inventory_forecasting</data>
+      <data key="d6">understock</data>
+      <data key="d7">overstock</data>
     </node>
     <node id="metric:wape">
       <data key="d1">Metric</data>
@@ -51,9 +64,12 @@
     <node id="algorithm:croston">
       <data key="d1">Algorithm</data>
       <data key="d2">croston</data>
-      <data key="d3">Estimates demand size and interval separately.</data>
-      <data key="d4">14</data>
-      <data key="d5">[]</data>
+      <data key="d8">Estimates demand size and interval separately.</data>
+      <data key="d9">14</data>
+      <data key="d10">[]</data>
+      <data key="d11">non-negative daily qty_alipay_njhs history</data>
+      <data key="d12">daily forecast plus horizon-total target inventory</data>
+      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
     </node>
     <node id="profile:many_zeros">
       <data key="d1">DemandProfile</data>
@@ -62,9 +78,12 @@
     <node id="algorithm:last_value">
       <data key="d1">Algorithm</data>
       <data key="d2">last_value</data>
-      <data key="d3">Repeats the last observed demand.</data>
-      <data key="d4">1</data>
-      <data key="d5">[]</data>
+      <data key="d8">Repeats the last observed demand.</data>
+      <data key="d9">1</data>
+      <data key="d10">[]</data>
+      <data key="d11">non-negative daily qty_alipay_njhs history</data>
+      <data key="d12">daily forecast plus horizon-total target inventory</data>
+      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
     </node>
     <node id="profile:short_history">
       <data key="d1">DemandProfile</data>
@@ -73,16 +92,22 @@
     <node id="algorithm:moving_average">
       <data key="d1">Algorithm</data>
       <data key="d2">moving_average</data>
-      <data key="d3">Uses the recent 14-day demand average.</data>
-      <data key="d4">7</data>
-      <data key="d5">[]</data>
+      <data key="d8">Uses the recent 14-day demand average.</data>
+      <data key="d9">7</data>
+      <data key="d10">[]</data>
+      <data key="d11">non-negative daily qty_alipay_njhs history</data>
+      <data key="d12">daily forecast plus horizon-total target inventory</data>
+      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
     </node>
     <node id="algorithm:ridge_lag">
       <data key="d1">Algorithm</data>
       <data key="d2">ridge_lag</data>
-      <data key="d3">Regularized autoregression over the last 14 days.</data>
-      <data key="d4">30</data>
-      <data key="d5">["scikit-learn"]</data>
+      <data key="d8">Regularized autoregression over the last 14 days.</data>
+      <data key="d9">30</data>
+      <data key="d10">["scikit-learn"]</data>
+      <data key="d11">non-negative daily qty_alipay_njhs history</data>
+      <data key="d12">daily forecast plus horizon-total target inventory</data>
+      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
     </node>
     <node id="profile:trend">
       <data key="d1">DemandProfile</data>
@@ -91,69 +116,72 @@
     <node id="algorithm:seasonal_naive">
       <data key="d1">Algorithm</data>
       <data key="d2">seasonal_naive</data>
-      <data key="d3">Repeats the most recent weekly demand pattern.</data>
-      <data key="d4">14</data>
-      <data key="d5">[]</data>
+      <data key="d8">Repeats the most recent weekly demand pattern.</data>
+      <data key="d9">14</data>
+      <data key="d10">[]</data>
+      <data key="d11">non-negative daily qty_alipay_njhs history</data>
+      <data key="d12">daily forecast plus horizon-total target inventory</data>
+      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
     </node>
     <edge source="algorithm:croston" target="metric:inventory_cost">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:wape">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="profile:intermittent">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:croston" target="profile:many_zeros">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:inventory_cost">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:wape">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="profile:short_history">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:inventory_cost">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:wape">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="profile:stable">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:moving_average" target="profile:short_history">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:inventory_cost">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:wape">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="profile:trend">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="profile:dense">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="profile:volatile">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:inventory_cost">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:wape">
-      <data key="d6">EVALUATED_BY</data>
+      <data key="d14">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="profile:weekly_seasonal">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="profile:stable">
-      <data key="d6">SUITABLE_FOR</data>
+      <data key="d14">SUITABLE_FOR</data>
     </edge>
     <data key="d0">1.0</data>
   </graph>

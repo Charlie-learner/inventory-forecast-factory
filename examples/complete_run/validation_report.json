@@ -1,6 +1,6 @@
 {
-  "run_id": "run:8ffa43959858",
-  "created_at": "2026-07-14T20:32:37.488519+00:00",
+  "run_id": "run:631f880dad03",
+  "created_at": "2026-07-15T08:55:49.520662+00:00",
   "request": {
     "description": "为商品 3424 在仓库 1 预测未来14天需求，比较多个算法并优先降低补多补少成本",
     "item_id": 3424,
@@ -11,20 +11,21 @@
     "constraints": []
   },
   "profile": {
-    "observations": 140,
-    "nonzero_observations": 139,
-    "zero_ratio": 0.007142857142857143,
-    "mean": 24.478571428571428,
-    "coefficient_of_variation": 0.8685054690057513,
-    "demand_type": "stable"
+    "observations": 444,
+    "nonzero_observations": 435,
+    "zero_ratio": 0.02027027027027027,
+    "mean": 20.394144144144143,
+    "coefficient_of_variation": 1.398720193593413,
+    "demand_type": "volatile",
+    "history_status": "observed"
   },
   "plan": {
     "candidates": [
-      "moving_average",
-      "seasonal_naive",
-      "croston"
+      "ridge_lag",
+      "croston",
+      "last_value"
     ],
-    "rationale": "需求类型=stable，零需求比例=0.71%；从能力图谱检索 moving_average, seasonal_naive, croston，使用 inventory_cost 滚动验证。",
+    "rationale": "需求类型=volatile，零需求比例=2.03%；从能力图谱检索 ridge_lag, croston, last_value，使用 inventory_cost 滚动验证。",
     "validation_metric": "inventory_cost",
     "max_repairs": 2
   },
@@ -32,88 +33,65 @@
     "item_id": 3424,
     "store_code": "1",
     "profile": {
-      "observations": 140,
-      "nonzero_observations": 139,
-      "zero_ratio": 0.007142857142857143,
-      "mean": 24.478571428571428,
-      "coefficient_of_variation": 0.8685054690057513,
-      "demand_type": "stable"
+      "observations": 444,
+      "nonzero_observations": 435,
+      "zero_ratio": 0.02027027027027027,
+      "mean": 20.394144144144143,
+      "coefficient_of_variation": 1.398720193593413,
+      "demand_type": "volatile"
     },
     "horizon": 14,
+    "evaluation_unit": "horizon_total",
+    "costs": {
+      "understock_cost": 6.48,
+      "overstock_cost": 11.0,
+      "source": "config2.csv",
+      "critical_fractile": 0.3707093821510298
+    },
     "candidates": [
       {
-        "model": "moving_average",
+        "model": "ridge_lag",
         "folds": 3,
         "metrics": {
-          "mae": 10.48299319727891,
-          "rmse": 21.628612840098153,
-          "wape": 0.7502287736158703,
-          "smape": 0.5510410444326782,
-          "bias": 0.7857142857142841,
-          "inventory_cost": 146.76190476190473
+          "mae": 15.417321776882824,
+          "rmse": 27.2253051830609,
+          "wape": 1.191299874489798,
+          "smape": 0.7266903478313816,
+          "bias": 6.949117801540523,
+          "inventory_cost": 1523.928106468691,
+          "mean_actual_total": 194.66666666666666,
+          "mean_target_inventory": 291.954315888234
         },
         "fold_metrics": [
           {
-            "mae": 3.408163265306121,
-            "rmse": 3.951878912463729,
-            "wape": 0.3670329670329669,
-            "smape": 0.33154086519749454,
-            "bias": 3.357142857142855,
-            "inventory_cost": 47.714285714285694
+            "mae": 7.025911350878671,
+            "rmse": 7.81406187626544,
+            "wape": 0.756636607017703,
+            "smape": 0.5605745480882516,
+            "bias": 6.322699422507354,
+            "inventory_cost": 973.6957110661327,
+            "actual_total": 130.0,
+            "target_inventory": 218.51779191510298
           },
           {
-            "mae": 16.183673469387752,
-            "rmse": 47.958315233127195,
-            "wape": 0.7308755760368663,
-            "smape": 0.5150453411462633,
-            "bias": -12.857142857142858,
-            "inventory_cost": 226.57142857142856
+            "mae": 19.138749233131428,
+            "rmse": 46.233197079131465,
+            "wape": 0.8643306105285161,
+            "smape": 0.7135216621920811,
+            "bias": -5.5626507645241565,
+            "inventory_cost": 504.6436773576315,
+            "actual_total": 310.0,
+            "target_inventory": 232.1228892966618
           },
           {
-            "mae": 11.857142857142856,
-            "rmse": 12.975644374703535,
-            "wape": 1.1527777777777777,
-            "smape": 0.8065369269542767,
-            "bias": 11.857142857142856,
-            "inventory_cost": 165.99999999999997
-          }
-        ]
-      },
-      {
-        "model": "seasonal_naive",
-        "folds": 3,
-        "metrics": {
-          "mae": 20.857142857142858,
-          "rmse": 47.16408065895295,
-          "wape": 1.7870967741935484,
-          "smape": 0.7508015179683252,
-          "bias": 6.476190476190477,
-          "inventory_cost": 292.0
-        },
-        "fold_metrics": [
-          {
-            "mae": 14.857142857142858,
-            "rmse": 26.46830989261363,
-            "wape": 1.6,
-            "smape": 0.7558079268657366,
-            "bias": 9.428571428571429,
-            "inventory_cost": 208.0
-          },
-          {
-            "mae": 16.857142857142858,
-            "rmse": 47.32712903670729,
-            "wape": 0.7612903225806451,
-            "smape": 0.5904237787352223,
-            "bias": -12.714285714285714,
-            "inventory_cost": 236.0
-          },
-          {
-            "mae": 30.857142857142858,
-            "rmse": 67.69680304753794,
-            "wape": 3.0,
-            "smape": 0.9061728483040165,
-            "bias": 22.714285714285715,
-            "inventory_cost": 432.0
+            "mae": 20.08730474663837,
+            "rmse": 27.6286565937858,
+            "wape": 1.9529324059231747,
+            "smape": 0.9059748332138123,
+            "bias": 20.08730474663837,
+            "inventory_cost": 3093.444930982309,
+            "actual_total": 144.0,
+            "target_inventory": 425.22226645293716
           }
         ]
       },
@@ -121,63 +99,124 @@
         "model": "croston",
         "folds": 3,
         "metrics": {
-          "mae": 12.557187797513643,
-          "rmse": 23.334080286214093,
-          "wape": 0.9579743986914359,
-          "smape": 0.6584633295341212,
-          "bias": 3.3700331428435946,
-          "inventory_cost": 175.800629165191
+          "mae": 12.557164862120215,
+          "rmse": 23.33406086536448,
+          "wape": 0.9579720238396535,
+          "smape": 0.6584619741875551,
+          "bias": 3.3700068543295507,
+          "inventory_cost": 1426.804219633228,
+          "mean_actual_total": 194.66666666666666,
+          "mean_target_inventory": 241.84676262728036
         },
         "fold_metrics": [
           {
-            "mae": 6.390046548125916,
-            "rmse": 6.721579699945999,
-            "wape": 0.6881588590289448,
-            "smape": 0.5298552972861833,
-            "bias": 6.390046548125916,
-            "inventory_cost": 89.46065167376283
+            "mae": 6.389984987453851,
+            "rmse": 6.721521175700916,
+            "wape": 0.688152229418107,
+            "smape": 0.5298516912388106,
+            "bias": 6.389984987453851,
+            "inventory_cost": 984.0576880678931,
+            "actual_total": 130.0,
+            "target_inventory": 219.45978982435392
           },
           {
-            "mae": 16.4325572715388,
-            "rmse": 47.52416692295356,
-            "wape": 0.7421154896823974,
-            "smape": 0.5422178504275036,
-            "bias": -11.128906692471345,
-            "inventory_cost": 230.0558018015432
+            "mae": 16.432553247794058,
+            "rmse": 47.524170220847736,
+            "wape": 0.742115307964893,
+            "smape": 0.5422174860773672,
+            "bias": -11.128920775577935,
+            "inventory_cost": 1009.6156927604303,
+            "actual_total": 310.0,
+            "target_inventory": 154.19510914190892
           },
           {
-            "mae": 14.848959572876213,
-            "rmse": 15.756494235742723,
-            "wape": 1.4436488473629652,
-            "smape": 0.903316840888677,
-            "bias": 14.848959572876213,
-            "inventory_cost": 207.88543402026698
+            "mae": 14.848956351112735,
+            "rmse": 15.756491199544802,
+            "wape": 1.4436485341359604,
+            "smape": 0.9033167452464876,
+            "bias": 14.848956351112735,
+            "inventory_cost": 2286.7392780713612,
+            "actual_total": 144.0,
+            "target_inventory": 351.8853889155783
+          }
+        ]
+      },
+      {
+        "model": "last_value",
+        "folds": 3,
+        "metrics": {
+          "mae": 9.285714285714286,
+          "rmse": 20.062139082888216,
+          "wape": 0.6246898263027295,
+          "smape": 0.7038722160544939,
+          "bias": -6.904761904761904,
+          "inventory_cost": 626.4000000000001,
+          "mean_actual_total": 194.66666666666666,
+          "mean_target_inventory": 98.0
+        },
+        "fold_metrics": [
+          {
+            "mae": 3.4285714285714284,
+            "rmse": 3.8913824205360674,
+            "wape": 0.36923076923076925,
+            "smape": 0.4250869946800951,
+            "bias": -3.2857142857142856,
+            "inventory_cost": 298.08000000000004,
+            "actual_total": 130.0,
+            "target_inventory": 84.0
+          },
+          {
+            "mae": 16.714285714285715,
+            "rmse": 47.30297483849645,
+            "wape": 0.7548387096774194,
+            "smape": 0.5659420198285263,
+            "bias": -10.142857142857142,
+            "inventory_cost": 920.1600000000001,
+            "actual_total": 310.0,
+            "target_inventory": 168.0
+          },
+          {
+            "mae": 7.714285714285714,
+            "rmse": 8.992059989632123,
+            "wape": 0.75,
+            "smape": 1.1205876336548606,
+            "bias": -7.285714285714286,
+            "inventory_cost": 660.96,
+            "actual_total": 144.0,
+            "target_inventory": 42.0
           }
         ]
       }
     ],
-    "selected_model": "moving_average",
+    "selected_model": "last_value",
     "forecast": [
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286,
-      10.285714285714286
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0,
+      22.0
     ],
-    "forecast_total": 144.00000000000003
+    "forecast_total": 308.0,
+    "target_inventory": 308.0
+  },
+  "business_definition": {
+    "target": "未来预测周期内非聚划算支付件数的总和",
+    "cost_formula": "A*max(D-T,0) + B*max(T-D,0)",
+    "cost_a": "补少/缺货成本",
+    "cost_b": "补多/积压成本"
   },
   "generated": {
-    "model": "moving_average",
-    "path": "examples\\complete_run\\generated\\forecast_moving_average.py",
+    "model": "last_value",
+    "path": "examples\\complete_run\\generated\\forecast_last_value.py",
     "generation_mode": "constrained_template"
   },
   "code_validation": {
@@ -190,21 +229,22 @@
     },
     "errors": [],
     "sample_output": [
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0,
-      4.0
-    ]
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0
+    ],
+    "sample_target_inventory": 98.0
   },
   "repairs": [],
   "knowledge_graph": {

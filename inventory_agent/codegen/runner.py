@@ -20,7 +20,9 @@ def main(argv: list[str] | None = None) -> int:
     spec.loader.exec_module(module)
     forecast = getattr(module, "forecast")
     values = forecast([1, 2, 3, 4, 5, 6, 7] * 8, 14)
-    print(json.dumps({"values": values}))
+    build_inventory_target = getattr(module, "build_inventory_target")
+    inventory = build_inventory_target([1, 2, 3, 4, 5, 6, 7] * 8, 14)
+    print(json.dumps({"values": values, "inventory": inventory}))
     return 0
 
 

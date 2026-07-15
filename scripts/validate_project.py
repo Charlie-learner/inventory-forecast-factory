@@ -37,7 +37,7 @@ def main() -> int:
         print(
             "E2E OK:",
             result["selected_model"],
-            f"forecast_total={result['benchmark']['forecast_total']:.2f}",
+            f"target_inventory={result['benchmark']['target_inventory']:.2f}",
         )
     return 0
 

@@ -24,7 +24,11 @@ class ReportAgent:
             json.dumps(payload, ensure_ascii=False, default=str),
         )
         candidates = payload["benchmark"]["candidates"]
-        rows = ["| 模型 | WAPE | sMAPE | Bias | 库存成本 |", "|---|---:|---:|---:|---:|"]
+        costs = payload["benchmark"]["costs"]
+        rows = [
+            "| 模型 | WAPE | sMAPE | Bias | 平均单折库存成本 |",
+            "|---|---:|---:|---:|---:|",
+        ]
         for candidate in candidates:
             metrics = candidate["metrics"]
             rows.append(
@@ -40,8 +44,14 @@ class ReportAgent:
                 f"- 仓库：{payload['request']['store_code']}",
                 f"- 预测周期：{payload['request']['horizon']} 天",
                 f"- 需求类型：{payload['profile']['demand_type']}",
+                f"- 历史状态：{payload['profile']['history_status']}",
                 f"- 选中模型：{payload['benchmark']['selected_model']}",
-                f"- 预测总需求：{payload['benchmark']['forecast_total']:.2f}",
+                f"- 未来 {payload['request']['horizon']} 天目标库存："
+                f"{payload['benchmark']['target_inventory']:.2f}",
+                f"- 成本 A（补少/缺货）：{costs['understock_cost']:.2f}",
+                f"- 成本 B（补多/积压）：{costs['overstock_cost']:.2f}",
+                f"- 成本来源：{costs['source']}",
+                f"- 成本口径：{payload['benchmark']['evaluation_unit']}",
                 "",
                 "## 候选模型验证",
                 "",
@@ -59,9 +69,8 @@ class ReportAgent:
                 "",
                 "## 使用边界",
                 "",
-                "预测值是未来需求估计，不等于直接补货量。正式补货还需结合现货、在途库存、提前期和安全库存。",
+                "目标库存 T 是预测周期内非聚划算需求总量。实际下单量仍需结合现货、在途库存、提前期和安全库存。",
             ]
         )
         markdown_path.write_text(markdown, encoding="utf-8")
         return {"json": str(json_path), "markdown": str(markdown_path)}
-

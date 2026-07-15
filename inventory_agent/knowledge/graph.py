@@ -27,7 +27,18 @@ class CapabilityKnowledgeGraph:
         for demand_type in ["stable", "volatile", "intermittent", "weekly_seasonal", "dense"]:
             knowledge.graph.add_node(f"profile:{demand_type}", type="DemandProfile", name=demand_type)
         for metric in ["inventory_cost", "wape", "smape", "bias", "rmse"]:
-            knowledge.graph.add_node(f"metric:{metric}", type="Metric", name=metric)
+            attributes = {"type": "Metric", "name": metric}
+            if metric == "inventory_cost":
+                attributes.update(
+                    {
+                        "evaluation_unit": "horizon_total",
+                        "formula": "A*max(D-T,0) + B*max(T-D,0)",
+                        "scenario": "inventory_forecasting",
+                        "cost_a": "understock",
+                        "cost_b": "overstock",
+                    }
+                )
+            knowledge.graph.add_node(f"metric:{metric}", **attributes)
 
         for name in registry.names():
             metadata = registry.metadata(name)
@@ -39,6 +50,9 @@ class CapabilityKnowledgeGraph:
                 description=metadata.description,
                 min_history=metadata.min_history,
                 dependencies=list(metadata.dependencies),
+                input_contract="non-negative daily qty_alipay_njhs history",
+                output_contract="daily forecast plus horizon-total target inventory",
+                locations=["all", "1", "2", "3", "4", "5"],
             )
             knowledge.graph.add_edge(model_node, "metric:inventory_cost", relation="EVALUATED_BY")
             knowledge.graph.add_edge(model_node, "metric:wape", relation="EVALUATED_BY")
@@ -117,4 +131,3 @@ class CapabilityKnowledgeGraph:
     def load(cls, path: str | Path) -> "CapabilityKnowledgeGraph":
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
         return cls(json_graph.node_link_graph(payload, edges="edges", directed=True))
-

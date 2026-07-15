@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import json
+import math
 import os
 import subprocess
 import sys
@@ -17,6 +18,7 @@ class CodeValidationResult:
     checks: dict[str, bool]
     errors: tuple[str, ...]
     sample_output: tuple[float, ...] = ()
+    sample_target_inventory: float | None = None
 
 
 class GeneratedCodeValidator:
@@ -54,12 +56,22 @@ class GeneratedCodeValidator:
         checks["imports"] = True
 
         try:
-            checks["interface"] = any(
-                isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "forecast"
+            functions = {
+                node.name: node
                 for node in tree.body
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            }
+            expected = {"forecast", "build_inventory_target"}
+            checks["interface"] = expected.issubset(functions) and all(
+                [argument.arg for argument in functions[name].args.args] == ["history", "horizon"]
+                and not functions[name].args.vararg
+                and not functions[name].args.kwarg
+                for name in expected
             )
             if not checks["interface"]:
-                raise ValueError("generated module must define forecast(history, horizon)")
+                raise ValueError(
+                    "generated module must define forecast() and build_inventory_target()"
+                )
             child_env = {
                 key: value
                 for key, value in os.environ.items()
@@ -73,14 +85,32 @@ class GeneratedCodeValidator:
                 timeout=self.timeout_seconds,
                 env=child_env,
             )
-            values = json.loads(completed.stdout)["values"]
+            payload = json.loads(completed.stdout)
+            values = payload["values"]
             if not isinstance(values, list) or len(values) != 14:
                 raise ValueError("forecast must return a list matching horizon")
             numeric = tuple(float(value) for value in values)
-            if any(value < 0 for value in numeric):
-                raise ValueError("forecast values must be non-negative")
+            if any(not math.isfinite(value) or value < 0 for value in numeric):
+                raise ValueError("forecast values must be finite and non-negative")
+            inventory = payload["inventory"]
+            target_inventory = float(inventory["target_inventory"])
+            inventory_values = tuple(float(value) for value in inventory["daily_forecast"])
+            if (
+                inventory_values != numeric
+                or not math.isfinite(target_inventory)
+                or target_inventory < 0
+            ):
+                raise ValueError("inventory target must contain the validated daily forecast")
+            if abs(target_inventory - sum(numeric)) > 1e-9:
+                raise ValueError("target_inventory must equal the horizon forecast total")
             sample = numeric
             checks["runtime"] = True
         except Exception as exc:  # Validation must return errors, not crash the workflow.
             errors.append(f"runtime: {type(exc).__name__}: {exc}")
-        return CodeValidationResult(all(checks.values()), checks, tuple(errors), sample)
+        return CodeValidationResult(
+            all(checks.values()),
+            checks,
+            tuple(errors),
+            sample,
+            target_inventory if checks["runtime"] else None,
+        )

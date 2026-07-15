@@ -18,7 +18,9 @@ from inventory_agent.agents.requirement import RequirementAgent
 from inventory_agent.codegen.generator import SafeCodeGenerator
 from inventory_agent.codegen.validator import GeneratedCodeValidator
 from inventory_agent.config import Settings
-from inventory_agent.data.panel import demand_series, profile_series
+from inventory_agent.data.costs import UNIT_COSTS, resolve_inventory_costs
+from inventory_agent.data.loader import create_cainiao_loader, load_location_frame
+from inventory_agent.data.panel import demand_series, location_has_observations, profile_series
 from inventory_agent.forecasting.registry import default_registry
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 from inventory_agent.llm.client import create_llm
@@ -56,12 +58,32 @@ class InventoryCapabilityWorkflow:
         return state
 
     def _profile(self, state: dict[str, Any]) -> dict[str, Any]:
-        frame = pd.read_csv(state["data_path"], parse_dates=["date"])
         request = state["request"]
-        series = demand_series(frame, request.item_id, request.store_code)
+        source = Path(state["data_path"])
+        is_raw_source = source.is_dir() or source.suffix.lower() == ".zip"
+        if is_raw_source:
+            frame = load_location_frame(source, request.store_code)
+            cost_frame = create_cainiao_loader(source).load_costs()
+            costs = resolve_inventory_costs(cost_frame, request.item_id, request.store_code)
+        else:
+            frame = pd.read_csv(source, parse_dates=["date"])
+            costs = UNIT_COSTS
+        series = demand_series(
+            frame,
+            request.item_id,
+            request.store_code,
+            allow_missing=is_raw_source,
+        )
         state["frame"] = frame
         state["series"] = series
+        state["costs"] = costs
+        state["raw_data_source"] = is_raw_source
         state["profile"] = profile_series(series)
+        state["profile"]["history_status"] = (
+            "observed"
+            if location_has_observations(frame, request.item_id, request.store_code)
+            else "zero_history_fallback"
+        )
         return state
 
     def _plan(self, state: dict[str, Any]) -> dict[str, Any]:
@@ -79,6 +101,8 @@ class InventoryCapabilityWorkflow:
             list(state["plan"].candidates),
             request.horizon,
             registry=self.registry,
+            costs=state["costs"],
+            allow_missing=state["raw_data_source"],
         )
         state["selected_model"] = state["benchmark"]["selected_model"]
         return state
@@ -139,6 +163,12 @@ class InventoryCapabilityWorkflow:
             "profile": state["profile"],
             "plan": asdict(state["plan"]),
             "benchmark": state["benchmark"],
+            "business_definition": {
+                "target": "未来预测周期内非聚划算支付件数的总和",
+                "cost_formula": "A*max(D-T,0) + B*max(T-D,0)",
+                "cost_a": "补少/缺货成本",
+                "cost_b": "补多/积压成本",
+            },
             "generated": {
                 "model": state["generated"].model,
                 "path": str(state["generated"].path),
@@ -155,6 +185,7 @@ class InventoryCapabilityWorkflow:
         state["report"] = payload
         state.pop("frame", None)
         state.pop("series", None)
+        state.pop("costs", None)
         return state
 
     def _build_graph(self):

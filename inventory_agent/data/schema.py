@@ -35,10 +35,17 @@ BEHAVIOR_COLUMNS = [
 NATIONAL_COLUMNS = ID_COLUMNS + BEHAVIOR_COLUMNS
 STORE_COLUMNS = ["date", "item_id", "store_code"] + ID_COLUMNS[2:] + BEHAVIOR_COLUMNS
 TARGET_COLUMN = "qty_alipay_njhs"
+NATIONAL_SCOPE = "all"
+COST_COLUMNS = ["item_id", "store_code", "cost_pair"]
+
+# Competition semantics from the published evaluation formula:
+# A * max(actual demand - target inventory, 0) +
+# B * max(target inventory - actual demand, 0).
+COST_A_COLUMN = "understock_cost"
+COST_B_COLUMN = "overstock_cost"
 
 ZIP_MEMBERS = {
     "national": "item_feature2.csv",
     "store": "item_store_feature2.csv",
     "cost": "config2.csv",
 }
-

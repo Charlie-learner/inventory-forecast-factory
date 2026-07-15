@@ -6,6 +6,7 @@ from dataclasses import asdict
 
 import pandas as pd
 
+from inventory_agent.data.costs import InventoryCostWeights, UNIT_COSTS, normalize_store_code
 from inventory_agent.data.panel import demand_series, profile_series
 from inventory_agent.forecasting.registry import ModelRegistry, default_registry
 from inventory_agent.validation.backtest import RollingBacktester
@@ -19,22 +20,36 @@ def benchmark_series(
     horizon: int = 14,
     folds: int = 3,
     registry: ModelRegistry | None = None,
+    costs: InventoryCostWeights | None = None,
+    allow_missing: bool = False,
 ) -> dict:
     registry = registry or default_registry()
+    costs = costs or UNIT_COSTS
+    location = normalize_store_code(store_code)
     names = model_names or registry.names()
-    series = demand_series(frame, item_id, store_code)
+    series = demand_series(frame, item_id, location, allow_missing=allow_missing)
     backtester = RollingBacktester(horizon=horizon, folds=folds, min_history=max(28, horizon * 2))
-    results = [backtester.evaluate(registry.create(name), series) for name in names]
+    results = [
+        backtester.evaluate(
+            registry.create(name),
+            series,
+            overstock_cost=costs.overstock_cost,
+            understock_cost=costs.understock_cost,
+        )
+        for name in names
+    ]
     best = backtester.select_best(results)
     final_forecast = registry.create(best.model).predict(series, horizon)
     return {
         "item_id": int(item_id),
-        "store_code": str(store_code),
+        "store_code": location,
         "profile": profile_series(series),
         "horizon": horizon,
+        "evaluation_unit": "horizon_total",
+        "costs": costs.as_dict(),
         "candidates": [asdict(result) for result in results],
         "selected_model": best.model,
         "forecast": final_forecast.tolist(),
         "forecast_total": float(final_forecast.sum()),
+        "target_inventory": float(final_forecast.sum()),
     }
-

@@ -8,7 +8,9 @@ canonical field names used by the original Cainiao demand forecasting task.
 - `item_feature2.csv`: daily national item features, 31 columns.
 - `item_store_feature2.csv`: daily item/warehouse features, 32 columns.
 - `config2.csv`: item/location cost pairs used for cost-sensitive evaluation.
-- `sample_submission.csv`: 1,000 items at `all` and five warehouse locations.
+- The competition documentation separately defines a `sample_submission.csv` template. The
+  three uploaded training/configuration files do not include a matching template, so this
+  project does not synthesize one or silently reuse an unrelated download.
 
 The primary target is `qty_alipay_njhs`, the paid item quantity excluding Juhuasuan activity.
 The target horizon is 14 days.
@@ -29,7 +31,24 @@ Behavioral columns cover page views, visitors, carts, collections, GMV, Alipay a
 traffic sources, and their non-Juhuasuan counterparts. The full ordered schema lives in
 `inventory_agent/data/schema.py` and is validated against the raw column count on load.
 
-The two values in `config2.csv` are deliberately named `cost_a` and `cost_b` until their
-overstock/understock direction is verified against the original competition documentation.
-This avoids silently reversing the business loss function.
+The two values in `config2.csv` follow the published competition formula:
 
+- `cost_a` / `understock_cost`: shortage cost, applied to `max(D - T, 0)`.
+- `cost_b` / `overstock_cost`: excess-inventory cost, applied to `max(T - D, 0)`.
+
+`D` and `T` are totals for the future 14-day horizon, not individual daily values. See
+[inventory_evaluation.md](inventory_evaluation.md) for the complete output and metric contract.
+
+## Extracted directory layout
+
+The loader accepts either the original ZIP or an extracted directory containing:
+
+```text
+data/
+├── item_feature2.csv
+├── item_store_feature2.csv
+└── config2.csv
+```
+
+These large raw CSV files are ignored by Git. The checked-in demo remains the small, headed
+panel file under `examples/data/`.

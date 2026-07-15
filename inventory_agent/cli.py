@@ -9,7 +9,12 @@ from pathlib import Path
 import pandas as pd
 
 from inventory_agent.config import Settings
-from inventory_agent.data.loader import CainiaoZipLoader
+from inventory_agent.data.costs import UNIT_COSTS, resolve_inventory_costs
+from inventory_agent.data.loader import (
+    CainiaoZipLoader,
+    create_cainiao_loader,
+    load_location_frame,
+)
 from inventory_agent.services.benchmark import benchmark_series
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
 
@@ -50,7 +55,18 @@ def _prepare(args: argparse.Namespace, settings: Settings) -> int:
 
 
 def _benchmark(args: argparse.Namespace) -> int:
-    frame = pd.read_csv(args.data, parse_dates=["date"])
+    source = Path(args.data)
+    is_raw_source = source.is_dir() or source.suffix.lower() == ".zip"
+    if is_raw_source:
+        frame = load_location_frame(source, args.store)
+        costs = resolve_inventory_costs(
+            create_cainiao_loader(source).load_costs(),
+            args.item,
+            args.store,
+        )
+    else:
+        frame = pd.read_csv(source, parse_dates=["date"])
+        costs = UNIT_COSTS
     report = benchmark_series(
         frame,
         item_id=args.item,
@@ -58,6 +74,8 @@ def _benchmark(args: argparse.Namespace) -> int:
         model_names=args.models,
         horizon=args.horizon,
         folds=args.folds,
+        costs=costs,
+        allow_missing=is_raw_source,
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -78,6 +96,8 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
                 "run_id": result["report"]["run_id"],
                 "selected_model": result["selected_model"],
                 "forecast_total": result["benchmark"]["forecast_total"],
+                "target_inventory": result["benchmark"]["target_inventory"],
+                "costs": result["benchmark"]["costs"],
                 "reports": result["report_paths"],
             },
             ensure_ascii=False,
@@ -88,7 +108,9 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Cainiao Inventory Forecast Capability Factory")
+    parser = argparse.ArgumentParser(
+        description="AI Agent Algorithm Capability Factory - Inventory Forecasting Scenario"
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("doctor", help="Check local configuration without exposing secrets")
@@ -99,7 +121,11 @@ def build_parser() -> argparse.ArgumentParser:
     prepare.add_argument("--items", type=int, default=20)
 
     benchmark = subparsers.add_parser("benchmark", help="Backtest models for one item/warehouse")
-    benchmark.add_argument("--data", default="data/processed/cainiao_sample.csv")
+    benchmark.add_argument(
+        "--data",
+        default="data",
+        help="Extracted Cainiao directory, original ZIP, or prepared panel CSV",
+    )
     benchmark.add_argument("--item", type=int, required=True)
     benchmark.add_argument("--store", required=True)
     benchmark.add_argument("--models", nargs="+")
@@ -109,7 +135,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     run = subparsers.add_parser("run", help="Run the complete natural-language Agent workflow")
     run.add_argument("--description", required=True)
-    run.add_argument("--data", default="data/processed/cainiao_sample.csv")
+    run.add_argument(
+        "--data",
+        default="data",
+        help="Extracted Cainiao directory, original ZIP, or prepared panel CSV",
+    )
     run.add_argument("--output-root", default="artifacts/runs")
     return parser
 
