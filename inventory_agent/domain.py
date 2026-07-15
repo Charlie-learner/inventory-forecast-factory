@@ -1,0 +1,35 @@
+"""Shared domain objects for the capability factory."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+
+@dataclass(frozen=True)
+class CapabilityRequest:
+    description: str
+    item_id: int
+    store_code: str
+    horizon: int = 14
+    candidate_count: int = 3
+    objective: str = "inventory_cost"
+    constraints: tuple[str, ...] = field(default_factory=tuple)
+
+    def __post_init__(self) -> None:
+        if not self.description.strip():
+            raise ValueError("description cannot be empty")
+        if self.item_id < 0:
+            raise ValueError("item_id must be non-negative")
+        if self.horizon <= 0:
+            raise ValueError("horizon must be positive")
+        if self.candidate_count <= 0:
+            raise ValueError("candidate_count must be positive")
+
+
+@dataclass(frozen=True)
+class AlgorithmPlan:
+    candidates: tuple[str, ...]
+    rationale: str
+    validation_metric: str = "inventory_cost"
+    max_repairs: int = 2
+

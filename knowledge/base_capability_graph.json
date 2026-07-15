@@ -1,0 +1,218 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {
+    "schema_version": "1.0"
+  },
+  "nodes": [
+    {
+      "type": "DemandProfile",
+      "name": "stable",
+      "id": "profile:stable"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "volatile",
+      "id": "profile:volatile"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "intermittent",
+      "id": "profile:intermittent"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "weekly_seasonal",
+      "id": "profile:weekly_seasonal"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "dense",
+      "id": "profile:dense"
+    },
+    {
+      "type": "Metric",
+      "name": "inventory_cost",
+      "id": "metric:inventory_cost"
+    },
+    {
+      "type": "Metric",
+      "name": "wape",
+      "id": "metric:wape"
+    },
+    {
+      "type": "Metric",
+      "name": "smape",
+      "id": "metric:smape"
+    },
+    {
+      "type": "Metric",
+      "name": "bias",
+      "id": "metric:bias"
+    },
+    {
+      "type": "Metric",
+      "name": "rmse",
+      "id": "metric:rmse"
+    },
+    {
+      "type": "Algorithm",
+      "name": "croston",
+      "description": "Estimates demand size and interval separately.",
+      "min_history": 14,
+      "dependencies": [],
+      "id": "algorithm:croston"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "many_zeros",
+      "id": "profile:many_zeros"
+    },
+    {
+      "type": "Algorithm",
+      "name": "last_value",
+      "description": "Repeats the last observed demand.",
+      "min_history": 1,
+      "dependencies": [],
+      "id": "algorithm:last_value"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "short_history",
+      "id": "profile:short_history"
+    },
+    {
+      "type": "Algorithm",
+      "name": "moving_average",
+      "description": "Uses the recent 14-day demand average.",
+      "min_history": 7,
+      "dependencies": [],
+      "id": "algorithm:moving_average"
+    },
+    {
+      "type": "Algorithm",
+      "name": "ridge_lag",
+      "description": "Regularized autoregression over the last 14 days.",
+      "min_history": 30,
+      "dependencies": [
+        "scikit-learn"
+      ],
+      "id": "algorithm:ridge_lag"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "trend",
+      "id": "profile:trend"
+    },
+    {
+      "type": "Algorithm",
+      "name": "seasonal_naive",
+      "description": "Repeats the most recent weekly demand pattern.",
+      "min_history": 14,
+      "dependencies": [],
+      "id": "algorithm:seasonal_naive"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:croston",
+      "target": "profile:intermittent"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:croston",
+      "target": "profile:many_zeros"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:last_value",
+      "target": "profile:short_history"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:moving_average",
+      "target": "profile:stable"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:moving_average",
+      "target": "profile:short_history"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:trend"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:dense"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:volatile"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:seasonal_naive",
+      "target": "profile:weekly_seasonal"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:seasonal_naive",
+      "target": "profile:stable"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.uv-cache/
+
+# Runtime artifacts and large/raw data
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+artifacts/
+results/
+logs/
+tmp/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

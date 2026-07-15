@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d6" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d5" for="node" attr.name="dependencies" attr.type="string" />
+  <key id="d4" for="node" attr.name="min_history" attr.type="long" />
+  <key id="d3" for="node" attr.name="description" attr.type="string" />
+  <key id="d2" for="node" attr.name="name" attr.type="string" />
+  <key id="d1" for="node" attr.name="type" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="profile:stable">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">stable</data>
+    </node>
+    <node id="profile:volatile">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">volatile</data>
+    </node>
+    <node id="profile:intermittent">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">intermittent</data>
+    </node>
+    <node id="profile:weekly_seasonal">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">weekly_seasonal</data>
+    </node>
+    <node id="profile:dense">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">dense</data>
+    </node>
+    <node id="metric:inventory_cost">
+      <data key="d1">Metric</data>
+      <data key="d2">inventory_cost</data>
+    </node>
+    <node id="metric:wape">
+      <data key="d1">Metric</data>
+      <data key="d2">wape</data>
+    </node>
+    <node id="metric:smape">
+      <data key="d1">Metric</data>
+      <data key="d2">smape</data>
+    </node>
+    <node id="metric:bias">
+      <data key="d1">Metric</data>
+      <data key="d2">bias</data>
+    </node>
+    <node id="metric:rmse">
+      <data key="d1">Metric</data>
+      <data key="d2">rmse</data>
+    </node>
+    <node id="algorithm:croston">
+      <data key="d1">Algorithm</data>
+      <data key="d2">croston</data>
+      <data key="d3">Estimates demand size and interval separately.</data>
+      <data key="d4">14</data>
+      <data key="d5">[]</data>
+    </node>
+    <node id="profile:many_zeros">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">many_zeros</data>
+    </node>
+    <node id="algorithm:last_value">
+      <data key="d1">Algorithm</data>
+      <data key="d2">last_value</data>
+      <data key="d3">Repeats the last observed demand.</data>
+      <data key="d4">1</data>
+      <data key="d5">[]</data>
+    </node>
+    <node id="profile:short_history">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">short_history</data>
+    </node>
+    <node id="algorithm:moving_average">
+      <data key="d1">Algorithm</data>
+      <data key="d2">moving_average</data>
+      <data key="d3">Uses the recent 14-day demand average.</data>
+      <data key="d4">7</data>
+      <data key="d5">[]</data>
+    </node>
+    <node id="algorithm:ridge_lag">
+      <data key="d1">Algorithm</data>
+      <data key="d2">ridge_lag</data>
+      <data key="d3">Regularized autoregression over the last 14 days.</data>
+      <data key="d4">30</data>
+      <data key="d5">["scikit-learn"]</data>
+    </node>
+    <node id="profile:trend">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">trend</data>
+    </node>
+    <node id="algorithm:seasonal_naive">
+      <data key="d1">Algorithm</data>
+      <data key="d2">seasonal_naive</data>
+      <data key="d3">Repeats the most recent weekly demand pattern.</data>
+      <data key="d4">14</data>
+      <data key="d5">[]</data>
+    </node>
+    <edge source="algorithm:croston" target="metric:inventory_cost">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:wape">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="profile:intermittent">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:croston" target="profile:many_zeros">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:inventory_cost">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:wape">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="profile:short_history">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:inventory_cost">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:wape">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="profile:stable">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="profile:short_history">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:inventory_cost">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:wape">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:trend">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:dense">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:volatile">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:inventory_cost">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:wape">
+      <data key="d6">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="profile:weekly_seasonal">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="profile:stable">
+      <data key="d6">SUITABLE_FOR</data>
+    </edge>
+    <data key="d0">1.0</data>
+  </graph>
+</graphml>

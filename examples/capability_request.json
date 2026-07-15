@@ -1,0 +1,10 @@
+{
+  "description": "为商品 3424 在仓库 1 预测未来14天需求，比较多个算法并优先降低补多补少成本",
+  "data": "examples/data/cainiao_demo.csv",
+  "expected_outputs": [
+    "generated Python capability",
+    "rolling backtest metrics",
+    "JSON and Markdown validation reports",
+    "knowledge graph validation run"
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "run_id": "run:8ffa43959858",
+  "created_at": "2026-07-14T20:32:37.488519+00:00",
+  "request": {
+    "description": "为商品 3424 在仓库 1 预测未来14天需求，比较多个算法并优先降低补多补少成本",
+    "item_id": 3424,
+    "store_code": "1",
+    "horizon": 14,
+    "candidate_count": 3,
+    "objective": "inventory_cost",
+    "constraints": []
+  },
+  "profile": {
+    "observations": 140,
+    "nonzero_observations": 139,
+    "zero_ratio": 0.007142857142857143,
+    "mean": 24.478571428571428,
+    "coefficient_of_variation": 0.8685054690057513,
+    "demand_type": "stable"
+  },
+  "plan": {
+    "candidates": [
+      "moving_average",
+      "seasonal_naive",
+      "croston"
+    ],
+    "rationale": "需求类型=stable，零需求比例=0.71%；从能力图谱检索 moving_average, seasonal_naive, croston，使用 inventory_cost 滚动验证。",
+    "validation_metric": "inventory_cost",
+    "max_repairs": 2
+  },
+  "benchmark": {
+    "item_id": 3424,
+    "store_code": "1",
+    "profile": {
+      "observations": 140,
+      "nonzero_observations": 139,
+      "zero_ratio": 0.007142857142857143,
+      "mean": 24.478571428571428,
+      "coefficient_of_variation": 0.8685054690057513,
+      "demand_type": "stable"
+    },
+    "horizon": 14,
+    "candidates": [
+      {
+        "model": "moving_average",
+        "folds": 3,
+        "metrics": {
+          "mae": 10.48299319727891,
+          "rmse": 21.628612840098153,
+          "wape": 0.7502287736158703,
+          "smape": 0.5510410444326782,
+          "bias": 0.7857142857142841,
+          "inventory_cost": 146.76190476190473
+        },
+        "fold_metrics": [
+          {
+            "mae": 3.408163265306121,
+            "rmse": 3.951878912463729,
+            "wape": 0.3670329670329669,
+            "smape": 0.33154086519749454,
+            "bias": 3.357142857142855,
+            "inventory_cost": 47.714285714285694
+          },
+          {
+            "mae": 16.183673469387752,
+            "rmse": 47.958315233127195,
+            "wape": 0.7308755760368663,
+            "smape": 0.5150453411462633,
+            "bias": -12.857142857142858,
+            "inventory_cost": 226.57142857142856
+          },
+          {
+            "mae": 11.857142857142856,
+            "rmse": 12.975644374703535,
+            "wape": 1.1527777777777777,
+            "smape": 0.8065369269542767,
+            "bias": 11.857142857142856,
+            "inventory_cost": 165.99999999999997
+          }
+        ]
+      },
+      {
+        "model": "seasonal_naive",
+        "folds": 3,
+        "metrics": {
+          "mae": 20.857142857142858,
+          "rmse": 47.16408065895295,
+          "wape": 1.7870967741935484,
+          "smape": 0.7508015179683252,
+          "bias": 6.476190476190477,
+          "inventory_cost": 292.0
+        },
+        "fold_metrics": [
+          {
+            "mae": 14.857142857142858,
+            "rmse": 26.46830989261363,
+            "wape": 1.6,
+            "smape": 0.7558079268657366,
+            "bias": 9.428571428571429,
+            "inventory_cost": 208.0
+          },
+          {
+            "mae": 16.857142857142858,
+            "rmse": 47.32712903670729,
+            "wape": 0.7612903225806451,
+            "smape": 0.5904237787352223,
+            "bias": -12.714285714285714,
+            "inventory_cost": 236.0
+          },
+          {
+            "mae": 30.857142857142858,
+            "rmse": 67.69680304753794,
+            "wape": 3.0,
+            "smape": 0.9061728483040165,
+            "bias": 22.714285714285715,
+            "inventory_cost": 432.0
+          }
+        ]
+      },
+      {
+        "model": "croston",
+        "folds": 3,
+        "metrics": {
+          "mae": 12.557187797513643,
+          "rmse": 23.334080286214093,
+          "wape": 0.9579743986914359,
+          "smape": 0.6584633295341212,
+          "bias": 3.3700331428435946,
+          "inventory_cost": 175.800629165191
+        },
+        "fold_metrics": [
+          {
+            "mae": 6.390046548125916,
+            "rmse": 6.721579699945999,
+            "wape": 0.6881588590289448,
+            "smape": 0.5298552972861833,
+            "bias": 6.390046548125916,
+            "inventory_cost": 89.46065167376283
+          },
+          {
+            "mae": 16.4325572715388,
+            "rmse": 47.52416692295356,
+            "wape": 0.7421154896823974,
+            "smape": 0.5422178504275036,
+            "bias": -11.128906692471345,
+            "inventory_cost": 230.0558018015432
+          },
+          {
+            "mae": 14.848959572876213,
+            "rmse": 15.756494235742723,
+            "wape": 1.4436488473629652,
+            "smape": 0.903316840888677,
+            "bias": 14.848959572876213,
+            "inventory_cost": 207.88543402026698
+          }
+        ]
+      }
+    ],
+    "selected_model": "moving_average",
+    "forecast": [
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286
+    ],
+    "forecast_total": 144.00000000000003
+  },
+  "generated": {
+    "model": "moving_average",
+    "path": "examples\\complete_run\\generated\\forecast_moving_average.py",
+    "generation_mode": "constrained_template"
+  },
+  "code_validation": {
+    "valid": true,
+    "checks": {
+      "syntax": true,
+      "imports": true,
+      "interface": true,
+      "runtime": true
+    },
+    "errors": [],
+    "sample_output": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0
+    ]
+  },
+  "repairs": [],
+  "knowledge_graph": {
+    "json": "artifacts\\knowledge\\capability_graph.json",
+    "graphml": "artifacts\\knowledge\\capability_graph.graphml"
+  }
+}
