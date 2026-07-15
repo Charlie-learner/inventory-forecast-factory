@@ -124,10 +124,10 @@ uv run python -m inventory_agent doctor
 
 ## 6. 库存场景示例数据和测试任务
 
-原始 ZIP 和解压后的大 CSV 均不提交 Git。当前支持原始 ZIP、解压目录和带表头的演示面板 CSV。ZIP 可通过以下命令抽样：
+原始 ZIP 和解压后的大 CSV 均不提交 Git。当前支持原始 ZIP、解压目录和带表头的演示面板 CSV。已经在 `data/` 放置解压文件时可直接运行工作流，无需执行数据准备命令；只有原始 ZIP 或需要轻量样本时，才使用可选命令：
 
 ```bash
-uv run python -m inventory_agent prepare-data \
+uv run python -m inventory_agent prepare-sample \
   --zip-path "C:/Users/you/Downloads/CAINIAO Part II Data_20160509.zip" \
   --items 20 \
   --output data/processed/cainiao_sample.csv

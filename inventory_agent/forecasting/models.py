@@ -10,6 +10,8 @@ from inventory_agent.forecasting.base import ForecastModel
 
 
 class LastValueModel(ForecastModel):
+    """Repeat the latest observed demand as a simple baseline."""
+
     name = "last_value"
 
     def predict(self, history: pd.Series, horizon: int) -> np.ndarray:
@@ -18,6 +20,8 @@ class LastValueModel(ForecastModel):
 
 
 class MovingAverageModel(ForecastModel):
+    """Forecast with the mean of the most recent demand window."""
+
     name = "moving_average"
 
     def __init__(self, window: int = 14):
@@ -30,6 +34,8 @@ class MovingAverageModel(ForecastModel):
 
 
 class SeasonalNaiveModel(ForecastModel):
+    """Repeat the latest seasonal pattern over the forecast horizon."""
+
     name = "seasonal_naive"
 
     def __init__(self, period: int = 7):
@@ -103,4 +109,3 @@ class RidgeLagModel(ForecastModel):
             predictions.append(prediction)
             buffer.append(prediction)
         return np.asarray(predictions)
-

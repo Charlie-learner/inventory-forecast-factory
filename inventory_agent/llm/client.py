@@ -9,13 +9,20 @@ from inventory_agent.config import Settings
 
 
 class LLMClient(Protocol):
-    def complete(self, system: str, user: str) -> str: ...
+    """Define the completion interface shared by offline and API adapters."""
+
+    def complete(self, system: str, user: str) -> str:
+        """Return a text completion for system and user messages."""
+
+        ...
 
 
 class MockLLMClient:
     """Deterministic offline adapter used by tests and the default demo."""
 
     def complete(self, system: str, user: str) -> str:
+        """Return a deterministic JSON response without making a network request."""
+
         del system
         return json.dumps(
             {
@@ -28,6 +35,8 @@ class MockLLMClient:
 
 
 class OpenAICompatibleClient:
+    """Call an OpenAI-compatible chat completion endpoint."""
+
     def __init__(self, settings: Settings):
         if not settings.api_key:
             raise ValueError("API key is required for API mode")
@@ -37,6 +46,8 @@ class OpenAICompatibleClient:
         self._model = settings.model
 
     def complete(self, system: str, user: str) -> str:
+        """Submit one chat completion request and return its text content."""
+
         response = self._client.chat.completions.create(
             model=self._model,
             messages=[
@@ -48,6 +59,8 @@ class OpenAICompatibleClient:
 
 
 def create_llm(settings: Settings) -> LLMClient:
+    """Create the configured API client or the deterministic mock client."""
+
     if settings.llm_mode == "api":
         return OpenAICompatibleClient(settings)
     return MockLLMClient()

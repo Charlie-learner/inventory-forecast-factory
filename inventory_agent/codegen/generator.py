@@ -8,6 +8,8 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class GeneratedCapability:
+    """Describe a generated capability module and its output location."""
+
     model: str
     source: str
     path: Path
@@ -45,6 +47,8 @@ def build_inventory_target(history: list[float], horizon: int) -> dict[str, obje
 '''
 
     def generate(self, model: str, output_dir: str | Path) -> GeneratedCapability:
+        """Generate a safe capability module for a registered model."""
+
         safe_name = "".join(character for character in model if character.isalnum() or character == "_")
         if safe_name != model or not safe_name:
             raise ValueError(f"Unsafe model name: {model!r}")

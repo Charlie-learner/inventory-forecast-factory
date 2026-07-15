@@ -25,6 +25,8 @@ class InventoryCostWeights:
 
     @property
     def critical_fractile(self) -> float:
+        """Return the cost-optimal demand quantile implied by A and B."""
+
         total = self.understock_cost + self.overstock_cost
         return self.understock_cost / total if total else 0.5
 
@@ -36,6 +38,8 @@ UNIT_COSTS = InventoryCostWeights(1.0, 1.0, source="unit_default")
 
 
 def normalize_store_code(store_code: int | str) -> str:
+    """Normalize nationwide and warehouse location identifiers."""
+
     value = str(store_code).strip().lower()
     return NATIONAL_SCOPE if value in {NATIONAL_SCOPE, "全国"} else value
 

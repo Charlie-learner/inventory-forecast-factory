@@ -15,6 +15,8 @@ from inventory_agent.forecasting.models import (
 
 
 class ModelRegistry:
+    """Register forecast plugins and create fresh model instances by name."""
+
     def __init__(self) -> None:
         self._factories: dict[str, Callable[[], ForecastModel]] = {}
         self._metadata: dict[str, ModelMetadata] = {}
@@ -24,12 +26,16 @@ class ModelRegistry:
         metadata: ModelMetadata,
         factory: Callable[[], ForecastModel],
     ) -> None:
+        """Register one model factory together with its capability metadata."""
+
         if metadata.name in self._factories:
             raise ValueError(f"Model already registered: {metadata.name}")
         self._factories[metadata.name] = factory
         self._metadata[metadata.name] = metadata
 
     def create(self, name: str) -> ForecastModel:
+        """Create a model instance or report the available plugin names."""
+
         try:
             return self._factories[name]()
         except KeyError as exc:
@@ -43,6 +49,8 @@ class ModelRegistry:
 
 
 def default_registry() -> ModelRegistry:
+    """Build the inventory scenario's default forecast plugin registry."""
+
     registry = ModelRegistry()
     registry.register(
         ModelMetadata("last_value", "Repeats the last observed demand.", ("short_history",), 1),

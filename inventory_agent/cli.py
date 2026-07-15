@@ -1,4 +1,4 @@
-"""Command-line interface for data preparation and environment diagnostics."""
+"""CLI for diagnostics, sample preparation, benchmarking, and Agent workflow execution."""
 
 from __future__ import annotations
 
@@ -20,6 +20,8 @@ from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
 
 
 def _doctor(settings: Settings) -> int:
+    """Print a secret-safe environment diagnosis and return its exit code."""
+
     report = {
         "llm_mode": settings.llm_mode,
         "model": settings.model,
@@ -32,7 +34,9 @@ def _doctor(settings: Settings) -> int:
     return 1 if report["issues"] else 0
 
 
-def _prepare(args: argparse.Namespace, settings: Settings) -> int:
+def _prepare_sample(args: argparse.Namespace, settings: Settings) -> int:
+    """Optionally extract a small demonstration sample from the raw Cainiao ZIP."""
+
     zip_path = Path(args.zip_path) if args.zip_path else settings.cainiao_zip_path
     if zip_path is None:
         raise SystemExit("Provide --zip-path or set CAINIAO_ZIP_PATH.")
@@ -55,8 +59,11 @@ def _prepare(args: argparse.Namespace, settings: Settings) -> int:
 
 
 def _benchmark(args: argparse.Namespace) -> int:
+    """Backtest candidate models for one item/location and save a JSON report."""
+
     source = Path(args.data)
     is_raw_source = source.is_dir() or source.suffix.lower() == ".zip"
+    # Raw sources provide real A/B costs; standalone panel CSVs use neutral unit costs.
     if is_raw_source:
         frame = load_location_frame(source, args.store)
         costs = resolve_inventory_costs(
@@ -85,6 +92,8 @@ def _benchmark(args: argparse.Namespace) -> int:
 
 
 def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
+    """Run the complete natural-language Agent workflow and print its summary."""
+
     result = InventoryCapabilityWorkflow(settings=settings).run(
         args.description,
         args.data,
@@ -108,6 +117,8 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Build the root parser and all supported CLI subcommands."""
+
     parser = argparse.ArgumentParser(
         description="AI Agent Algorithm Capability Factory - Inventory Forecasting Scenario"
     )
@@ -115,10 +126,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("doctor", help="Check local configuration without exposing secrets")
 
-    prepare = subparsers.add_parser("prepare-data", help="Create a deterministic Cainiao sample")
-    prepare.add_argument("--zip-path", help="Path to CAINIAO Part II Data_20160509.zip")
-    prepare.add_argument("--output", default="data/processed/cainiao_sample.csv")
-    prepare.add_argument("--items", type=int, default=20)
+    prepare_sample = subparsers.add_parser(
+        "prepare-sample",
+        help="Optionally create a lightweight demonstration sample from the raw Cainiao ZIP",
+    )
+    prepare_sample.add_argument(
+        "--zip-path", help="Path to CAINIAO Part II Data_20160509.zip"
+    )
+    prepare_sample.add_argument("--output", default="data/processed/cainiao_sample.csv")
+    prepare_sample.add_argument("--items", type=int, default=20)
 
     benchmark = subparsers.add_parser("benchmark", help="Backtest models for one item/warehouse")
     benchmark.add_argument(
@@ -145,12 +161,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Parse arguments, load settings, and dispatch the selected command."""
+
     args = build_parser().parse_args(argv)
     settings = Settings.from_env()
     if args.command == "doctor":
         return _doctor(settings)
-    if args.command == "prepare-data":
-        return _prepare(args, settings)
+    if args.command == "prepare-sample":
+        return _prepare_sample(args, settings)
     if args.command == "benchmark":
         return _benchmark(args)
     if args.command == "run":

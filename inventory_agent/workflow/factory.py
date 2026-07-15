@@ -35,6 +35,8 @@ class InventoryCapabilityWorkflow:
         settings: Settings | None = None,
         knowledge_path: str | Path = "artifacts/knowledge/capability_graph.json",
     ):
+        """Initialize agents, model registry, knowledge graph, and workflow."""
+
         self.settings = settings or Settings.from_env()
         self.llm = create_llm(self.settings)
         self.requirement_agent = RequirementAgent(self.llm)
@@ -54,10 +56,14 @@ class InventoryCapabilityWorkflow:
         self.graph = self._build_graph()
 
     def _parse(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Parse the natural-language request into a capability contract."""
+
         state["request"] = self.requirement_agent.parse(state["description"])
         return state
 
     def _profile(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Load demand history, costs, and the series demand profile."""
+
         request = state["request"]
         source = Path(state["data_path"])
         is_raw_source = source.is_dir() or source.suffix.lower() == ".zip"
@@ -87,12 +93,16 @@ class InventoryCapabilityWorkflow:
         return state
 
     def _plan(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Select candidate algorithms using the request and knowledge graph."""
+
         state["plan"] = self.planning_agent.plan(
             state["request"], state["profile"], self.knowledge
         )
         return state
 
     def _benchmark(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Backtest candidate algorithms and retain the selected model."""
+
         request = state["request"]
         state["benchmark"] = benchmark_series(
             state["frame"],
@@ -108,17 +118,23 @@ class InventoryCapabilityWorkflow:
         return state
 
     def _generate(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Generate a reusable module for the selected forecasting model."""
+
         generated_dir = Path(state["run_dir"]) / "generated"
         state["generated"] = self.generator.generate(state["selected_model"], generated_dir)
         state.setdefault("repairs", [])
         return state
 
     def _validate(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Validate the generated module against safety and output contracts."""
+
         state["code_validation"] = self.validator.validate(state["generated"].path)
         return state
 
     @staticmethod
     def _validation_route(state: dict[str, Any]) -> str:
+        """Route validation to reporting, repair, or terminal failure."""
+
         if state["code_validation"].valid:
             return "report"
         if len(state["repairs"]) < state["plan"].max_repairs:
@@ -126,6 +142,8 @@ class InventoryCapabilityWorkflow:
         return "failed"
 
     def _repair(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Regenerate a safe capability and record the repair reason."""
+
         generated, reason = self.repair_agent.repair(
             state["selected_model"],
             state["code_validation"].errors,
@@ -137,10 +155,14 @@ class InventoryCapabilityWorkflow:
 
     @staticmethod
     def _failed(state: dict[str, Any]) -> dict[str, Any]:
+        """Stop execution after the configured repair budget is exhausted."""
+
         errors = "; ".join(state["code_validation"].errors)
         raise RuntimeError(f"Generated capability failed after repair budget: {errors}")
 
     def _report(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Persist experience and produce the final validation reports."""
+
         selected = next(
             candidate
             for candidate in state["benchmark"]["candidates"]
@@ -189,6 +211,8 @@ class InventoryCapabilityWorkflow:
         return state
 
     def _build_graph(self):
+        """Compile the LangGraph workflow and its validation repair loop."""
+
         workflow = StateGraph(dict)
         workflow.add_node("parse", self._parse)
         workflow.add_node("profile", self._profile)
@@ -220,6 +244,8 @@ class InventoryCapabilityWorkflow:
         data_path: str | Path,
         output_root: str | Path = "artifacts/runs",
     ) -> dict[str, Any]:
+        """Run the capability factory for one natural-language request."""
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         run_dir = Path(output_root) / timestamp
         initial = {

@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-
 @dataclass(frozen=True)
 class CapabilityRequest:
+    """Describe the algorithm capability requested by a user."""
+
     description: str
     item_id: int
     store_code: str
@@ -16,6 +17,8 @@ class CapabilityRequest:
     constraints: tuple[str, ...] = field(default_factory=tuple)
 
     def __post_init__(self) -> None:
+        """Reject requests with missing or invalid core fields."""
+
         if not self.description.strip():
             raise ValueError("description cannot be empty")
         if self.item_id < 0:
@@ -28,8 +31,9 @@ class CapabilityRequest:
 
 @dataclass(frozen=True)
 class AlgorithmPlan:
+    """Represent the candidate algorithm plan produced by the planning agent."""
+
     candidates: tuple[str, ...]
     rationale: str
     validation_metric: str = "inventory_cost"
     max_repairs: int = 2
-

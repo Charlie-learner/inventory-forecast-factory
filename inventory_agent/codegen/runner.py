@@ -9,6 +9,8 @@ from pathlib import Path
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Load a generated module and emit smoke-test results as JSON."""
+
     arguments = argv if argv is not None else sys.argv[1:]
     if len(arguments) != 1:
         raise SystemExit("Usage: python -m inventory_agent.codegen.runner GENERATED_MODULE")

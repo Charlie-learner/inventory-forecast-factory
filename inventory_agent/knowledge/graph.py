@@ -14,14 +14,20 @@ from inventory_agent.forecasting.registry import ModelRegistry, default_registry
 
 
 class CapabilityKnowledgeGraph:
+    """Store algorithm metadata and validation experience in a directed graph."""
+
     SCHEMA_VERSION = "1.0"
 
     def __init__(self, graph: nx.DiGraph | None = None):
+        """Initialize a graph and attach the current schema version."""
+
         self.graph = graph or nx.DiGraph()
         self.graph.graph["schema_version"] = self.SCHEMA_VERSION
 
     @classmethod
     def bootstrap(cls, registry: ModelRegistry | None = None) -> "CapabilityKnowledgeGraph":
+        """Build the base graph from registered algorithms and metrics."""
+
         registry = registry or default_registry()
         knowledge = cls()
         for demand_type in ["stable", "volatile", "intermittent", "weekly_seasonal", "dense"]:
@@ -64,6 +70,8 @@ class CapabilityKnowledgeGraph:
         return knowledge
 
     def retrieve_algorithms(self, demand_type: str, limit: int = 3) -> list[dict]:
+        """Return algorithms ranked by suitability for a demand profile."""
+
         profile_node = f"profile:{demand_type}"
         exact: list[dict] = []
         fallback: list[dict] = []
@@ -89,6 +97,8 @@ class CapabilityKnowledgeGraph:
         status: str = "success",
         repair: str | None = None,
     ) -> str:
+        """Record one model validation and any repair strategy used."""
+
         run_id = f"run:{uuid4().hex[:12]}"
         self.graph.add_node(
             run_id,
@@ -110,6 +120,8 @@ class CapabilityKnowledgeGraph:
         return run_id
 
     def save(self, json_path: str | Path, graphml_path: str | Path | None = None) -> None:
+        """Persist the graph as JSON and optionally GraphML."""
+
         json_output = Path(json_path)
         json_output.parent.mkdir(parents=True, exist_ok=True)
         payload = json_graph.node_link_data(self.graph, edges="edges")
@@ -129,5 +141,7 @@ class CapabilityKnowledgeGraph:
 
     @classmethod
     def load(cls, path: str | Path) -> "CapabilityKnowledgeGraph":
+        """Load a previously persisted JSON knowledge graph."""
+
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
         return cls(json_graph.node_link_graph(payload, edges="edges", directed=True))

@@ -8,6 +8,8 @@ from inventory_agent.codegen.generator import GeneratedCapability, SafeCodeGener
 
 
 class RepairAgent:
+    """Regenerate a capability from the safe template after validation failure."""
+
     def __init__(self, generator: SafeCodeGenerator | None = None):
         self.generator = generator or SafeCodeGenerator()
 
@@ -17,7 +19,8 @@ class RepairAgent:
         errors: tuple[str, ...],
         output_dir: str | Path,
     ) -> tuple[GeneratedCapability, str]:
+        """Regenerate the selected model and record the triggering errors."""
+
         reason = "根据验证错误重新生成受约束实现: " + "; ".join(errors)
         generated = self.generator.generate(model, output_dir)
         return generated, reason
-

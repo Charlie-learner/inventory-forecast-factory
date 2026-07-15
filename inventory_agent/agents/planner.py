@@ -7,12 +7,16 @@ from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 
 
 class PlanningAgent:
+    """Plan candidate algorithms with demand profiles and graph knowledge."""
+
     def plan(
         self,
         request: CapabilityRequest,
         profile: dict,
         knowledge: CapabilityKnowledgeGraph,
     ) -> AlgorithmPlan:
+        """Retrieve suitable models and return a bounded validation plan."""
+
         retrieved = knowledge.retrieve_algorithms(
             str(profile["demand_type"]), limit=request.candidate_count
         )
@@ -25,4 +29,3 @@ class PlanningAgent:
             f"从能力图谱检索 {', '.join(names)}，使用 {request.objective} 滚动验证。"
         )
         return AlgorithmPlan(tuple(names), rationale, request.objective)
-

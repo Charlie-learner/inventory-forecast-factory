@@ -34,6 +34,8 @@ class Settings:
 
     @classmethod
     def from_env(cls, load_dotenv: bool = True) -> "Settings":
+        """Build settings from environment variables and an optional .env file."""
+
         if load_dotenv:
             _load_dotenv()
         zip_value = os.getenv("CAINIAO_ZIP_PATH")
@@ -48,6 +50,8 @@ class Settings:
         )
 
     def validate(self) -> list[str]:
+        """Return configuration issues without exposing secret values."""
+
         issues: list[str] = []
         if self.llm_mode not in {"mock", "api"}:
             issues.append("LLM_MODE must be 'mock' or 'api'.")
@@ -56,4 +60,3 @@ class Settings:
         if self.cainiao_zip_path and not self.cainiao_zip_path.exists():
             issues.append(f"Cainiao ZIP not found: {self.cainiao_zip_path}")
         return issues
-

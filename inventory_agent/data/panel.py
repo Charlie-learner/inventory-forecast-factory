@@ -31,6 +31,8 @@ def demand_series(
     target: str = TARGET_COLUMN,
     allow_missing: bool = False,
 ) -> pd.Series:
+    """Build a complete daily demand series for one item and location."""
+
     location = normalize_store_code(store_code)
     required = {"date", "item_id", target}
     if location != "all":
@@ -56,6 +58,8 @@ def demand_series(
 
 
 def profile_series(series: pd.Series) -> dict[str, float | int | str]:
+    """Summarize demand density and classify the series behavior."""
+
     clean = pd.to_numeric(series, errors="coerce").fillna(0).clip(lower=0)
     zero_ratio = float((clean == 0).mean())
     nonzero = clean[clean > 0]

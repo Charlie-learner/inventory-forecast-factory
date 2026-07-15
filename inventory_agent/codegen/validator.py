@@ -14,6 +14,8 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class CodeValidationResult:
+    """Summarize static checks and the generated module smoke test."""
+
     valid: bool
     checks: dict[str, bool]
     errors: tuple[str, ...]
@@ -22,13 +24,19 @@ class CodeValidationResult:
 
 
 class GeneratedCodeValidator:
+    """Validate generated code with static rules and an isolated smoke test."""
+
     ALLOWED_IMPORT_ROOTS = {"__future__", "pandas", "inventory_agent"}
     FORBIDDEN_CALLS = {"eval", "exec", "compile", "open", "input", "__import__"}
 
     def __init__(self, timeout_seconds: float = 10.0):
+        """Configure the maximum runtime allowed for generated code."""
+
         self.timeout_seconds = timeout_seconds
 
     def validate(self, path: str | Path) -> CodeValidationResult:
+        """Check syntax, imports, interfaces, and runtime output contracts."""
+
         module_path = Path(path)
         checks = {"syntax": False, "imports": False, "interface": False, "runtime": False}
         errors: list[str] = []

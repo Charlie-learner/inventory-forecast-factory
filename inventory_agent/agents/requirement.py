@@ -10,11 +10,15 @@ from inventory_agent.llm.client import LLMClient, MockLLMClient
 
 
 class RequirementAgent:
+    """Convert natural-language inventory requests into validated domain objects."""
+
     def __init__(self, llm: LLMClient | None = None):
         self.llm = llm or MockLLMClient()
 
     @staticmethod
     def _fallback_parse(description: str) -> CapabilityRequest:
+        """Extract required fields deterministically when LLM parsing is unavailable."""
+
         item_match = re.search(r"(?:item|商品|SKU)[_\s:=号-]*(\d+)", description, re.IGNORECASE)
         store_match = re.search(
             r"(?:store|仓库|分仓|范围)[_\s:=号-]*(all|全国|\d+)",
@@ -34,6 +38,8 @@ class RequirementAgent:
         )
 
     def parse(self, description: str) -> CapabilityRequest:
+        """Parse a request with deterministic defaults and optional LLM refinement."""
+
         fallback = self._fallback_parse(description)
         if isinstance(self.llm, MockLLMClient):
             return fallback

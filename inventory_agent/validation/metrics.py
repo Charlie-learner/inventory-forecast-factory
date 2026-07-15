@@ -8,6 +8,8 @@ import numpy as np
 
 
 def _arrays(actual: np.ndarray, forecast: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Convert metric inputs to compatible finite arrays."""
+
     actual = np.asarray(actual, dtype=float)
     forecast = np.asarray(forecast, dtype=float)
     if actual.shape != forecast.shape:
@@ -46,6 +48,8 @@ def forecast_metrics(
     overstock_cost: float = 1.0,
     understock_cost: float = 1.0,
 ) -> dict[str, float]:
+    """Compute daily accuracy metrics and horizon-level inventory cost."""
+
     actual, forecast = _arrays(actual, forecast)
     error = forecast - actual
     absolute = np.abs(error)

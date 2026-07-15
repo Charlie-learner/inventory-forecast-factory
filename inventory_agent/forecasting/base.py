@@ -20,6 +20,8 @@ class ForecastModel(ABC):
 
     @staticmethod
     def validate_input(history: pd.Series, horizon: int) -> pd.Series:
+        """Validate forecast inputs and return a clean non-negative series."""
+
         if horizon <= 0:
             raise ValueError("horizon must be positive")
         clean = pd.to_numeric(history, errors="coerce").dropna().astype(float)
@@ -30,9 +32,10 @@ class ForecastModel(ABC):
 
 @dataclass(frozen=True)
 class ModelMetadata:
+    """Describe a forecast plugin and the demand profiles it supports."""
+
     name: str
     description: str
     suitable_for: tuple[str, ...]
     min_history: int
     dependencies: tuple[str, ...] = field(default_factory=tuple)
-

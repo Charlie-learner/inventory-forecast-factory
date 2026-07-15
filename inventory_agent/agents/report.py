@@ -9,10 +9,14 @@ from inventory_agent.llm.client import LLMClient, MockLLMClient
 
 
 class ReportAgent:
+    """Render machine-readable and human-readable validation reports."""
+
     def __init__(self, llm: LLMClient | None = None):
         self.llm = llm or MockLLMClient()
 
     def create(self, payload: dict, output_dir: str | Path) -> dict[str, str]:
+        """Write JSON and Markdown reports and return their file paths."""
+
         output = Path(output_dir)
         output.mkdir(parents=True, exist_ok=True)
         json_path = output / "validation_report.json"

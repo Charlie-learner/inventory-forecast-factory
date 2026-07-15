@@ -23,12 +23,16 @@ from inventory_agent.data.schema import (
 
 @dataclass
 class CainiaoDataBundle:
+    """Normalized national, warehouse, and inventory-cost tables."""
+
     national: pd.DataFrame
     store: pd.DataFrame
     costs: pd.DataFrame
 
 
 def _normalize_features(frame: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+    """Apply the canonical schema and validate feature-table keys."""
+
     if frame.shape[1] != len(columns):
         raise ValueError(f"Expected {len(columns)} columns, got {frame.shape[1]}")
     result = frame.copy()
@@ -42,6 +46,8 @@ def _normalize_features(frame: pd.DataFrame, columns: list[str]) -> pd.DataFrame
 
 
 def _normalize_costs(frame: pd.DataFrame) -> pd.DataFrame:
+    """Parse and validate the official A_B inventory-cost pairs."""
+
     if frame.shape[1] != len(COST_COLUMNS):
         raise ValueError(f"Expected {len(COST_COLUMNS)} cost columns, got {frame.shape[1]}")
     result = frame.copy()
@@ -82,24 +88,32 @@ class CainiaoZipLoader:
         return _normalize_features(frame, columns)
 
     def load_national(self) -> pd.DataFrame:
+        """Load and normalize the nationwide item feature table."""
+
         with ZipFile(self.zip_path) as archive:
             member = self._find_member(archive, ZIP_MEMBERS["national"])
             raw = pd.read_csv(archive.open(member), header=None)
         return self._normalize_features(raw, NATIONAL_COLUMNS)
 
     def load_store(self) -> pd.DataFrame:
+        """Load and normalize the item-by-warehouse feature table."""
+
         with ZipFile(self.zip_path) as archive:
             member = self._find_member(archive, ZIP_MEMBERS["store"])
             raw = pd.read_csv(archive.open(member), header=None)
         return self._normalize_features(raw, STORE_COLUMNS)
 
     def load_costs(self) -> pd.DataFrame:
+        """Load and normalize inventory-cost configuration."""
+
         with ZipFile(self.zip_path) as archive:
             member = self._find_member(archive, ZIP_MEMBERS["cost"])
             raw = pd.read_csv(archive.open(member), header=None)
         return _normalize_costs(raw)
 
     def load(self) -> CainiaoDataBundle:
+        """Load all three source tables as one data bundle."""
+
         return CainiaoDataBundle(
             national=self.load_national(),
             store=self.load_store(),
@@ -135,19 +149,29 @@ class CainiaoDirectoryLoader:
         return path
 
     def load_national(self) -> pd.DataFrame:
+        """Load nationwide features from the extracted data directory."""
+
         return _normalize_features(pd.read_csv(self._path("national"), header=None), NATIONAL_COLUMNS)
 
     def load_store(self) -> pd.DataFrame:
+        """Load warehouse features from the extracted data directory."""
+
         return _normalize_features(pd.read_csv(self._path("store"), header=None), STORE_COLUMNS)
 
     def load_costs(self) -> pd.DataFrame:
+        """Load inventory costs from the extracted data directory."""
+
         return _normalize_costs(pd.read_csv(self._path("cost"), header=None))
 
     def load(self) -> CainiaoDataBundle:
+        """Load all extracted source tables as one data bundle."""
+
         return CainiaoDataBundle(self.load_national(), self.load_store(), self.load_costs())
 
 
 def create_cainiao_loader(source: str | Path) -> CainiaoZipLoader | CainiaoDirectoryLoader:
+    """Create the loader matching an extracted directory or ZIP source."""
+
     path = Path(source)
     if path.is_dir():
         return CainiaoDirectoryLoader(path)

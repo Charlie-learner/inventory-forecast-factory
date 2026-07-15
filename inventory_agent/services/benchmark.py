@@ -23,6 +23,8 @@ def benchmark_series(
     costs: InventoryCostWeights | None = None,
     allow_missing: bool = False,
 ) -> dict:
+    """Backtest candidates and forecast inventory for one item/location."""
+
     registry = registry or default_registry()
     costs = costs or UNIT_COSTS
     location = normalize_store_code(store_code)

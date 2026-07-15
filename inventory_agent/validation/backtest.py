@@ -13,6 +13,8 @@ from inventory_agent.validation.metrics import forecast_metrics
 
 @dataclass(frozen=True)
 class BacktestResult:
+    """Aggregated and per-fold metrics for one forecast model."""
+
     model: str
     folds: int
     metrics: dict[str, float]
@@ -20,6 +22,8 @@ class BacktestResult:
 
 
 class RollingBacktester:
+    """Evaluate models on chronological, non-overlapping forecast windows."""
+
     def __init__(self, horizon: int = 14, folds: int = 3, min_history: int = 28):
         if horizon <= 0 or folds <= 0 or min_history <= 0:
             raise ValueError("horizon, folds and min_history must be positive")
@@ -34,6 +38,8 @@ class RollingBacktester:
         overstock_cost: float = 1.0,
         understock_cost: float = 1.0,
     ) -> BacktestResult:
+        """Run leakage-safe rolling-origin evaluation for one model."""
+
         clean = pd.to_numeric(series, errors="coerce").dropna().astype(float).clip(lower=0)
         required = self.min_history + self.horizon
         if len(clean) < required:
@@ -59,6 +65,8 @@ class RollingBacktester:
 
     @staticmethod
     def select_best(results: list[BacktestResult]) -> BacktestResult:
+        """Select by inventory cost, then WAPE, then stable model name."""
+
         if not results:
             raise ValueError("At least one backtest result is required")
         return min(results, key=lambda item: (item.metrics["inventory_cost"], item.metrics["wape"], item.model))
