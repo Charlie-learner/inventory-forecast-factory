@@ -35,6 +35,15 @@ target_inventory = sum(daily_forecast)
 
 非对称库存成本必须先分别汇总 14 天的实际需求和预测，再计算一次公式；不能逐日计算成本后求和，因为不同日期的高估和低估应在同一库存周期内相互抵消。
 
+## 验证配置
+
+验证规则通过 `ValidationProfileRegistry` 注册，当前提供两种库存场景任务：
+
+- `inventory_target`：以 `inventory_cost` 为主指标，以 WAPE、RMSE 作为排序补充。
+- `demand_forecast`：以 WAPE 为主指标，以 RMSE、库存成本作为排序补充。
+
+自然语言中明确出现 WAPE、RMSE、精度或“日需求”时选择精度配置；其他库存能力描述默认选择目标库存配置。新增任务配置不需要修改回测器，只需注册新的 `ValidationProfile`。
+
 ## 全国与分仓
 
 - `store_code=all`：读取 `item_feature2.csv` 的全国序列。

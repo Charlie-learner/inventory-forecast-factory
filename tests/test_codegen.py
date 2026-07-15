@@ -10,6 +10,9 @@ def test_generated_capability_passes_validation(tmp_path: Path):
     assert result.valid
     assert len(result.sample_output) == 14
     assert result.sample_target_inventory == sum(result.sample_output)
+    assert result.checks["stability"]
+    assert result.runtime_seconds is not None
+    assert result.runtime_seconds > 0
 
 
 def test_validator_rejects_unsafe_import(tmp_path: Path):

@@ -29,7 +29,7 @@ flowchart LR
     V -->|失败| F[RepairAgent]
     F --> V
     V -->|成功| E[ExperienceAgent]
-    E --> G[(JSON / GraphML)]
+    E --> G[(JSON / GraphML / HTML)]
     E --> O[ReportAgent]
 ```
 
@@ -37,7 +37,7 @@ flowchart LR
 
 - 能力工厂核心：`agents`、`knowledge`、`codegen`、`workflow`，负责理解、检索、规划、生成、验证、修复和沉淀。
 - 库存场景适配：`data`、`forecasting`、`services/benchmark.py`，负责菜鸟数据读取、需求画像、预测模型和成本回测。
-- 通用验证层：`validation` 提供滚动验证和可扩展指标接口；`codegen/validator.py` 提供生成能力的接口与运行检查。
+- 通用验证层：`validation` 提供滚动验证、`ValidationProfileRegistry` 任务配置和 `MetricRegistry` 指标插件；`codegen/validator.py` 提供生成能力的接口、稳定性与受限运行检查。
 
 项目已从旧时序预测原型独立重构，所有核心功能均位于 `inventory_agent/`。
 
@@ -64,16 +64,26 @@ data/              本地原始/处理中间数据（大文件由 Git 忽略）
 
 运行后的验证结果写入 `artifacts/knowledge/`，避免修改版本化基础图谱。
 
+生成无需外部 JavaScript 依赖的 HTML 可视化：
+
+```bash
+uv run python -m inventory_agent visualize-graph \
+  --knowledge knowledge/base_capability_graph.json \
+  --output artifacts/knowledge/capability_graph.html
+```
+
+工作流每次成功或最终失败时也会同步保存 JSON、GraphML 和 HTML。HTML 中按节点类型着色，并展示算法、需求画像、指标、验证记录和修复策略之间的关系。
+
 ## 4. Agent 工作流设计
 
 1. `RequirementAgent` 从中文或英文需求中提取商品、仓库、预测周期和目标。
 2. 数据画像计算零需求比例、波动系数和需求类型。
 3. `PlanningAgent` 从图谱检索适用算法，形成多个候选方案。
-4. 库存场景验证器按 14 天窗口执行滚动回测，从 `config2.csv` 读取 A/B，并按非对称库存成本和 WAPE 排序。
+4. 验证配置注册表根据任务目标选择排序策略：目标库存任务优先非对称库存成本，精度任务优先 WAPE；两者都执行无时间泄漏的滚动回测。
 5. 代码生成器为胜出模型生成标准 `forecast(history, horizon)` 模块。
-6. 验证器检查语法、导入白名单、接口和受限超时子进程运行结果。
-7. 失败时 `RepairAgent` 在最多两轮内重新生成已知安全模板；当前不做 LLM 级错误定位修改。
-8. `ExperienceAgent` 把指标和修复记录写回知识图谱；当前历史记录尚未参与下一次模型排序。
+6. 验证器检查语法、导入白名单、接口、边界输入、确定性和受限超时子进程运行结果，并记录运行耗时。
+7. 失败时 `RepairAgent` 在最多两轮内按错误类别记录修复原因：API 模式首轮让 LLM 基于源码和错误返回完整修复版本，若仍失败则回退已知安全模板；Mock 模式直接使用安全模板。所有修复版本都重新经过安全验证。
+8. `ExperienceAgent` 把成功或最终失败的指标与修复记录写回知识图谱；同类需求再次检索时，历史成功率和平均库存成本参与候选排序。
 9. `ReportAgent` 输出 JSON 和 Markdown 报告。
 
 默认使用 Mock LLM，完全离线可复现。切换到 OpenAI 兼容接口后，LLM 参与需求理解和报告总结；模型选择仍由实际回测裁决。
@@ -121,6 +131,8 @@ API_KEY=your-new-api-key
 ```bash
 uv run python -m inventory_agent doctor
 ```
+
+CLI 支持 `doctor`、`prepare-sample`、`benchmark`、`run` 和 `visualize-graph`。使用 `--verbose` 可查看不包含密钥的工作流进度日志。
 
 ## 6. 库存场景示例数据和测试任务
 
@@ -200,7 +212,8 @@ def build_inventory_target(history: list[float], horizon: int) -> dict:
 - Python 语法检查
 - 导入白名单检查
 - `forecast()` 和 `build_inventory_target()` 接口检查
-- 删除 API Key 后的超时子进程运行检查
+- 全零历史、短预测周期和相同输入重复执行的稳定性检查
+- 删除 API Key 后的超时子进程运行检查与运行耗时记录
 
 运行完整项目验收：
 
@@ -223,6 +236,8 @@ uv run ruff check inventory_agent tests scripts
 - 间歇需求：注册 Croston，并由零需求比例驱动知识检索。
 - 业务目标不同于纯精度：明确 A=补少、B=补多，并按整个 14 天库存周期计算非对称成本。
 - 生成代码风险：限制导入和危险调用，在去除密钥的子进程中设置超时运行。
+- 验证目标差异：通过插件式 `ValidationProfileRegistry` 分离库存成本任务和日需求精度任务的排序规则。
+- 经验无法复用：将验证次数、成功率和平均库存成本汇总为检索排序依据，同时保留原始验证节点便于审计。
 - API 不可用：Mock LLM 保证核心流程、测试和展示完全离线可运行。
 - 全国与分仓字段不同：`all` 使用全国表，1-5 使用分仓表，通过统一位置接口处理。
 
@@ -231,8 +246,8 @@ uv run ruff check inventory_agent tests scripts
 - 基于 `A/(A+B)` 临界分位进一步进行成本感知的目标库存校准。
 - 加入浏览、收藏、加购等外生特征的 pooled Gradient Boosting 模型。
 - 针对 37 个无历史商品实现类目和品牌相似商品冷启动迁移。
-- 抽象场景 Adapter 与验证配置，使同一能力工厂可接入异常检测、流失预测等新任务。
+- 抽象场景 Adapter，使同一能力工厂可接入异常检测、流失预测等新任务；当前可插拔的是库存预测内部的验证配置。
 - 增加全国预测与五仓预测的层级一致性约束。
 - 加入安全库存、在途库存和提前期，输出最终补货量。
-- 增加 Streamlit 图谱和预测报告可视化。
+- 在现有静态 HTML 图谱基础上增加 Streamlit 交互式预测报告。
 - 将子进程执行升级为容器级资源和网络隔离沙箱。

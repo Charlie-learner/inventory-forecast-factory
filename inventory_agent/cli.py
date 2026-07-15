@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 from pathlib import Path
 
 import pandas as pd
@@ -16,7 +17,9 @@ from inventory_agent.data.loader import (
     load_location_frame,
 )
 from inventory_agent.services.benchmark import benchmark_series
+from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
+from inventory_agent.validation.profiles import default_validation_profiles
 
 
 def _doctor(settings: Settings) -> int:
@@ -83,6 +86,7 @@ def _benchmark(args: argparse.Namespace) -> int:
         folds=args.folds,
         costs=costs,
         allow_missing=is_raw_source,
+        validation_profile=default_validation_profiles().get(args.task_type),
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -116,12 +120,27 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
     return 0
 
 
+def _visualize_graph(args: argparse.Namespace) -> int:
+    """Render a saved knowledge graph as a standalone HTML visualization."""
+
+    source = Path(args.knowledge)
+    knowledge = (
+        CapabilityKnowledgeGraph.load(source)
+        if source.exists()
+        else CapabilityKnowledgeGraph.bootstrap()
+    )
+    output = knowledge.render_html(args.output)
+    print(json.dumps({"visualization": str(output.resolve())}, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the root parser and all supported CLI subcommands."""
 
     parser = argparse.ArgumentParser(
         description="AI Agent Algorithm Capability Factory - Inventory Forecasting Scenario"
     )
+    parser.add_argument("--verbose", action="store_true", help="Show workflow progress logs")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("doctor", help="Check local configuration without exposing secrets")
@@ -146,7 +165,15 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--store", required=True)
     benchmark.add_argument("--models", nargs="+")
     benchmark.add_argument("--horizon", type=int, default=14)
-    benchmark.add_argument("--folds", type=int, default=3)
+    benchmark.add_argument(
+        "--folds", type=int, help="Override the validation profile's fold count"
+    )
+    benchmark.add_argument(
+        "--task-type",
+        choices=default_validation_profiles().names(),
+        default="inventory_target",
+        help="Validation policy used to rank candidate models",
+    )
     benchmark.add_argument("--output", default="artifacts/benchmark_report.json")
 
     run = subparsers.add_parser("run", help="Run the complete natural-language Agent workflow")
@@ -157,6 +184,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Extracted Cainiao directory, original ZIP, or prepared panel CSV",
     )
     run.add_argument("--output-root", default="artifacts/runs")
+
+    visualize = subparsers.add_parser(
+        "visualize-graph", help="Render the knowledge graph as standalone HTML"
+    )
+    visualize.add_argument(
+        "--knowledge", default="knowledge/base_capability_graph.json"
+    )
+    visualize.add_argument(
+        "--output", default="artifacts/knowledge/capability_graph.html"
+    )
     return parser
 
 
@@ -164,6 +201,10 @@ def main(argv: list[str] | None = None) -> int:
     """Parse arguments, load settings, and dispatch the selected command."""
 
     args = build_parser().parse_args(argv)
+    logging.basicConfig(
+        level=logging.INFO if args.verbose else logging.WARNING,
+        format="%(levelname)s %(name)s: %(message)s",
+    )
     settings = Settings.from_env()
     if args.command == "doctor":
         return _doctor(settings)
@@ -173,4 +214,6 @@ def main(argv: list[str] | None = None) -> int:
         return _benchmark(args)
     if args.command == "run":
         return _run_factory(args, settings)
+    if args.command == "visualize-graph":
+        return _visualize_graph(args)
     raise SystemExit(f"Unknown command: {args.command}")

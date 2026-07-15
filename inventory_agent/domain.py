@@ -13,6 +13,7 @@ class CapabilityRequest:
     store_code: str
     horizon: int = 14
     candidate_count: int = 3
+    task_type: str = "inventory_target"
     objective: str = "inventory_cost"
     constraints: tuple[str, ...] = field(default_factory=tuple)
 
@@ -27,6 +28,8 @@ class CapabilityRequest:
             raise ValueError("horizon must be positive")
         if self.candidate_count <= 0:
             raise ValueError("candidate_count must be positive")
+        if not self.task_type.strip():
+            raise ValueError("task_type cannot be empty")
 
 
 @dataclass(frozen=True)

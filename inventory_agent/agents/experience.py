@@ -6,7 +6,7 @@ from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 
 
 class ExperienceAgent:
-    """Write successful validation outcomes back to the capability graph."""
+    """Write validation outcomes back to the capability graph."""
 
     def write_back(
         self,
@@ -16,14 +16,15 @@ class ExperienceAgent:
         model: str,
         metrics: dict[str, float],
         repairs: list[str],
+        status: str = "success",
     ) -> str:
-        """Persist model metrics and optional repair history for a validation run."""
+        """Persist metrics, status, and optional repair history for a validation run."""
 
         return knowledge.record_validation(
             item_id,
             store_code,
             model,
             metrics,
-            status="success",
+            status=status,
             repair=" | ".join(repairs) if repairs else None,
         )

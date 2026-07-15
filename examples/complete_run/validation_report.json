@@ -1,12 +1,13 @@
 {
-  "run_id": "run:631f880dad03",
-  "created_at": "2026-07-15T08:55:49.520662+00:00",
+  "run_id": "run:5d00f4da4b54",
+  "created_at": "2026-07-15T14:46:52.074291+00:00",
   "request": {
     "description": "为商品 3424 在仓库 1 预测未来14天需求，比较多个算法并优先降低补多补少成本",
     "item_id": 3424,
     "store_code": "1",
     "horizon": 14,
     "candidate_count": 3,
+    "task_type": "inventory_target",
     "objective": "inventory_cost",
     "constraints": []
   },
@@ -22,10 +23,10 @@
   "plan": {
     "candidates": [
       "ridge_lag",
-      "croston",
-      "last_value"
+      "last_value",
+      "croston"
     ],
-    "rationale": "需求类型=volatile，零需求比例=2.03%；从能力图谱检索 ridge_lag, croston, last_value，使用 inventory_cost 滚动验证。",
+    "rationale": "需求类型=volatile，零需求比例=2.03%；从能力图谱检索 ridge_lag, last_value, croston，使用 inventory_cost 滚动验证。",
     "validation_metric": "inventory_cost",
     "max_repairs": 2
   },
@@ -42,6 +43,17 @@
     },
     "horizon": 14,
     "evaluation_unit": "horizon_total",
+    "validation_profile": {
+      "name": "inventory_target",
+      "primary_metric": "inventory_cost",
+      "tie_breakers": [
+        "wape",
+        "rmse"
+      ],
+      "folds": 3,
+      "min_history_days": 28,
+      "description": "Minimize asymmetric shortage and overstock cost."
+    },
     "costs": {
       "understock_cost": 6.48,
       "overstock_cost": 11.0,
@@ -96,52 +108,6 @@
         ]
       },
       {
-        "model": "croston",
-        "folds": 3,
-        "metrics": {
-          "mae": 12.557164862120215,
-          "rmse": 23.33406086536448,
-          "wape": 0.9579720238396535,
-          "smape": 0.6584619741875551,
-          "bias": 3.3700068543295507,
-          "inventory_cost": 1426.804219633228,
-          "mean_actual_total": 194.66666666666666,
-          "mean_target_inventory": 241.84676262728036
-        },
-        "fold_metrics": [
-          {
-            "mae": 6.389984987453851,
-            "rmse": 6.721521175700916,
-            "wape": 0.688152229418107,
-            "smape": 0.5298516912388106,
-            "bias": 6.389984987453851,
-            "inventory_cost": 984.0576880678931,
-            "actual_total": 130.0,
-            "target_inventory": 219.45978982435392
-          },
-          {
-            "mae": 16.432553247794058,
-            "rmse": 47.524170220847736,
-            "wape": 0.742115307964893,
-            "smape": 0.5422174860773672,
-            "bias": -11.128920775577935,
-            "inventory_cost": 1009.6156927604303,
-            "actual_total": 310.0,
-            "target_inventory": 154.19510914190892
-          },
-          {
-            "mae": 14.848956351112735,
-            "rmse": 15.756491199544802,
-            "wape": 1.4436485341359604,
-            "smape": 0.9033167452464876,
-            "bias": 14.848956351112735,
-            "inventory_cost": 2286.7392780713612,
-            "actual_total": 144.0,
-            "target_inventory": 351.8853889155783
-          }
-        ]
-      },
-      {
         "model": "last_value",
         "folds": 3,
         "metrics": {
@@ -186,6 +152,52 @@
             "target_inventory": 42.0
           }
         ]
+      },
+      {
+        "model": "croston",
+        "folds": 3,
+        "metrics": {
+          "mae": 12.557164862120215,
+          "rmse": 23.33406086536448,
+          "wape": 0.9579720238396535,
+          "smape": 0.6584619741875551,
+          "bias": 3.3700068543295507,
+          "inventory_cost": 1426.804219633228,
+          "mean_actual_total": 194.66666666666666,
+          "mean_target_inventory": 241.84676262728036
+        },
+        "fold_metrics": [
+          {
+            "mae": 6.389984987453851,
+            "rmse": 6.721521175700916,
+            "wape": 0.688152229418107,
+            "smape": 0.5298516912388106,
+            "bias": 6.389984987453851,
+            "inventory_cost": 984.0576880678931,
+            "actual_total": 130.0,
+            "target_inventory": 219.45978982435392
+          },
+          {
+            "mae": 16.432553247794058,
+            "rmse": 47.524170220847736,
+            "wape": 0.742115307964893,
+            "smape": 0.5422174860773672,
+            "bias": -11.128920775577935,
+            "inventory_cost": 1009.6156927604303,
+            "actual_total": 310.0,
+            "target_inventory": 154.19510914190892
+          },
+          {
+            "mae": 14.848956351112735,
+            "rmse": 15.756491199544802,
+            "wape": 1.4436485341359604,
+            "smape": 0.9033167452464876,
+            "bias": 14.848956351112735,
+            "inventory_cost": 2286.7392780713612,
+            "actual_total": 144.0,
+            "target_inventory": 351.8853889155783
+          }
+        ]
       }
     ],
     "selected_model": "last_value",
@@ -214,6 +226,17 @@
     "cost_a": "补少/缺货成本",
     "cost_b": "补多/积压成本"
   },
+  "validation_profile": {
+    "name": "inventory_target",
+    "primary_metric": "inventory_cost",
+    "tie_breakers": [
+      "wape",
+      "rmse"
+    ],
+    "folds": 3,
+    "min_history_days": 28,
+    "description": "Minimize asymmetric shortage and overstock cost."
+  },
   "generated": {
     "model": "last_value",
     "path": "examples\\complete_run\\generated\\forecast_last_value.py",
@@ -225,7 +248,8 @@
       "syntax": true,
       "imports": true,
       "interface": true,
-      "runtime": true
+      "runtime": true,
+      "stability": true
     },
     "errors": [],
     "sample_output": [
@@ -244,11 +268,13 @@
       7.0,
       7.0
     ],
-    "sample_target_inventory": 98.0
+    "sample_target_inventory": 98.0,
+    "runtime_seconds": 0.9481511999983923
   },
   "repairs": [],
   "knowledge_graph": {
     "json": "artifacts\\knowledge\\capability_graph.json",
-    "graphml": "artifacts\\knowledge\\capability_graph.graphml"
+    "graphml": "artifacts\\knowledge\\capability_graph.graphml",
+    "html": "artifacts\\knowledge\\capability_graph.html"
   }
 }

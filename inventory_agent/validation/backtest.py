@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from inventory_agent.forecasting.base import ForecastModel
-from inventory_agent.validation.metrics import forecast_metrics
+from inventory_agent.validation.metrics import MetricRegistry, forecast_metrics
 
 
 @dataclass(frozen=True)
@@ -24,12 +24,19 @@ class BacktestResult:
 class RollingBacktester:
     """Evaluate models on chronological, non-overlapping forecast windows."""
 
-    def __init__(self, horizon: int = 14, folds: int = 3, min_history: int = 28):
+    def __init__(
+        self,
+        horizon: int = 14,
+        folds: int = 3,
+        min_history: int = 28,
+        metric_registry: MetricRegistry | None = None,
+    ):
         if horizon <= 0 or folds <= 0 or min_history <= 0:
             raise ValueError("horizon, folds and min_history must be positive")
         self.horizon = horizon
         self.folds = folds
         self.min_history = min_history
+        self.metric_registry = metric_registry
 
     def evaluate(
         self,
@@ -54,7 +61,13 @@ class RollingBacktester:
             actual = clean.iloc[train_end:test_end].to_numpy(dtype=float)
             prediction = model.predict(train, self.horizon)
             fold_results.append(
-                forecast_metrics(actual, prediction, overstock_cost, understock_cost)
+                forecast_metrics(
+                    actual,
+                    prediction,
+                    overstock_cost,
+                    understock_cost,
+                    registry=self.metric_registry,
+                )
             )
 
         aggregated = {}
@@ -64,9 +77,22 @@ class RollingBacktester:
         return BacktestResult(model.name, available_folds, aggregated, tuple(fold_results))
 
     @staticmethod
-    def select_best(results: list[BacktestResult]) -> BacktestResult:
-        """Select by inventory cost, then WAPE, then stable model name."""
+    def select_best(
+        results: list[BacktestResult],
+        metric_order: tuple[str, ...] = ("inventory_cost", "wape", "rmse"),
+    ) -> BacktestResult:
+        """Select by configured metrics and then by stable model name."""
 
         if not results:
             raise ValueError("At least one backtest result is required")
-        return min(results, key=lambda item: (item.metrics["inventory_cost"], item.metrics["wape"], item.model))
+        missing = [
+            metric
+            for metric in metric_order
+            if any(metric not in result.metrics for result in results)
+        ]
+        if missing:
+            raise KeyError(f"Ranking metrics missing from backtest results: {sorted(set(missing))}")
+        return min(
+            results,
+            key=lambda item: (*[item.metrics[name] for name in metric_order], item.model),
+        )

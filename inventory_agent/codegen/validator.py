@@ -8,6 +8,7 @@ import math
 import os
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -21,6 +22,7 @@ class CodeValidationResult:
     errors: tuple[str, ...]
     sample_output: tuple[float, ...] = ()
     sample_target_inventory: float | None = None
+    runtime_seconds: float | None = None
 
 
 class GeneratedCodeValidator:
@@ -38,9 +40,16 @@ class GeneratedCodeValidator:
         """Check syntax, imports, interfaces, and runtime output contracts."""
 
         module_path = Path(path)
-        checks = {"syntax": False, "imports": False, "interface": False, "runtime": False}
+        checks = {
+            "syntax": False,
+            "imports": False,
+            "interface": False,
+            "runtime": False,
+            "stability": False,
+        }
         errors: list[str] = []
         sample: tuple[float, ...] = ()
+        runtime_seconds: float | None = None
         try:
             source = module_path.read_text(encoding="utf-8")
             tree = ast.parse(source)
@@ -85,6 +94,7 @@ class GeneratedCodeValidator:
                 for key, value in os.environ.items()
                 if key not in {"API_KEY", "OPENAI_API_KEY"}
             }
+            started = time.perf_counter()
             completed = subprocess.run(
                 [sys.executable, "-m", "inventory_agent.codegen.runner", str(module_path)],
                 check=True,
@@ -93,6 +103,7 @@ class GeneratedCodeValidator:
                 timeout=self.timeout_seconds,
                 env=child_env,
             )
+            runtime_seconds = time.perf_counter() - started
             payload = json.loads(completed.stdout)
             values = payload["values"]
             if not isinstance(values, list) or len(values) != 14:
@@ -100,6 +111,15 @@ class GeneratedCodeValidator:
             numeric = tuple(float(value) for value in values)
             if any(not math.isfinite(value) or value < 0 for value in numeric):
                 raise ValueError("forecast values must be finite and non-negative")
+            repeated = tuple(float(value) for value in payload["repeated_values"])
+            edge_values = tuple(float(value) for value in payload["edge_values"])
+            if repeated != numeric:
+                raise ValueError("forecast must be deterministic for identical inputs")
+            if len(edge_values) != 1 or any(
+                not math.isfinite(value) or value < 0 for value in edge_values
+            ):
+                raise ValueError("forecast must handle an all-zero history and horizon=1")
+            checks["stability"] = True
             inventory = payload["inventory"]
             target_inventory = float(inventory["target_inventory"])
             inventory_values = tuple(float(value) for value in inventory["daily_forecast"])
@@ -121,4 +141,5 @@ class GeneratedCodeValidator:
             tuple(errors),
             sample,
             target_inventory if checks["runtime"] else None,
+            runtime_seconds,
         )

@@ -34,6 +34,13 @@ def main() -> int:
         )
         if not result["code_validation"].valid:
             raise RuntimeError("Generated capability did not pass validation")
+        if not result["code_validation"].checks.get("stability"):
+            raise RuntimeError("Generated capability stability check did not run")
+        graph_html = output / "knowledge.html"
+        if not graph_html.exists() or "库存算法能力知识图谱" not in graph_html.read_text(
+            encoding="utf-8"
+        ):
+            raise RuntimeError("Knowledge graph HTML visualization was not generated")
         print(
             "E2E OK:",
             result["selected_model"],

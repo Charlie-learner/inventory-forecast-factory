@@ -5,7 +5,7 @@ import pytest
 from inventory_agent.forecasting.models import CrostonModel, RidgeLagModel, SeasonalNaiveModel
 from inventory_agent.forecasting.registry import default_registry
 from inventory_agent.validation.backtest import RollingBacktester
-from inventory_agent.validation.metrics import forecast_metrics
+from inventory_agent.validation.metrics import MetricRegistry, forecast_metrics
 
 
 class _ConstantModel:
@@ -101,3 +101,24 @@ def test_backtest_rejects_short_history():
         RollingBacktester(horizon=14, min_history=28).evaluate(
             SeasonalNaiveModel(), pd.Series([1, 2, 3])
         )
+
+
+def test_metric_registry_accepts_custom_metric_plugin():
+    registry = MetricRegistry()
+    registry.register(
+        "signed_total_error",
+        lambda actual, forecast, _over, _under: forecast.sum() - actual.sum(),
+    )
+    metrics = forecast_metrics(
+        np.array([1.0, 2.0]),
+        np.array([2.0, 4.0]),
+        registry=registry,
+    )
+    assert metrics == {"signed_total_error": 3.0}
+
+
+def test_metric_registry_rejects_non_finite_plugin_output():
+    registry = MetricRegistry()
+    registry.register("broken", lambda _actual, _forecast, _over, _under: np.nan)
+    with pytest.raises(ValueError, match="non-finite"):
+        forecast_metrics(np.array([1.0]), np.array([1.0]), registry=registry)

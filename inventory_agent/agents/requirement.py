@@ -30,11 +30,16 @@ class RequirementAgent:
         if not item_match or (not store_match and not nationwide):
             raise ValueError("需求中必须明确商品 item/SKU 和仓库 store/分仓。")
         store_code = "all" if nationwide else store_match.group(1)
+        accuracy_task = bool(
+            re.search(r"(?:WAPE|RMSE|精度|准确率|日需求)", description, re.IGNORECASE)
+        )
         return CapabilityRequest(
             description=description,
             item_id=int(item_match.group(1)),
             store_code="all" if store_code.lower() == "全国" else store_code,
             horizon=int(horizon_match.group(1)) if horizon_match else 14,
+            task_type="demand_forecast" if accuracy_task else "inventory_target",
+            objective="wape" if accuracy_task else "inventory_cost",
         )
 
     def parse(self, description: str) -> CapabilityRequest:
@@ -49,6 +54,8 @@ class RequirementAgent:
                 "item_id": fallback.item_id,
                 "store_code": fallback.store_code,
                 "horizon": fallback.horizon,
+                "task_type": fallback.task_type,
+                "objective": fallback.objective,
             },
         }
         response = self.llm.complete(
@@ -57,12 +64,17 @@ class RequirementAgent:
         )
         try:
             data = json.loads(response)
+            task_type = str(data.get("task_type", fallback.task_type))
+            if task_type not in {"inventory_target", "demand_forecast"}:
+                task_type = fallback.task_type
+            objective = "wape" if task_type == "demand_forecast" else "inventory_cost"
             return CapabilityRequest(
                 description=description,
                 item_id=int(data.get("item_id", fallback.item_id)),
                 store_code=str(data.get("store_code", fallback.store_code)),
                 horizon=int(data.get("horizon", fallback.horizon)),
-                objective=str(data.get("objective", "inventory_cost")),
+                task_type=task_type,
+                objective=objective,
             )
         except (json.JSONDecodeError, TypeError, ValueError):
             return fallback

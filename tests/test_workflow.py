@@ -2,10 +2,18 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
+from inventory_agent.codegen.validator import CodeValidationResult
 from inventory_agent.config import Settings
 from inventory_agent.data.schema import NATIONAL_COLUMNS, STORE_COLUMNS, TARGET_COLUMN
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
+
+
+class _AlwaysInvalidValidator:
+    def validate(self, path: Path) -> CodeValidationResult:
+        del path
+        return CodeValidationResult(False, {}, ("runtime: forced failure",))
 
 
 def test_end_to_end_mock_workflow(tmp_path: Path):
@@ -33,6 +41,8 @@ def test_end_to_end_mock_workflow(tmp_path: Path):
     assert Path(result["report_paths"]["json"]).exists()
     assert Path(result["report_paths"]["markdown"]).exists()
     assert (tmp_path / "knowledge.graphml").exists()
+    assert (tmp_path / "knowledge.html").exists()
+    assert result["report"]["validation_profile"]["name"] == "inventory_target"
 
 
 def test_end_to_end_raw_directory_nationwide_uses_competition_costs(tmp_path: Path):
@@ -86,3 +96,47 @@ def test_end_to_end_raw_directory_nationwide_uses_competition_costs(tmp_path: Pa
     assert warehouse_result["benchmark"]["store_code"] == "1"
     assert warehouse_result["benchmark"]["costs"]["understock_cost"] == 2.0
     assert warehouse_result["benchmark"]["costs"]["overstock_cost"] == 5.0
+
+
+def test_failed_workflow_records_two_repairs_and_failure_experience(tmp_path: Path):
+    data = pd.DataFrame(
+        {
+            "date": pd.date_range("2024-01-01", periods=70, freq="D"),
+            "item_id": 42,
+            "store_code": 1,
+            "qty_alipay_njhs": np.tile([1, 2, 3, 4, 5, 6, 7], 10),
+        }
+    )
+    data_path = tmp_path / "panel.csv"
+    data.to_csv(data_path, index=False)
+    knowledge_path = tmp_path / "knowledge.json"
+    workflow = InventoryCapabilityWorkflow(
+        settings=Settings(llm_mode="mock"),
+        knowledge_path=knowledge_path,
+    )
+    workflow.validator = _AlwaysInvalidValidator()
+
+    with pytest.raises(RuntimeError, match="failed after repair budget"):
+        workflow.run(
+            "为商品 42 在仓库 1 预测未来14天目标库存",
+            data_path,
+            tmp_path / "runs",
+        )
+
+    saved = InventoryCapabilityWorkflow(
+        settings=Settings(llm_mode="mock"),
+        knowledge_path=knowledge_path,
+    ).knowledge
+    failures = [
+        attributes
+        for _, attributes in saved.graph.nodes(data=True)
+        if attributes.get("type") == "ValidationRun"
+    ]
+    repairs = [
+        attributes["description"]
+        for _, attributes in saved.graph.nodes(data=True)
+        if attributes.get("type") == "RepairStrategy"
+    ]
+    assert failures[0]["status"] == "failure"
+    assert "第 1 轮修复" in repairs[0]
+    assert "第 2 轮修复" in repairs[0]

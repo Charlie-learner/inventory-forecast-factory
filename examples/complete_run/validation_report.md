@@ -4,6 +4,8 @@
 - 商品：3424
 - 仓库：1
 - 预测周期：14 天
+- 任务类型：inventory_target
+- 主验证指标：inventory_cost
 - 需求类型：volatile
 - 历史状态：observed
 - 选中模型：last_value
@@ -18,18 +20,19 @@
 | 模型 | WAPE | sMAPE | Bias | 平均单折库存成本 |
 |---|---:|---:|---:|---:|
 | ridge_lag | 1.1913 | 0.7267 | 6.9491 | 1523.93 |
-| croston | 0.9580 | 0.6585 | 3.3700 | 1426.80 |
 | last_value | 0.6247 | 0.7039 | -6.9048 | 626.40 |
+| croston | 0.9580 | 0.6585 | 3.3700 | 1426.80 |
 
 ## 生成代码验证
 
 - 生成方式：constrained_template
-- 语法、导入、接口、运行检查：{'syntax': True, 'imports': True, 'interface': True, 'runtime': True}
+- 语法、导入、接口、运行、稳定性检查：{'syntax': True, 'imports': True, 'interface': True, 'runtime': True, 'stability': True}
+- 受限运行耗时：0.948 秒
 - 修复次数：0
 
 ## Agent 总结
 
-{"mode": "mock", "summary": "使用可复现规则完成需求理解、模型检索与验证。", "input_excerpt": "{\"run_id\": \"run:631f880dad03\", \"created_at\": \"2026-07-15T08:55:49.520662+00:00\", \"request\": {\"description\": \"为商品 3424 在仓"}
+{"mode": "mock", "summary": "使用可复现规则完成需求理解、模型检索与验证。", "input_excerpt": "{\"run_id\": \"run:5d00f4da4b54\", \"created_at\": \"2026-07-15T14:46:52.074291+00:00\", \"request\": {\"description\": \"为商品 3424 在仓"}
 
 ## 使用边界
 

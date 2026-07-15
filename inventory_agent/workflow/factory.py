@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from datetime import datetime, timezone
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +26,10 @@ from inventory_agent.forecasting.registry import default_registry
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 from inventory_agent.llm.client import create_llm
 from inventory_agent.services.benchmark import benchmark_series
+from inventory_agent.validation.profiles import default_validation_profiles
+
+
+logger = logging.getLogger(__name__)
 
 
 class InventoryCapabilityWorkflow:
@@ -43,10 +48,11 @@ class InventoryCapabilityWorkflow:
         self.planning_agent = PlanningAgent()
         self.generator = SafeCodeGenerator()
         self.validator = GeneratedCodeValidator()
-        self.repair_agent = RepairAgent(self.generator)
+        self.repair_agent = RepairAgent(self.generator, self.llm)
         self.experience_agent = ExperienceAgent()
         self.report_agent = ReportAgent(self.llm)
         self.registry = default_registry()
+        self.validation_profiles = default_validation_profiles()
         self.knowledge_path = Path(knowledge_path)
         self.knowledge = (
             CapabilityKnowledgeGraph.load(self.knowledge_path)
@@ -59,6 +65,7 @@ class InventoryCapabilityWorkflow:
         """Parse the natural-language request into a capability contract."""
 
         state["request"] = self.requirement_agent.parse(state["description"])
+        logger.info("Parsed request for item=%s store=%s", state["request"].item_id, state["request"].store_code)
         return state
 
     def _profile(self, state: dict[str, Any]) -> dict[str, Any]:
@@ -113,8 +120,14 @@ class InventoryCapabilityWorkflow:
             registry=self.registry,
             costs=state["costs"],
             allow_missing=state["raw_data_source"],
+            validation_profile=self.validation_profiles.get(request.task_type),
         )
         state["selected_model"] = state["benchmark"]["selected_model"]
+        logger.info(
+            "Selected model=%s using profile=%s",
+            state["selected_model"],
+            request.task_type,
+        )
         return state
 
     def _generate(self, state: dict[str, Any]) -> dict[str, Any]:
@@ -129,6 +142,11 @@ class InventoryCapabilityWorkflow:
         """Validate the generated module against safety and output contracts."""
 
         state["code_validation"] = self.validator.validate(state["generated"].path)
+        logger.info(
+            "Validated generated code valid=%s errors=%s",
+            state["code_validation"].valid,
+            len(state["code_validation"].errors),
+        )
         return state
 
     @staticmethod
@@ -148,17 +166,47 @@ class InventoryCapabilityWorkflow:
             state["selected_model"],
             state["code_validation"].errors,
             Path(state["run_dir"]) / "generated",
+            attempt=len(state["repairs"]) + 1,
+            current=state["generated"],
         )
         state["generated"] = generated
         state["repairs"].append(reason)
+        logger.warning("Repair attempt=%s reason=%s", len(state["repairs"]), reason)
         return state
 
-    @staticmethod
-    def _failed(state: dict[str, Any]) -> dict[str, Any]:
+    def _failed(self, state: dict[str, Any]) -> dict[str, Any]:
         """Stop execution after the configured repair budget is exhausted."""
 
         errors = "; ".join(state["code_validation"].errors)
+        selected = next(
+            candidate
+            for candidate in state["benchmark"]["candidates"]
+            if candidate["model"] == state["selected_model"]
+        )
+        self.experience_agent.write_back(
+            self.knowledge,
+            state["request"].item_id,
+            state["request"].store_code,
+            state["selected_model"],
+            selected["metrics"],
+            [*state["repairs"], f"最终失败: {errors}"],
+            status="failure",
+        )
+        self._save_knowledge()
+        logger.error("Capability failed after repair budget: %s", errors)
         raise RuntimeError(f"Generated capability failed after repair budget: {errors}")
+
+    def _save_knowledge(self) -> dict[str, str]:
+        """Persist machine-readable and directly viewable graph formats."""
+
+        graphml_path = self.knowledge_path.with_suffix(".graphml")
+        html_path = self.knowledge_path.with_suffix(".html")
+        self.knowledge.save(self.knowledge_path, graphml_path, html_path)
+        return {
+            "json": str(self.knowledge_path),
+            "graphml": str(graphml_path),
+            "html": str(html_path),
+        }
 
     def _report(self, state: dict[str, Any]) -> dict[str, Any]:
         """Persist experience and produce the final validation reports."""
@@ -176,8 +224,7 @@ class InventoryCapabilityWorkflow:
             selected["metrics"],
             state["repairs"],
         )
-        graphml_path = self.knowledge_path.with_suffix(".graphml")
-        self.knowledge.save(self.knowledge_path, graphml_path)
+        knowledge_paths = self._save_knowledge()
         payload = {
             "run_id": run_id,
             "created_at": datetime.now(timezone.utc).isoformat(),
@@ -191,6 +238,7 @@ class InventoryCapabilityWorkflow:
                 "cost_a": "补少/缺货成本",
                 "cost_b": "补多/积压成本",
             },
+            "validation_profile": state["benchmark"]["validation_profile"],
             "generated": {
                 "model": state["generated"].model,
                 "path": str(state["generated"].path),
@@ -199,8 +247,7 @@ class InventoryCapabilityWorkflow:
             "code_validation": asdict(state["code_validation"]),
             "repairs": state["repairs"],
             "knowledge_graph": {
-                "json": str(self.knowledge_path),
-                "graphml": str(graphml_path),
+                **knowledge_paths,
             },
         }
         state["report_paths"] = self.report_agent.create(payload, state["run_dir"])
@@ -254,4 +301,5 @@ class InventoryCapabilityWorkflow:
             "run_dir": str(run_dir),
             "repairs": [],
         }
+        logger.info("Starting capability workflow run_dir=%s", run_dir)
         return self.graph.invoke(initial)
