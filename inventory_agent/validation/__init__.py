@@ -1,6 +1,7 @@
 """Leakage-safe forecasting validation."""
 
 from inventory_agent.validation.backtest import BacktestResult, RollingBacktester
+from inventory_agent.validation.failures import FailureAnalysis, FailureAnalyzer
 from inventory_agent.validation.metrics import MetricRegistry, default_metric_registry
 from inventory_agent.validation.profiles import (
     ValidationProfile,
@@ -10,6 +11,8 @@ from inventory_agent.validation.profiles import (
 
 __all__ = [
     "BacktestResult",
+    "FailureAnalysis",
+    "FailureAnalyzer",
     "MetricRegistry",
     "RollingBacktester",
     "ValidationProfile",

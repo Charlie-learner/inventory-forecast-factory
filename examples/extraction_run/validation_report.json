@@ -1,0 +1,367 @@
+{
+  "run_id": "run:612fbc1b2be3",
+  "created_at": "2026-07-15T20:41:37.595388+00:00",
+  "request": {
+    "description": "为商品 3424 在仓库 1 预测未来14天目标库存，并复刻能力文档中的算法",
+    "item_id": 3424,
+    "store_code": "1",
+    "horizon": 14,
+    "candidate_count": 3,
+    "task_type": "inventory_target",
+    "objective": "inventory_cost",
+    "constraints": []
+  },
+  "profile": {
+    "observations": 140,
+    "nonzero_observations": 139,
+    "zero_ratio": 0.007142857142857143,
+    "mean": 24.478571428571428,
+    "coefficient_of_variation": 0.8685054690057513,
+    "demand_type": "stable",
+    "history_status": "observed"
+  },
+  "plan": {
+    "candidates": [
+      "moving_average",
+      "seasonal_naive",
+      "croston"
+    ],
+    "rationale": "需求类型=stable，零需求比例=0.71%；从能力图谱检索 moving_average, seasonal_naive, croston，使用 inventory_cost 滚动验证。",
+    "validation_metric": "inventory_cost",
+    "max_repairs": 2
+  },
+  "capability_extraction": {
+    "sources": [
+      "examples/capabilities/moving_average.md"
+    ],
+    "result_path": "examples\\extraction_run\\extracted_capabilities.json",
+    "count": 1,
+    "scan_reports": [
+      {
+        "source": "examples\\capabilities\\moving_average.md",
+        "source_kind": "file",
+        "files_scanned": 1,
+        "files_matched": 1,
+        "errors": []
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "moving_average",
+        "task_type": "inventory_forecasting",
+        "description": "Forecast stable demand with the mean of the most recent observations.",
+        "template_name": "moving_average",
+        "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+        "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+        "suitable_for": [
+          "stable",
+          "short_history"
+        ],
+        "metrics": [
+          "inventory_cost",
+          "wape",
+          "rmse"
+        ],
+        "dependencies": [
+          "pandas"
+        ],
+        "parameters": {
+          "window": 14
+        },
+        "source_type": "document",
+        "source_ref": "examples\\capabilities\\moving_average.md",
+        "source_hash": "3759e85562d8ac58da336a3f31ea3044f4d72b45cc771b106c828a4b3cd51540",
+        "version": "1.1.0",
+        "extracted_by": "deterministic"
+      }
+    ]
+  },
+  "capability_spec": {
+    "name": "moving_average",
+    "task_type": "inventory_forecasting",
+    "description": "Forecast stable demand with the mean of the most recent observations.",
+    "template_name": "moving_average",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "short_history",
+      "stable"
+    ],
+    "metrics": [
+      "inventory_cost",
+      "rmse",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "window": 14
+    },
+    "source_type": "document",
+    "source_ref": "examples\\capabilities\\moving_average.md",
+    "source_hash": "3759e85562d8ac58da336a3f31ea3044f4d72b45cc771b106c828a4b3cd51540",
+    "version": "1.1.0",
+    "extracted_by": "deterministic"
+  },
+  "benchmark": {
+    "item_id": 3424,
+    "store_code": "1",
+    "profile": {
+      "observations": 140,
+      "nonzero_observations": 139,
+      "zero_ratio": 0.007142857142857143,
+      "mean": 24.478571428571428,
+      "coefficient_of_variation": 0.8685054690057513,
+      "demand_type": "stable"
+    },
+    "horizon": 14,
+    "evaluation_unit": "horizon_total",
+    "validation_profile": {
+      "name": "inventory_target",
+      "primary_metric": "inventory_cost",
+      "tie_breakers": [
+        "wape",
+        "rmse"
+      ],
+      "folds": 3,
+      "min_history_days": 28,
+      "description": "Minimize asymmetric shortage and overstock cost."
+    },
+    "costs": {
+      "understock_cost": 1.0,
+      "overstock_cost": 1.0,
+      "source": "unit_default",
+      "critical_fractile": 0.5
+    },
+    "candidates": [
+      {
+        "model": "moving_average",
+        "folds": 3,
+        "metrics": {
+          "mae": 10.48299319727891,
+          "rmse": 21.628612840098153,
+          "wape": 0.7502287736158703,
+          "smape": 0.5510410444326782,
+          "bias": 0.7857142857142841,
+          "inventory_cost": 131.0,
+          "mean_actual_total": 194.66666666666666,
+          "mean_target_inventory": 205.66666666666666
+        },
+        "fold_metrics": [
+          {
+            "mae": 3.408163265306121,
+            "rmse": 3.951878912463729,
+            "wape": 0.3670329670329669,
+            "smape": 0.33154086519749454,
+            "bias": 3.357142857142855,
+            "inventory_cost": 46.99999999999997,
+            "actual_total": 130.0,
+            "target_inventory": 176.99999999999997
+          },
+          {
+            "mae": 16.183673469387752,
+            "rmse": 47.958315233127195,
+            "wape": 0.7308755760368663,
+            "smape": 0.5150453411462633,
+            "bias": -12.857142857142858,
+            "inventory_cost": 179.99999999999997,
+            "actual_total": 310.0,
+            "target_inventory": 130.00000000000003
+          },
+          {
+            "mae": 11.857142857142856,
+            "rmse": 12.975644374703535,
+            "wape": 1.1527777777777777,
+            "smape": 0.8065369269542767,
+            "bias": 11.857142857142856,
+            "inventory_cost": 166.00000000000006,
+            "actual_total": 144.0,
+            "target_inventory": 310.00000000000006
+          }
+        ]
+      },
+      {
+        "model": "seasonal_naive",
+        "folds": 3,
+        "metrics": {
+          "mae": 20.857142857142858,
+          "rmse": 47.16408065895295,
+          "wape": 1.7870967741935484,
+          "smape": 0.7508015179683252,
+          "bias": 6.476190476190477,
+          "inventory_cost": 209.33333333333334,
+          "mean_actual_total": 194.66666666666666,
+          "mean_target_inventory": 285.3333333333333
+        },
+        "fold_metrics": [
+          {
+            "mae": 14.857142857142858,
+            "rmse": 26.46830989261363,
+            "wape": 1.6,
+            "smape": 0.7558079268657366,
+            "bias": 9.428571428571429,
+            "inventory_cost": 132.0,
+            "actual_total": 130.0,
+            "target_inventory": 262.0
+          },
+          {
+            "mae": 16.857142857142858,
+            "rmse": 47.32712903670729,
+            "wape": 0.7612903225806451,
+            "smape": 0.5904237787352223,
+            "bias": -12.714285714285714,
+            "inventory_cost": 178.0,
+            "actual_total": 310.0,
+            "target_inventory": 132.0
+          },
+          {
+            "mae": 30.857142857142858,
+            "rmse": 67.69680304753794,
+            "wape": 3.0,
+            "smape": 0.9061728483040165,
+            "bias": 22.714285714285715,
+            "inventory_cost": 318.0,
+            "actual_total": 144.0,
+            "target_inventory": 462.0
+          }
+        ]
+      },
+      {
+        "model": "croston",
+        "folds": 3,
+        "metrics": {
+          "mae": 12.557187797513643,
+          "rmse": 23.334080286214093,
+          "wape": 0.9579743986914359,
+          "smape": 0.6584633295341212,
+          "bias": 3.3700331428435946,
+          "inventory_cost": 151.0502597962095,
+          "mean_actual_total": 194.66666666666666,
+          "mean_target_inventory": 241.84713066647694
+        },
+        "fold_metrics": [
+          {
+            "mae": 6.390046548125916,
+            "rmse": 6.721579699945999,
+            "wape": 0.6881588590289448,
+            "smape": 0.5298552972861833,
+            "bias": 6.390046548125916,
+            "inventory_cost": 89.46065167376284,
+            "actual_total": 130.0,
+            "target_inventory": 219.46065167376284
+          },
+          {
+            "mae": 16.4325572715388,
+            "rmse": 47.52416692295356,
+            "wape": 0.7421154896823974,
+            "smape": 0.5422178504275036,
+            "bias": -11.128906692471345,
+            "inventory_cost": 155.80469369459883,
+            "actual_total": 310.0,
+            "target_inventory": 154.19530630540117
+          },
+          {
+            "mae": 14.848959572876213,
+            "rmse": 15.756494235742723,
+            "wape": 1.4436488473629652,
+            "smape": 0.903316840888677,
+            "bias": 14.848959572876213,
+            "inventory_cost": 207.88543402026687,
+            "actual_total": 144.0,
+            "target_inventory": 351.88543402026687
+          }
+        ]
+      }
+    ],
+    "selected_model": "moving_average",
+    "forecast": [
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286,
+      10.285714285714286
+    ],
+    "forecast_total": 144.00000000000003,
+    "target_inventory": 144.00000000000003
+  },
+  "candidate_code_solutions": [],
+  "business_definition": {
+    "target": "未来预测周期内非聚划算支付件数的总和",
+    "cost_formula": "A*max(D-T,0) + B*max(T-D,0)",
+    "cost_a": "补少/缺货成本",
+    "cost_b": "补多/积压成本"
+  },
+  "validation_profile": {
+    "name": "inventory_target",
+    "primary_metric": "inventory_cost",
+    "tie_breakers": [
+      "wape",
+      "rmse"
+    ],
+    "folds": 3,
+    "min_history_days": 28,
+    "description": "Minimize asymmetric shortage and overstock cost."
+  },
+  "generated": {
+    "model": "moving_average",
+    "path": "examples\\extraction_run\\generated\\forecast_moving_average.py",
+    "generation_mode": "spec_template",
+    "spec_hash": "4dbbe2cc86168a8f415dd0e51d87aeb6f01f5b938a97dc229394afbeaaec1ea2",
+    "source_hash": "3d9874403af73c5abda0dbb6d193266e73313ea5db2e285ebf45e4d874711a00"
+  },
+  "code_validation": {
+    "valid": true,
+    "checks": {
+      "syntax": true,
+      "imports": true,
+      "interface": true,
+      "runtime": true,
+      "stability": true,
+      "equivalence": true
+    },
+    "errors": [],
+    "sample_output": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0
+    ],
+    "sample_target_inventory": 56.0,
+    "runtime_seconds": 1.1119159999943804,
+    "equivalence_max_error": 0.0,
+    "equivalence_cases": 4
+  },
+  "repairs": [],
+  "failure_history": [],
+  "repair_experience_used": [],
+  "execution_trace": {
+    "level": "off",
+    "paths": null,
+    "events_recorded_before_report": 0
+  },
+  "knowledge_graph": {
+    "json": "artifacts\\extraction_example_knowledge.json",
+    "graphml": "artifacts\\extraction_example_knowledge.graphml",
+    "html": "artifacts\\extraction_example_knowledge.html"
+  }
+}

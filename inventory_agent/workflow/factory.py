@@ -6,12 +6,14 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 import logging
 from pathlib import Path
+import traceback
 from typing import Any
 
 import pandas as pd
 from langgraph.graph import END, StateGraph
 
 from inventory_agent.agents.experience import ExperienceAgent
+from inventory_agent.agents.extraction import CapabilityExtractionAgent
 from inventory_agent.agents.planner import PlanningAgent
 from inventory_agent.agents.repair import RepairAgent
 from inventory_agent.agents.report import ReportAgent
@@ -25,6 +27,7 @@ from inventory_agent.data.panel import demand_series, location_has_observations,
 from inventory_agent.forecasting.registry import default_registry
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 from inventory_agent.llm.client import create_llm
+from inventory_agent.observability.trace import RunRetentionManager, RunTraceRecorder
 from inventory_agent.services.benchmark import benchmark_series
 from inventory_agent.validation.profiles import default_validation_profiles
 
@@ -45,6 +48,7 @@ class InventoryCapabilityWorkflow:
         self.settings = settings or Settings.from_env()
         self.llm = create_llm(self.settings)
         self.requirement_agent = RequirementAgent(self.llm)
+        self.extraction_agent = CapabilityExtractionAgent(self.llm)
         self.planning_agent = PlanningAgent()
         self.generator = SafeCodeGenerator()
         self.validator = GeneratedCodeValidator()
@@ -61,10 +65,27 @@ class InventoryCapabilityWorkflow:
         )
         self.graph = self._build_graph()
 
+    @staticmethod
+    def _record_trace(state: dict[str, Any], **event: Any) -> None:
+        """Record one workflow event when tracing is enabled."""
+
+        recorder = state.get("_trace_recorder")
+        if recorder is not None:
+            recorder.record(**event)
+
     def _parse(self, state: dict[str, Any]) -> dict[str, Any]:
         """Parse the natural-language request into a capability contract."""
 
         state["request"] = self.requirement_agent.parse(state["description"])
+        self._record_trace(
+            state,
+            stage="requirement_understanding",
+            component="RequirementAgent",
+            component_type="agent",
+            action="parse",
+            inputs={"description": state["description"]},
+            outputs=asdict(state["request"]),
+        )
         logger.info("Parsed request for item=%s store=%s", state["request"].item_id, state["request"].store_code)
         return state
 
@@ -97,13 +118,108 @@ class InventoryCapabilityWorkflow:
             if location_has_observations(frame, request.item_id, request.store_code)
             else "zero_history_fallback"
         )
+        self._record_trace(
+            state,
+            stage="data_profiling",
+            component="data_loader_and_profiler",
+            component_type="tool",
+            action="load_and_profile",
+            inputs={
+                "data_path": source,
+                "item_id": request.item_id,
+                "store_code": request.store_code,
+            },
+            outputs={
+                "rows": len(frame),
+                "history_points": len(series),
+                "profile": state["profile"],
+                "costs": costs.as_dict(),
+                "raw_data_source": is_raw_source,
+            },
+        )
+        return state
+
+    def _extract(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Extract optional document/code capabilities and merge them into knowledge."""
+
+        sources = [Path(source) for source in state.get("capability_sources", [])]
+        if not sources:
+            state["extracted_capabilities"] = []
+            state["extraction_result_path"] = None
+            self._record_trace(
+                state,
+                stage="capability_extraction",
+                component="CapabilityExtractionAgent",
+                component_type="agent",
+                action="extract_sources",
+                inputs={"sources": []},
+                outputs={"count": 0, "message": "using existing knowledge graph"},
+            )
+            return state
+        capabilities = self.extraction_agent.extract_sources(sources)
+        self.knowledge.ingest_capabilities(capabilities)
+        result_path = self.extraction_agent.write_result(
+            capabilities,
+            Path(state["run_dir"]) / "extracted_capabilities.json",
+            self.extraction_agent.scan_reports,
+        )
+        state["extracted_capabilities"] = capabilities
+        state["extraction_scan_reports"] = self.extraction_agent.scan_reports
+        state["extraction_result_path"] = str(result_path)
+        self._record_trace(
+            state,
+            stage="capability_extraction",
+            component="CapabilityExtractionAgent",
+            component_type="agent",
+            action="extract_sources",
+            inputs={"sources": sources},
+            outputs={
+                "count": len(capabilities),
+                "capabilities": [asdict(capability) for capability in capabilities],
+                "scan_reports": self.extraction_agent.scan_reports,
+            },
+            artifacts=[result_path],
+        )
+        logger.info(
+            "Extracted capabilities=%s from sources=%s",
+            len(capabilities),
+            len(sources),
+        )
         return state
 
     def _plan(self, state: dict[str, Any]) -> dict[str, Any]:
         """Select candidate algorithms using the request and knowledge graph."""
 
+        retrieved = self.knowledge.retrieve_algorithms(
+            str(state["profile"]["demand_type"]),
+            limit=len(self.registry.names()),
+        )
+        self._record_trace(
+            state,
+            stage="knowledge_retrieval",
+            component="CapabilityKnowledgeGraph",
+            component_type="tool",
+            action="retrieve_algorithms",
+            inputs={"demand_type": state["profile"]["demand_type"]},
+            outputs={"retrieved": retrieved},
+        )
         state["plan"] = self.planning_agent.plan(
-            state["request"], state["profile"], self.knowledge
+            state["request"],
+            state["profile"],
+            self.knowledge,
+            available_models=self.registry.names(),
+        )
+        self._record_trace(
+            state,
+            stage="implementation_planning",
+            component="PlanningAgent",
+            component_type="agent",
+            action="plan",
+            inputs={
+                "request": asdict(state["request"]),
+                "profile": state["profile"],
+            },
+            outputs=asdict(state["plan"]),
         )
         return state
 
@@ -111,6 +227,10 @@ class InventoryCapabilityWorkflow:
         """Backtest candidate algorithms and retain the selected model."""
 
         request = state["request"]
+        model_parameters = {
+            name: self.knowledge.capability_spec(name).parameters
+            for name in state["plan"].candidates
+        }
         state["benchmark"] = benchmark_series(
             state["frame"],
             request.item_id,
@@ -121,8 +241,22 @@ class InventoryCapabilityWorkflow:
             costs=state["costs"],
             allow_missing=state["raw_data_source"],
             validation_profile=self.validation_profiles.get(request.task_type),
+            model_parameters=model_parameters,
         )
         state["selected_model"] = state["benchmark"]["selected_model"]
+        self._record_trace(
+            state,
+            stage="candidate_comparison",
+            component="rolling_backtest",
+            component_type="tool",
+            action="benchmark_candidates",
+            inputs={
+                "candidates": list(state["plan"].candidates),
+                "model_parameters": model_parameters,
+                "validation_profile": request.task_type,
+            },
+            outputs=state["benchmark"],
+        )
         logger.info(
             "Selected model=%s using profile=%s",
             state["selected_model"],
@@ -131,17 +265,118 @@ class InventoryCapabilityWorkflow:
         return state
 
     def _generate(self, state: dict[str, Any]) -> dict[str, Any]:
-        """Generate a reusable module for the selected forecasting model."""
+        """Generate a reusable module from the selected graph capability spec."""
+
+        state["candidate_code_solutions"] = []
+        if state.get("trace_level") == "full":
+            benchmark_by_model = {
+                candidate["model"]: candidate
+                for candidate in state["benchmark"]["candidates"]
+            }
+            for model in state["plan"].candidates:
+                proposal_spec = self.knowledge.capability_spec(model)
+                proposal = self.generator.generate_from_spec(
+                    proposal_spec,
+                    Path(state["run_dir"]) / "candidate_solutions" / model,
+                )
+                proposal_validation = self.validator.validate(
+                    proposal.path,
+                    reference_model=proposal_spec.template_name,
+                    reference_parameters=proposal_spec.parameters,
+                )
+                proposal_record = {
+                    "model": model,
+                    "selected": model == state["selected_model"],
+                    "benchmark": benchmark_by_model.get(model),
+                    "capability_spec": asdict(proposal_spec),
+                    "generated": {
+                        "path": str(proposal.path),
+                        "generation_mode": proposal.generation_mode,
+                        "spec_hash": proposal.spec_hash,
+                        "source_hash": proposal.source_hash,
+                    },
+                    "code_validation": asdict(proposal_validation),
+                }
+                state["candidate_code_solutions"].append(proposal_record)
+                self._record_trace(
+                    state,
+                    stage="candidate_code_generation",
+                    component="SafeCodeGenerator",
+                    component_type="tool",
+                    action="generate_and_validate_candidate",
+                    inputs={"model": model, "spec": asdict(proposal_spec)},
+                    outputs=proposal_record,
+                    artifacts=[proposal.path],
+                )
 
         generated_dir = Path(state["run_dir"]) / "generated"
-        state["generated"] = self.generator.generate(state["selected_model"], generated_dir)
+        capability_spec = self.knowledge.capability_spec(state["selected_model"])
+        state["capability_spec"] = capability_spec
+        state["generated"] = self.generator.generate_from_spec(
+            capability_spec,
+            generated_dir,
+            llm=self.llm,
+        )
+        recorder = state.get("_trace_recorder")
+        snapshot = (
+            recorder.snapshot_code(
+                state["generated"].source,
+                "initial",
+                state["generated"].model,
+            )
+            if recorder is not None
+            else None
+        )
+        self._record_trace(
+            state,
+            stage="selected_code_generation",
+            component="SafeCodeGenerator",
+            component_type="tool",
+            action="generate_from_spec",
+            inputs={"capability_spec": asdict(capability_spec)},
+            outputs={
+                "model": state["generated"].model,
+                "path": state["generated"].path,
+                "generation_mode": state["generated"].generation_mode,
+                "spec_hash": state["generated"].spec_hash,
+                "source_hash": state["generated"].source_hash,
+            },
+            artifacts=[path for path in [state["generated"].path, snapshot] if path],
+        )
         state.setdefault("repairs", [])
+        state.setdefault("failure_history", [])
+        state.setdefault("repair_experience_used", [])
         return state
 
     def _validate(self, state: dict[str, Any]) -> dict[str, Any]:
         """Validate the generated module against safety and output contracts."""
 
-        state["code_validation"] = self.validator.validate(state["generated"].path)
+        state["code_validation"] = self.validator.validate(
+            state["generated"].path,
+            reference_model=state["capability_spec"].template_name,
+            reference_parameters=state["capability_spec"].parameters,
+        )
+        if not state["code_validation"].valid:
+            analysis = self.repair_agent.analyze(
+                state["code_validation"].errors,
+                state["code_validation"].checks,
+            )
+            state["failure_history"].append(asdict(analysis))
+        self._record_trace(
+            state,
+            stage="code_validation",
+            component="GeneratedCodeValidator",
+            component_type="tool",
+            action="validate",
+            status="success" if state["code_validation"].valid else "failed",
+            inputs={
+                "path": state["generated"].path,
+                "reference_model": state["capability_spec"].template_name,
+                "reference_parameters": state["capability_spec"].parameters,
+                "attempt": len(state["repairs"]),
+            },
+            outputs=asdict(state["code_validation"]),
+        )
         logger.info(
             "Validated generated code valid=%s errors=%s",
             state["code_validation"].valid,
@@ -162,17 +397,68 @@ class InventoryCapabilityWorkflow:
     def _repair(self, state: dict[str, Any]) -> dict[str, Any]:
         """Regenerate a safe capability and record the repair reason."""
 
+        current_failure = state["failure_history"][-1]
+        prior_experience = self.knowledge.repair_experience(
+            state["selected_model"], current_failure["category"]
+        )
         generated, reason = self.repair_agent.repair(
             state["selected_model"],
             state["code_validation"].errors,
             Path(state["run_dir"]) / "generated",
             attempt=len(state["repairs"]) + 1,
             current=state["generated"],
+            capability_spec=state["capability_spec"],
+            prior_experience=prior_experience,
         )
         state["generated"] = generated
         state["repairs"].append(reason)
+        state["repair_experience_used"].extend(prior_experience)
+        recorder = state.get("_trace_recorder")
+        snapshot = (
+            recorder.snapshot_code(
+                generated.source,
+                f"repair_{len(state['repairs'])}",
+                generated.model,
+            )
+            if recorder is not None
+            else None
+        )
+        self._record_trace(
+            state,
+            stage="code_repair",
+            component="RepairAgent",
+            component_type="agent",
+            action="repair",
+            inputs={
+                "errors": state["code_validation"].errors,
+                "failure": current_failure,
+                "prior_experience": prior_experience,
+                "attempt": len(state["repairs"]),
+            },
+            outputs={
+                "reason": reason,
+                "generation_mode": generated.generation_mode,
+                "source_hash": generated.source_hash,
+            },
+            artifacts=[path for path in [generated.path, snapshot] if path],
+        )
         logger.warning("Repair attempt=%s reason=%s", len(state["repairs"]), reason)
         return state
+
+    @staticmethod
+    def _capability_version(state: dict[str, Any]) -> dict[str, Any]:
+        """Build lineage metadata for the generated implementation version."""
+
+        generated = state["generated"]
+        spec = state["capability_spec"]
+        return {
+            "capability_version": spec.version,
+            "generation_mode": generated.generation_mode,
+            "spec_hash": generated.spec_hash,
+            "source_hash": generated.source_hash,
+            "source_ref": spec.source_ref,
+            "generated_path": str(generated.path),
+        }
 
     def _failed(self, state: dict[str, Any]) -> dict[str, Any]:
         """Stop execution after the configured repair budget is exhausted."""
@@ -183,7 +469,7 @@ class InventoryCapabilityWorkflow:
             for candidate in state["benchmark"]["candidates"]
             if candidate["model"] == state["selected_model"]
         )
-        self.experience_agent.write_back(
+        run_id = self.experience_agent.write_back(
             self.knowledge,
             state["request"].item_id,
             state["request"].store_code,
@@ -191,8 +477,26 @@ class InventoryCapabilityWorkflow:
             selected["metrics"],
             [*state["repairs"], f"最终失败: {errors}"],
             status="failure",
+            validation_checks=state["code_validation"].checks,
+            capability_version=self._capability_version(state),
+            failure_history=state.get("failure_history", []),
         )
-        self._save_knowledge()
+        knowledge_paths = self._save_knowledge()
+        self._record_trace(
+            state,
+            stage="experience_deposition",
+            component="ExperienceAgent",
+            component_type="agent",
+            action="write_failure",
+            status="failed",
+            inputs={
+                "model": state["selected_model"],
+                "repairs": state["repairs"],
+                "failure_history": state.get("failure_history", []),
+            },
+            outputs={"run_id": run_id, "knowledge_graph": knowledge_paths},
+            artifacts=list(knowledge_paths.values()),
+        )
         logger.error("Capability failed after repair budget: %s", errors)
         raise RuntimeError(f"Generated capability failed after repair budget: {errors}")
 
@@ -223,15 +527,60 @@ class InventoryCapabilityWorkflow:
             state["selected_model"],
             selected["metrics"],
             state["repairs"],
+            validation_checks=state["code_validation"].checks,
+            capability_version=self._capability_version(state),
+            failure_history=state.get("failure_history", []),
+        )
+        self._record_trace(
+            state,
+            stage="experience_deposition",
+            component="ExperienceAgent",
+            component_type="agent",
+            action="write_success",
+            inputs={
+                "model": state["selected_model"],
+                "metrics": selected["metrics"],
+                "repairs": state["repairs"],
+                "failure_history": state.get("failure_history", []),
+            },
+            outputs={"run_id": run_id},
         )
         knowledge_paths = self._save_knowledge()
+        self._record_trace(
+            state,
+            stage="knowledge_persistence",
+            component="CapabilityKnowledgeGraph",
+            component_type="tool",
+            action="save",
+            inputs={"schema_version": self.knowledge.SCHEMA_VERSION},
+            outputs=knowledge_paths,
+            artifacts=list(knowledge_paths.values()),
+        )
+        recorder = state.get("_trace_recorder")
+        trace_paths = (
+            recorder.paths()
+            if recorder is not None and recorder.enabled
+            else None
+        )
         payload = {
             "run_id": run_id,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "request": asdict(state["request"]),
             "profile": state["profile"],
             "plan": asdict(state["plan"]),
+            "capability_extraction": {
+                "sources": state.get("capability_sources", []),
+                "result_path": state.get("extraction_result_path"),
+                "count": len(state.get("extracted_capabilities", [])),
+                "scan_reports": state.get("extraction_scan_reports", []),
+                "capabilities": [
+                    asdict(capability)
+                    for capability in state.get("extracted_capabilities", [])
+                ],
+            },
+            "capability_spec": asdict(state["capability_spec"]),
             "benchmark": state["benchmark"],
+            "candidate_code_solutions": state.get("candidate_code_solutions", []),
             "business_definition": {
                 "target": "未来预测周期内非聚划算支付件数的总和",
                 "cost_formula": "A*max(D-T,0) + B*max(T-D,0)",
@@ -243,14 +592,35 @@ class InventoryCapabilityWorkflow:
                 "model": state["generated"].model,
                 "path": str(state["generated"].path),
                 "generation_mode": state["generated"].generation_mode,
+                "spec_hash": state["generated"].spec_hash,
+                "source_hash": state["generated"].source_hash,
             },
             "code_validation": asdict(state["code_validation"]),
             "repairs": state["repairs"],
+            "failure_history": state.get("failure_history", []),
+            "repair_experience_used": state.get("repair_experience_used", []),
+            "execution_trace": {
+                "level": state.get("trace_level", "off"),
+                "paths": trace_paths,
+                "events_recorded_before_report": (
+                    len(recorder.events) if recorder is not None and recorder.enabled else 0
+                ),
+            },
             "knowledge_graph": {
                 **knowledge_paths,
             },
         }
         state["report_paths"] = self.report_agent.create(payload, state["run_dir"])
+        self._record_trace(
+            state,
+            stage="report_generation",
+            component="ReportAgent",
+            component_type="agent",
+            action="create",
+            inputs={"run_id": run_id, "report_sections": list(payload)},
+            outputs=state["report_paths"],
+            artifacts=list(state["report_paths"].values()),
+        )
         state["report"] = payload
         state.pop("frame", None)
         state.pop("series", None)
@@ -262,6 +632,7 @@ class InventoryCapabilityWorkflow:
 
         workflow = StateGraph(dict)
         workflow.add_node("parse", self._parse)
+        workflow.add_node("extract", self._extract)
         workflow.add_node("profile", self._profile)
         workflow.add_node("plan", self._plan)
         workflow.add_node("benchmark", self._benchmark)
@@ -271,7 +642,8 @@ class InventoryCapabilityWorkflow:
         workflow.add_node("failed", self._failed)
         workflow.add_node("report", self._report)
         workflow.set_entry_point("parse")
-        workflow.add_edge("parse", "profile")
+        workflow.add_edge("parse", "extract")
+        workflow.add_edge("extract", "profile")
         workflow.add_edge("profile", "plan")
         workflow.add_edge("plan", "benchmark")
         workflow.add_edge("benchmark", "generate")
@@ -290,16 +662,75 @@ class InventoryCapabilityWorkflow:
         description: str,
         data_path: str | Path,
         output_root: str | Path = "artifacts/runs",
+        capability_sources: list[str | Path] | None = None,
+        trace_level: str = "basic",
+        keep_runs: int = 10,
     ) -> dict[str, Any]:
         """Run the capability factory for one natural-language request."""
 
+        if trace_level not in {"off", "basic", "full"}:
+            raise ValueError("trace_level must be one of: off, basic, full")
+        if keep_runs <= 0:
+            raise ValueError("keep_runs must be positive")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         run_dir = Path(output_root) / timestamp
+        run_dir.mkdir(parents=True, exist_ok=True)
+        trace = RunTraceRecorder(run_dir, enabled=trace_level != "off")
+        deleted_runs = RunRetentionManager.cleanup(output_root, keep_runs)
+        trace.record(
+            stage="run",
+            component="InventoryCapabilityWorkflow",
+            component_type="workflow",
+            action="run_started",
+            inputs={
+                "description": description,
+                "data_path": data_path,
+                "capability_sources": capability_sources or [],
+                "trace_level": trace_level,
+                "keep_runs": keep_runs,
+            },
+            outputs={
+                "run_dir": run_dir,
+                "deleted_old_run_directories": deleted_runs,
+            },
+        )
+        if hasattr(self.llm, "set_trace_recorder"):
+            self.llm.set_trace_recorder(trace if trace.enabled else None)
         initial = {
             "description": description,
             "data_path": str(data_path),
             "run_dir": str(run_dir),
             "repairs": [],
+            "capability_sources": [str(source) for source in capability_sources or []],
+            "trace_level": trace_level,
+            "_trace_recorder": trace,
         }
         logger.info("Starting capability workflow run_dir=%s", run_dir)
-        return self.graph.invoke(initial)
+        try:
+            result = self.graph.invoke(initial)
+            trace_paths = trace.finalize(
+                "success",
+                {
+                    "selected_model": result["selected_model"],
+                    "target_inventory": result["benchmark"]["target_inventory"],
+                    "report_paths": result["report_paths"],
+                    "candidate_code_solutions": len(
+                        result.get("candidate_code_solutions", [])
+                    ),
+                },
+            )
+            result["trace_paths"] = trace_paths
+            result.pop("_trace_recorder", None)
+            return result
+        except Exception as exc:
+            trace.finalize(
+                "failed",
+                {
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "traceback": traceback.format_exc(),
+                },
+            )
+            raise
+        finally:
+            if hasattr(self.llm, "set_trace_recorder"):
+                self.llm.set_trace_recorder(None)

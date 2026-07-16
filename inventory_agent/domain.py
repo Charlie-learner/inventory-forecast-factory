@@ -3,6 +3,57 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
+
+
+@dataclass(frozen=True)
+class CapabilitySpec:
+    """Structured, source-traceable algorithm capability extracted for replication."""
+
+    name: str
+    task_type: str
+    description: str
+    template_name: str
+    input_contract: str
+    output_contract: str
+    suitable_for: tuple[str, ...] = field(default_factory=tuple)
+    metrics: tuple[str, ...] = ("inventory_cost", "wape")
+    dependencies: tuple[str, ...] = field(default_factory=tuple)
+    parameters: dict[str, Any] = field(default_factory=dict)
+    source_type: str = "registry"
+    source_ref: str = ""
+    source_hash: str = ""
+    version: str = "1.0.0"
+    extracted_by: str = "deterministic"
+
+    def __post_init__(self) -> None:
+        """Reject incomplete specifications before graph ingestion or generation."""
+
+        required = {
+            "name": self.name,
+            "task_type": self.task_type,
+            "description": self.description,
+            "template_name": self.template_name,
+            "input_contract": self.input_contract,
+            "output_contract": self.output_contract,
+            "version": self.version,
+        }
+        missing = [name for name, value in required.items() if not str(value).strip()]
+        if missing:
+            raise ValueError(f"Capability specification fields cannot be empty: {missing}")
+        safe_name = "".join(
+            character
+            for character in self.name
+            if character.isalnum() or character == "_"
+        )
+        if safe_name != self.name:
+            raise ValueError(f"Unsafe capability name: {self.name!r}")
+
+    @property
+    def capability_id(self) -> str:
+        """Return a stable human-readable version identifier."""
+
+        return f"{self.name}:{self.version}"
 
 @dataclass(frozen=True)
 class CapabilityRequest:

@@ -1,5 +1,6 @@
 from inventory_agent.agents.planner import PlanningAgent
 from inventory_agent.agents.requirement import RequirementAgent
+from inventory_agent.domain import CapabilitySpec
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 
 
@@ -46,3 +47,31 @@ def test_planner_uses_demand_profile_and_baseline():
     )
     assert "croston" in plan.candidates
     assert "last_value" in plan.candidates
+
+
+def test_planner_keeps_non_executable_extraction_out_of_automatic_benchmark():
+    knowledge = CapabilityKnowledgeGraph.bootstrap()
+    knowledge.ingest_capabilities(
+        [
+            CapabilitySpec(
+                name="novel_research_model",
+                task_type="inventory_forecasting",
+                description="Extracted research algorithm awaiting local integration",
+                template_name="novel_research_model",
+                input_contract="daily demand history",
+                output_contract="daily forecast",
+                suitable_for=("stable",),
+            )
+        ]
+    )
+    request = RequirementAgent().parse("预测 SKU 3424 在 store 1 未来14天需求")
+
+    plan = PlanningAgent().plan(
+        request,
+        {"demand_type": "stable", "zero_ratio": 0.0},
+        knowledge,
+        available_models={"last_value", "moving_average"},
+    )
+
+    assert "novel_research_model" not in plan.candidates
+    assert set(plan.candidates) <= {"last_value", "moving_average"}

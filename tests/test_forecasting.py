@@ -4,6 +4,7 @@ import pytest
 
 from inventory_agent.forecasting.models import CrostonModel, RidgeLagModel, SeasonalNaiveModel
 from inventory_agent.forecasting.registry import default_registry
+from inventory_agent.services.benchmark import benchmark_series
 from inventory_agent.validation.backtest import RollingBacktester
 from inventory_agent.validation.metrics import MetricRegistry, forecast_metrics
 
@@ -76,6 +77,30 @@ def test_rolling_backtest_selects_result():
     selected = backtester.select_best(results)
     assert selected.model in registry.names()
     assert selected.folds == 3
+
+
+def test_benchmark_and_final_forecast_use_capability_spec_parameters():
+    frame = pd.DataFrame(
+        {
+            "date": pd.date_range("2024-01-01", periods=84, freq="D"),
+            "item_id": 42,
+            "store_code": 1,
+            "qty_alipay_njhs": np.arange(1, 85, dtype=float),
+        }
+    )
+
+    result = benchmark_series(
+        frame,
+        item_id=42,
+        store_code=1,
+        model_names=["moving_average"],
+        horizon=7,
+        folds=1,
+        model_parameters={"moving_average": {"window": 3}},
+    )
+
+    assert result["forecast"] == [83.0] * 7
+    assert result["target_inventory"] == 581.0
 
 
 def test_asymmetric_cost_changes_target_inventory_selection():

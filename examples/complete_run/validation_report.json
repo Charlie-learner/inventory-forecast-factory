@@ -1,6 +1,6 @@
 {
-  "run_id": "run:5d00f4da4b54",
-  "created_at": "2026-07-15T14:46:52.074291+00:00",
+  "run_id": "run:c463361635c5",
+  "created_at": "2026-07-15T20:42:06.329763+00:00",
   "request": {
     "description": "为商品 3424 在仓库 1 预测未来14天需求，比较多个算法并优先降低补多补少成本",
     "item_id": 3424,
@@ -29,6 +29,35 @@
     "rationale": "需求类型=volatile，零需求比例=2.03%；从能力图谱检索 ridge_lag, last_value, croston，使用 inventory_cost 滚动验证。",
     "validation_metric": "inventory_cost",
     "max_repairs": 2
+  },
+  "capability_extraction": {
+    "sources": [],
+    "result_path": null,
+    "count": 0,
+    "scan_reports": [],
+    "capabilities": []
+  },
+  "capability_spec": {
+    "name": "last_value",
+    "task_type": "inventory_forecasting",
+    "description": "Repeats the last observed demand.",
+    "template_name": "last_value",
+    "input_contract": "non-negative daily qty_alipay_njhs history",
+    "output_contract": "daily forecast plus horizon-total target inventory",
+    "suitable_for": [
+      "short_history"
+    ],
+    "metrics": [
+      "inventory_cost",
+      "wape"
+    ],
+    "dependencies": [],
+    "parameters": {},
+    "source_type": "knowledge_graph",
+    "source_ref": "",
+    "source_hash": "",
+    "version": "1.0.0",
+    "extracted_by": "knowledge_graph"
   },
   "benchmark": {
     "item_id": 3424,
@@ -220,6 +249,7 @@
     "forecast_total": 308.0,
     "target_inventory": 308.0
   },
+  "candidate_code_solutions": [],
   "business_definition": {
     "target": "未来预测周期内非聚划算支付件数的总和",
     "cost_formula": "A*max(D-T,0) + B*max(T-D,0)",
@@ -240,7 +270,9 @@
   "generated": {
     "model": "last_value",
     "path": "examples\\complete_run\\generated\\forecast_last_value.py",
-    "generation_mode": "constrained_template"
+    "generation_mode": "spec_template",
+    "spec_hash": "fc1df3d7652deb3090cb2c81780e6d4f9d7bc216a7def0ca2304d025e17f6543",
+    "source_hash": "0f2d0bac7b835626773bfa67e2546d014a3901886628ddf3a157cb890f623acd"
   },
   "code_validation": {
     "valid": true,
@@ -249,7 +281,8 @@
       "imports": true,
       "interface": true,
       "runtime": true,
-      "stability": true
+      "stability": true,
+      "equivalence": true
     },
     "errors": [],
     "sample_output": [
@@ -269,9 +302,18 @@
       7.0
     ],
     "sample_target_inventory": 98.0,
-    "runtime_seconds": 0.9481511999983923
+    "runtime_seconds": 1.070336499993573,
+    "equivalence_max_error": 0.0,
+    "equivalence_cases": 4
   },
   "repairs": [],
+  "failure_history": [],
+  "repair_experience_used": [],
+  "execution_trace": {
+    "level": "off",
+    "paths": null,
+    "events_recorded_before_report": 0
+  },
   "knowledge_graph": {
     "json": "artifacts\\knowledge\\capability_graph.json",
     "graphml": "artifacts\\knowledge\\capability_graph.graphml",

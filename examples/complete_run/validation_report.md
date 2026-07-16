@@ -14,6 +14,9 @@
 - 成本 B（补多/积压）：11.00
 - 成本来源：config2.csv
 - 成本口径：horizon_total
+- 能力抽取数量：0
+- 能力来源扫描文件数：0
+- 能力来源：内置能力图谱
 
 ## 候选模型验证
 
@@ -23,16 +26,29 @@
 | last_value | 0.6247 | 0.7039 | -6.9048 | 626.40 |
 | croston | 0.9580 | 0.6585 | 3.3700 | 1426.80 |
 
+## 候选代码方案生成与比较
+
+| 代码方案 | 回测选中 | 生成方式 | 代码验证 | 等价误差 | 文件 |
+|---|---|---|---|---:|---|
+| 未启用完整追踪 | - | - | - | - | - |
+
 ## 生成代码验证
 
-- 生成方式：constrained_template
-- 语法、导入、接口、运行、稳定性检查：{'syntax': True, 'imports': True, 'interface': True, 'runtime': True, 'stability': True}
-- 受限运行耗时：0.948 秒
+- 生成方式：spec_template
+- 能力规格哈希：fc1df3d7652deb30
+- 生成源码哈希：0f2d0bac7b835626
+- 语法、导入、接口、运行、稳定性检查：{'syntax': True, 'imports': True, 'interface': True, 'runtime': True, 'stability': True, 'equivalence': True}
+- 与参考能力最大误差：0.0
+- 等价性验证用例数：4
+- 受限运行耗时：1.070 秒
 - 修复次数：0
+- 结构化失败记录数：0
+- 复用历史修复经验数：0
+- 详细中间过程：未启用
 
 ## Agent 总结
 
-{"mode": "mock", "summary": "使用可复现规则完成需求理解、模型检索与验证。", "input_excerpt": "{\"run_id\": \"run:5d00f4da4b54\", \"created_at\": \"2026-07-15T14:46:52.074291+00:00\", \"request\": {\"description\": \"为商品 3424 在仓"}
+[mock] 使用可复现规则完成需求理解、模型检索与验证。
 
 ## 使用边界
 

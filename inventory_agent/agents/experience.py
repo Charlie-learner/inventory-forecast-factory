@@ -17,6 +17,9 @@ class ExperienceAgent:
         metrics: dict[str, float],
         repairs: list[str],
         status: str = "success",
+        validation_checks: dict[str, bool] | None = None,
+        capability_version: dict | None = None,
+        failure_history: list[dict] | None = None,
     ) -> str:
         """Persist metrics, status, and optional repair history for a validation run."""
 
@@ -27,4 +30,7 @@ class ExperienceAgent:
             metrics,
             status=status,
             repair=" | ".join(repairs) if repairs else None,
+            validation_checks=validation_checks,
+            capability_version=capability_version,
+            failure_history=failure_history,
         )

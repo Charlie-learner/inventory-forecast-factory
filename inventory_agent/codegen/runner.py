@@ -25,6 +25,19 @@ def main(argv: list[str] | None = None) -> int:
     values = forecast(history, 14)
     repeated_values = forecast(history, 14)
     edge_values = forecast([0] * 56, 1)
+    equivalence_inputs = [
+        {"history": history, "horizon": 14},
+        {"history": [0, 0, 0, 5, 0, 0, 0, 0] * 7, "horizon": 8},
+        {"history": list(range(1, 57)), "horizon": 7},
+        {"history": [0] * 56, "horizon": 3},
+    ]
+    equivalence_cases = [
+        {
+            **case,
+            "values": forecast(case["history"], case["horizon"]),
+        }
+        for case in equivalence_inputs
+    ]
     build_inventory_target = getattr(module, "build_inventory_target")
     inventory = build_inventory_target([1, 2, 3, 4, 5, 6, 7] * 8, 14)
     print(
@@ -34,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
                 "repeated_values": repeated_values,
                 "edge_values": edge_values,
                 "inventory": inventory,
+                "equivalence_cases": equivalence_cases,
             }
         )
     )

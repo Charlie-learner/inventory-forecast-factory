@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-07-15T22:31:02.412926+00:00",
+  "capability": {
+    "name": "moving_average",
+    "task_type": "inventory_forecasting",
+    "description": "Forecast stable demand with the mean of the most recent observations.",
+    "template_name": "moving_average",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "stable",
+      "short_history"
+    ],
+    "metrics": [
+      "inventory_cost",
+      "wape",
+      "rmse"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "window": 14
+    },
+    "source_type": "document",
+    "source_ref": "examples\\capabilities\\moving_average.md",
+    "source_hash": "3759e85562d8ac58da336a3f31ea3044f4d72b45cc771b106c828a4b3cd51540",
+    "version": "1.1.0",
+    "extracted_by": "deterministic"
+  },
+  "generation": {
+    "model": "moving_average",
+    "path": "examples\\replication_run\\generated\\forecast_moving_average.py",
+    "mode": "spec_template",
+    "spec_hash": "fa5148b4c8061540b1142fcc35d2ce82135dbc97a2927cb058dd9e954339cfbb",
+    "source_hash": "c09def94d2c58b8fe3517f35ba9ca0557ec04c48e20af3868d6421888d85204b"
+  },
+  "validation": {
+    "valid": true,
+    "checks": {
+      "syntax": true,
+      "imports": true,
+      "interface": true,
+      "runtime": true,
+      "stability": true,
+      "equivalence": true
+    },
+    "errors": [],
+    "sample_output": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0
+    ],
+    "sample_target_inventory": 56.0,
+    "runtime_seconds": 0.9890814999962458,
+    "equivalence_max_error": 0.0,
+    "equivalence_cases": 4
+  },
+  "reference_model": "moving_average",
+  "review": {
+    "status": "auto_validated",
+    "approved_by_user": false,
+    "registration_ready": true,
+    "reason": "Behavior matches registered reference capability moving_average."
+  }
+}

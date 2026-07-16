@@ -35,3 +35,70 @@ def test_graph_validation_history_influences_suitable_algorithm_ranking():
     assert [record["name"] for record in records] == ["moving_average", "seasonal_naive"]
     assert records[0]["validation_count"] == 1
     assert records[0]["mean_inventory_cost"] == 2.0
+
+
+def test_successful_repair_experience_is_retrievable_by_failure_category():
+    graph = CapabilityKnowledgeGraph.bootstrap()
+    failure = {
+        "category": "runtime",
+        "fingerprint": "runtime123",
+        "normalized_error": "runtime: value error",
+        "retryable": True,
+    }
+    graph.record_validation(
+        1,
+        "1",
+        "moving_average",
+        {"inventory_cost": 2.0},
+        repair="fallback to safe moving-average template",
+        failure_history=[failure],
+    )
+
+    experiences = graph.repair_experience("moving_average", "runtime")
+
+    assert len(experiences) == 1
+    assert experiences[0]["fingerprint"] == "runtime123"
+    assert "safe moving-average" in experiences[0]["strategy"]
+    failure_node = graph.graph.nodes["failure:runtime123"]
+    assert failure_node["occurrence_count"] == 1
+
+
+def test_capability_versions_can_be_compared_promoted_and_rolled_back():
+    graph = CapabilityKnowledgeGraph.bootstrap()
+    first = {
+        "capability_version": "1.0.0",
+        "generation_mode": "spec_template",
+        "spec_hash": "1" * 64,
+        "source_hash": "a" * 64,
+        "source_ref": "first.md",
+        "generated_path": "first.py",
+    }
+    second = {
+        **first,
+        "capability_version": "1.1.0",
+        "spec_hash": "2" * 64,
+        "source_hash": "b" * 64,
+        "source_ref": "second.md",
+        "generated_path": "second.py",
+    }
+    graph.record_validation(
+        1, "1", "moving_average", {"inventory_cost": 2.0}, capability_version=first
+    )
+    graph.record_validation(
+        1, "1", "moving_average", {"inventory_cost": 1.5}, capability_version=second
+    )
+
+    versions = graph.capability_versions("moving_average")
+    assert len(versions) == 2
+    comparison = graph.compare_versions("moving_average", "a" * 12, "b" * 12)
+    assert comparison["differences"]["spec_hash"]["left"] == "1" * 64
+
+    graph.promote_version("moving_average", "b" * 12)
+    assert graph.graph.nodes["version:moving_average:bbbbbbbbbbbb"][
+        "lifecycle_status"
+    ] == "active"
+    event = graph.rollback_version("moving_average", "a" * 12)
+    assert graph.graph.nodes["version:moving_average:aaaaaaaaaaaa"][
+        "lifecycle_status"
+    ] == "active"
+    assert graph.graph.nodes[event]["action"] == "rollback"

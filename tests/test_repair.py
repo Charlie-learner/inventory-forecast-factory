@@ -59,6 +59,6 @@ def test_provider_failure_falls_back_to_safe_template(tmp_path: Path):
         tmp_path,
         current=current,
     )
-    assert generated.generation_mode == "constrained_template"
+    assert generated.generation_mode == "spec_template"
     assert "ConnectionError" in reason
     assert GeneratedCodeValidator().validate(generated.path).valid

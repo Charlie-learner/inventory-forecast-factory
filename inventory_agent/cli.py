@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from inventory_agent.agents.extraction import CapabilityExtractionAgent
+from inventory_agent.codegen.replication import CapabilityReplicator
 from inventory_agent.config import Settings
 from inventory_agent.data.costs import UNIT_COSTS, resolve_inventory_costs
 from inventory_agent.data.loader import (
@@ -18,6 +20,7 @@ from inventory_agent.data.loader import (
 )
 from inventory_agent.services.benchmark import benchmark_series
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
+from inventory_agent.llm.client import create_llm
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
 from inventory_agent.validation.profiles import default_validation_profiles
 
@@ -102,6 +105,9 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
         args.description,
         args.data,
         args.output_root,
+        capability_sources=args.capability_source,
+        trace_level=args.trace_level,
+        keep_runs=args.keep_runs,
     )
     print(
         json.dumps(
@@ -112,12 +118,108 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
                 "target_inventory": result["benchmark"]["target_inventory"],
                 "costs": result["benchmark"]["costs"],
                 "reports": result["report_paths"],
+                "extracted_capabilities": result["report"]["capability_extraction"][
+                    "count"
+                ],
+                "generation_mode": result["generated"].generation_mode,
+                "candidate_code_solutions": len(
+                    result.get("candidate_code_solutions", [])
+                ),
+                "detailed_trace": result.get("trace_paths"),
             },
             ensure_ascii=False,
             indent=2,
         )
     )
     return 0
+
+
+def _extract_capabilities(args: argparse.Namespace, settings: Settings) -> int:
+    """Extract capability specs and optionally merge them into a knowledge graph."""
+
+    agent = CapabilityExtractionAgent(create_llm(settings))
+    capabilities = agent.extract_sources([Path(source) for source in args.source])
+    output = agent.write_result(capabilities, args.output, agent.scan_reports)
+    knowledge_paths = None
+    if args.knowledge:
+        knowledge_path = Path(args.knowledge)
+        knowledge = (
+            CapabilityKnowledgeGraph.load(knowledge_path)
+            if knowledge_path.exists()
+            else CapabilityKnowledgeGraph.bootstrap()
+        )
+        knowledge.ingest_capabilities(capabilities)
+        graphml_path = knowledge_path.with_suffix(".graphml")
+        html_path = knowledge_path.with_suffix(".html")
+        knowledge.save(knowledge_path, graphml_path, html_path)
+        knowledge_paths = {
+            "json": str(knowledge_path.resolve()),
+            "graphml": str(graphml_path.resolve()),
+            "html": str(html_path.resolve()),
+        }
+    print(
+        json.dumps(
+            {
+                "count": len(capabilities),
+                "capabilities": [capability.capability_id for capability in capabilities],
+                "scan_reports": agent.scan_reports,
+                "result": str(output.resolve()),
+                "knowledge_graph": knowledge_paths,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0
+
+
+def _replicate_capability(args: argparse.Namespace, settings: Settings) -> int:
+    """Replicate one extracted capability and write its review manifest."""
+
+    llm = create_llm(settings)
+    agent = CapabilityExtractionAgent(llm)
+    capabilities = agent.extract_sources([Path(source) for source in args.source])
+    if args.capability:
+        matches = [item for item in capabilities if item.name == args.capability]
+        if len(matches) != 1:
+            raise SystemExit(
+                f"Expected one extracted capability named {args.capability!r}; "
+                f"found {len(matches)}"
+            )
+        spec = matches[0]
+    elif len(capabilities) == 1:
+        spec = capabilities[0]
+    else:
+        names = ", ".join(capability.name for capability in capabilities)
+        raise SystemExit(
+            f"Source contains {len(capabilities)} capabilities ({names}); "
+            "select one with --capability"
+        )
+
+    manifest = CapabilityReplicator().replicate(
+        spec,
+        args.output_dir,
+        args.manifest,
+        llm=llm,
+        reference_model=args.reference_model,
+        approved=args.approve,
+    )
+    print(
+        json.dumps(
+            {
+                "capability": spec.capability_id,
+                "generated": manifest["generation"]["path"],
+                "generation_mode": manifest["generation"]["mode"],
+                "valid": manifest["validation"]["valid"],
+                "reference_model": manifest["reference_model"],
+                "review": manifest["review"],
+                "manifests": manifest["manifest_paths"],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0 if manifest["validation"]["valid"] else 2
 
 
 def _visualize_graph(args: argparse.Namespace) -> int:
@@ -131,6 +233,44 @@ def _visualize_graph(args: argparse.Namespace) -> int:
     )
     output = knowledge.render_html(args.output)
     print(json.dumps({"visualization": str(output.resolve())}, ensure_ascii=False, indent=2))
+    return 0
+
+
+def _manage_versions(args: argparse.Namespace) -> int:
+    """List, compare, promote, or roll back validated capability versions."""
+
+    knowledge_path = Path(args.knowledge)
+    if not knowledge_path.exists():
+        raise SystemExit(f"Knowledge graph not found: {knowledge_path}")
+    knowledge = CapabilityKnowledgeGraph.load(knowledge_path)
+    if args.version_command == "list":
+        payload = {
+            "model": args.model,
+            "versions": knowledge.capability_versions(args.model),
+        }
+    elif args.version_command == "compare":
+        payload = knowledge.compare_versions(args.model, args.left, args.right)
+    elif args.version_command in {"promote", "rollback"}:
+        event = (
+            knowledge.promote_version(args.model, args.version)
+            if args.version_command == "promote"
+            else knowledge.rollback_version(args.model, args.version)
+        )
+        knowledge.save(
+            knowledge_path,
+            knowledge_path.with_suffix(".graphml"),
+            knowledge_path.with_suffix(".html"),
+        )
+        payload = {
+            "action": args.version_command,
+            "model": args.model,
+            "selected": args.version,
+            "event": event,
+            "versions": knowledge.capability_versions(args.model),
+        }
+    else:  # pragma: no cover - argparse restricts this value.
+        raise SystemExit(f"Unknown version command: {args.version_command}")
+    print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
     return 0
 
 
@@ -184,6 +324,99 @@ def build_parser() -> argparse.ArgumentParser:
         help="Extracted Cainiao directory, original ZIP, or prepared panel CSV",
     )
     run.add_argument("--output-root", default="artifacts/runs")
+    run.add_argument(
+        "--trace-level",
+        choices=["off", "basic", "full"],
+        default="full",
+        help="full also generates and validates code for every candidate",
+    )
+    run.add_argument(
+        "--keep-runs",
+        type=int,
+        default=10,
+        help="Keep only the newest N timestamped run directories",
+    )
+    run.add_argument(
+        "--capability-source",
+        action="append",
+        default=[],
+        help="Optional document, Python file, or local repository to extract before planning",
+    )
+
+    extract = subparsers.add_parser(
+        "extract-capability",
+        help="Extract source-traceable capability specifications",
+    )
+    extract.add_argument(
+        "--source",
+        nargs="+",
+        required=True,
+        help="Capability documents, Python files, or local repository directories",
+    )
+    extract.add_argument(
+        "--output", default="artifacts/extraction/extracted_capabilities.json"
+    )
+    extract.add_argument(
+        "--knowledge",
+        help="Optional knowledge JSON path to update alongside GraphML and HTML",
+    )
+
+    replicate = subparsers.add_parser(
+        "replicate-capability",
+        help="Generate and validate one extracted capability with a review manifest",
+    )
+    replicate.add_argument(
+        "--source",
+        nargs="+",
+        required=True,
+        help="Capability file or local repository directory",
+    )
+    replicate.add_argument(
+        "--capability",
+        help="Capability name when the source contains more than one",
+    )
+    replicate.add_argument(
+        "--reference-model",
+        help="Optional registered model used for behavioral equivalence validation",
+    )
+    replicate.add_argument(
+        "--output-dir", default="artifacts/replication/generated"
+    )
+    replicate.add_argument(
+        "--manifest", default="artifacts/replication/review_manifest.json"
+    )
+    replicate.add_argument(
+        "--approve",
+        action="store_true",
+        help="Record explicit human approval after automated checks pass",
+    )
+
+    versions = subparsers.add_parser(
+        "versions",
+        help="Inspect and manage validated capability versions",
+    )
+    version_commands = versions.add_subparsers(
+        dest="version_command", required=True
+    )
+    version_list = version_commands.add_parser("list", help="List model versions")
+    version_compare = version_commands.add_parser(
+        "compare", help="Compare two model versions"
+    )
+    version_promote = version_commands.add_parser(
+        "promote", help="Activate a validated model version"
+    )
+    version_rollback = version_commands.add_parser(
+        "rollback", help="Restore a previously validated model version"
+    )
+    for command in [version_list, version_compare, version_promote, version_rollback]:
+        command.add_argument(
+            "--knowledge", default="artifacts/knowledge/capability_graph.json"
+        )
+        command.add_argument("--model", required=True)
+    version_compare.add_argument("--left", required=True)
+    version_compare.add_argument("--right", required=True)
+    version_promote.add_argument("--version", required=True)
+    version_rollback.add_argument("--version", required=True)
 
     visualize = subparsers.add_parser(
         "visualize-graph", help="Render the knowledge graph as standalone HTML"
@@ -214,6 +447,12 @@ def main(argv: list[str] | None = None) -> int:
         return _benchmark(args)
     if args.command == "run":
         return _run_factory(args, settings)
+    if args.command == "extract-capability":
+        return _extract_capabilities(args, settings)
+    if args.command == "replicate-capability":
+        return _replicate_capability(args, settings)
+    if args.command == "versions":
+        return _manage_versions(args)
     if args.command == "visualize-graph":
         return _visualize_graph(args)
     raise SystemExit(f"Unknown command: {args.command}")

@@ -12,6 +12,11 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+
+from inventory_agent.forecasting.registry import default_registry
+
 
 @dataclass(frozen=True)
 class CodeValidationResult:
@@ -23,21 +28,71 @@ class CodeValidationResult:
     sample_output: tuple[float, ...] = ()
     sample_target_inventory: float | None = None
     runtime_seconds: float | None = None
+    equivalence_max_error: float | None = None
+    equivalence_cases: int = 0
 
 
 class GeneratedCodeValidator:
     """Validate generated code with static rules and an isolated smoke test."""
 
-    ALLOWED_IMPORT_ROOTS = {"__future__", "pandas", "inventory_agent"}
-    FORBIDDEN_CALLS = {"eval", "exec", "compile", "open", "input", "__import__"}
+    ALLOWED_IMPORT_ROOTS = {
+        "__future__",
+        "numpy",
+        "pandas",
+        "sklearn",
+    }
+    FORBIDDEN_CALLS = {
+        "__import__",
+        "breakpoint",
+        "compile",
+        "delattr",
+        "dir",
+        "eval",
+        "exec",
+        "getattr",
+        "globals",
+        "help",
+        "input",
+        "locals",
+        "open",
+        "setattr",
+        "vars",
+    }
+    FORBIDDEN_ATTRIBUTE_CALLS = {
+        "connect",
+        "dump",
+        "load",
+        "open",
+        "popen",
+        "Popen",
+        "read_csv",
+        "read_json",
+        "read_pickle",
+        "read_table",
+        "request",
+        "run",
+        "save",
+        "savez",
+        "socket",
+        "system",
+        "to_csv",
+        "to_json",
+        "to_pickle",
+        "urlopen",
+    }
 
     def __init__(self, timeout_seconds: float = 10.0):
         """Configure the maximum runtime allowed for generated code."""
 
         self.timeout_seconds = timeout_seconds
 
-    def validate(self, path: str | Path) -> CodeValidationResult:
-        """Check syntax, imports, interfaces, and runtime output contracts."""
+    def validate(
+        self,
+        path: str | Path,
+        reference_model: str | None = None,
+        reference_parameters: dict | None = None,
+    ) -> CodeValidationResult:
+        """Check safety, contracts, runtime stability, and optional replication equivalence."""
 
         module_path = Path(path)
         checks = {
@@ -47,9 +102,13 @@ class GeneratedCodeValidator:
             "runtime": False,
             "stability": False,
         }
+        if reference_model is not None:
+            checks["equivalence"] = False
         errors: list[str] = []
         sample: tuple[float, ...] = ()
         runtime_seconds: float | None = None
+        equivalence_max_error: float | None = None
+        equivalence_cases = 0
         try:
             source = module_path.read_text(encoding="utf-8")
             tree = ast.parse(source)
@@ -67,6 +126,11 @@ class GeneratedCodeValidator:
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
                 if node.func.id in self.FORBIDDEN_CALLS:
                     unsafe.append(f"call {node.func.id}")
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                if node.func.attr in self.FORBIDDEN_ATTRIBUTE_CALLS:
+                    unsafe.append(f"attribute call {node.func.attr}")
+            if isinstance(node, ast.Attribute) and node.attr.startswith("__"):
+                unsafe.append(f"dunder attribute {node.attr}")
         if unsafe:
             errors.append("unsafe constructs: " + ", ".join(sorted(set(unsafe))))
             return CodeValidationResult(False, checks, tuple(errors))
@@ -94,6 +158,7 @@ class GeneratedCodeValidator:
                 for key, value in os.environ.items()
                 if key not in {"API_KEY", "OPENAI_API_KEY"}
             }
+            child_env["PYTHONDONTWRITEBYTECODE"] = "1"
             started = time.perf_counter()
             completed = subprocess.run(
                 [sys.executable, "-m", "inventory_agent.codegen.runner", str(module_path)],
@@ -133,6 +198,40 @@ class GeneratedCodeValidator:
                 raise ValueError("target_inventory must equal the horizon forecast total")
             sample = numeric
             checks["runtime"] = True
+            if reference_model is not None:
+                reference = default_registry().create(reference_model)
+                for name, value in (reference_parameters or {}).items():
+                    if not hasattr(reference, name):
+                        raise ValueError(
+                            f"reference capability {reference_model!r} has no parameter {name!r}"
+                        )
+                    setattr(reference, name, value)
+                max_errors = []
+                for index, case in enumerate(payload["equivalence_cases"], start=1):
+                    horizon = int(case["horizon"])
+                    generated_values = np.asarray(case["values"], dtype=float)
+                    if (
+                        len(generated_values) != horizon
+                        or not np.all(np.isfinite(generated_values))
+                        or np.any(generated_values < 0)
+                    ):
+                        raise ValueError(
+                            f"equivalence case {index} returned invalid forecast values"
+                        )
+                    history = pd.Series(case["history"], dtype=float)
+                    expected = reference.predict(history, horizon)
+                    case_error = float(np.max(np.abs(generated_values - expected)))
+                    max_errors.append(case_error)
+                    if not np.allclose(
+                        generated_values, expected, rtol=1e-7, atol=1e-9
+                    ):
+                        raise ValueError(
+                            "generated forecast does not match the referenced capability; "
+                            f"case={index}, max_error={case_error:.6g}"
+                        )
+                equivalence_cases = len(max_errors)
+                equivalence_max_error = max(max_errors, default=0.0)
+                checks["equivalence"] = True
         except Exception as exc:  # Validation must return errors, not crash the workflow.
             errors.append(f"runtime: {type(exc).__name__}: {exc}")
         return CodeValidationResult(
@@ -142,4 +241,6 @@ class GeneratedCodeValidator:
             sample,
             target_inventory if checks["runtime"] else None,
             runtime_seconds,
+            equivalence_max_error,
+            equivalence_cases,
         )

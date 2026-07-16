@@ -1,0 +1,151 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-07-15T23:11:15.417940+00:00",
+  "count": 5,
+  "scan_reports": [
+    {
+      "source": ".",
+      "source_kind": "repository",
+      "files_scanned": 59,
+      "files_matched": 1,
+      "capabilities_found": 5,
+      "errors": []
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "last_value",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest observed demand as a simple baseline.",
+      "template_name": "last_value",
+      "input_contract": "non-negative daily demand history and positive horizon",
+      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "suitable_for": [],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse"
+      ],
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "sklearn"
+      ],
+      "parameters": {},
+      "source_type": "python",
+      "source_ref": "inventory_agent\\forecasting\\models.py:12",
+      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "version": "1.0.0",
+      "extracted_by": "python_ast"
+    },
+    {
+      "name": "moving_average",
+      "task_type": "inventory_forecasting",
+      "description": "Forecast with the mean of the most recent demand window.",
+      "template_name": "moving_average",
+      "input_contract": "non-negative daily demand history and positive horizon",
+      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "suitable_for": [],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse"
+      ],
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "sklearn"
+      ],
+      "parameters": {
+        "window": 14
+      },
+      "source_type": "python",
+      "source_ref": "inventory_agent\\forecasting\\models.py:22",
+      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "version": "1.0.0",
+      "extracted_by": "python_ast"
+    },
+    {
+      "name": "seasonal_naive",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest seasonal pattern over the forecast horizon.",
+      "template_name": "seasonal_naive",
+      "input_contract": "non-negative daily demand history and positive horizon",
+      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "suitable_for": [],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse"
+      ],
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "sklearn"
+      ],
+      "parameters": {
+        "period": 7
+      },
+      "source_type": "python",
+      "source_ref": "inventory_agent\\forecasting\\models.py:36",
+      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "version": "1.0.0",
+      "extracted_by": "python_ast"
+    },
+    {
+      "name": "croston",
+      "task_type": "inventory_forecasting",
+      "description": "Classic Croston forecast for intermittent demand.",
+      "template_name": "croston",
+      "input_contract": "non-negative daily demand history and positive horizon",
+      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "suitable_for": [],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse"
+      ],
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "sklearn"
+      ],
+      "parameters": {
+        "alpha": 0.1
+      },
+      "source_type": "python",
+      "source_ref": "inventory_agent\\forecasting\\models.py:52",
+      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "version": "1.0.0",
+      "extracted_by": "python_ast"
+    },
+    {
+      "name": "ridge_lag",
+      "task_type": "inventory_forecasting",
+      "description": "Autoregressive ridge model using leakage-safe lag features.",
+      "template_name": "ridge_lag",
+      "input_contract": "non-negative daily demand history and positive horizon",
+      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "suitable_for": [],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse"
+      ],
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "sklearn"
+      ],
+      "parameters": {
+        "lags": 14,
+        "alpha": 1.0
+      },
+      "source_type": "python",
+      "source_ref": "inventory_agent\\forecasting\\models.py:84",
+      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "version": "1.0.0",
+      "extracted_by": "python_ast"
+    }
+  ]
+}

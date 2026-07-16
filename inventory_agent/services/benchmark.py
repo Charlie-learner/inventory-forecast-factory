@@ -26,6 +26,7 @@ def benchmark_series(
     allow_missing: bool = False,
     validation_profile: ValidationProfile | None = None,
     metric_registry: MetricRegistry | None = None,
+    model_parameters: dict[str, dict] | None = None,
 ) -> dict:
     """Backtest candidates and forecast inventory for one item/location."""
 
@@ -43,9 +44,20 @@ def benchmark_series(
         min_history=max(validation_profile.min_history_days, horizon * 2),
         metric_registry=metric_registry,
     )
+
+    def configured_model(name: str):
+        model = registry.create(name)
+        for parameter, value in (model_parameters or {}).get(name, {}).items():
+            if not hasattr(model, parameter):
+                raise ValueError(
+                    f"Forecast capability {name!r} has no parameter {parameter!r}"
+                )
+            setattr(model, parameter, value)
+        return model
+
     results = [
         backtester.evaluate(
-            registry.create(name),
+            configured_model(name),
             series,
             overstock_cost=costs.overstock_cost,
             understock_cost=costs.understock_cost,
@@ -53,7 +65,7 @@ def benchmark_series(
         for name in names
     ]
     best = backtester.select_best(results, validation_profile.ranking_metrics)
-    final_forecast = registry.create(best.model).predict(series, horizon)
+    final_forecast = configured_model(best.model).predict(series, horizon)
     return {
         "item_id": int(item_id),
         "store_code": location,
