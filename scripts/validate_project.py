@@ -74,7 +74,27 @@ def main() -> int:
         output = Path(temp)
         extractor = CapabilityExtractor()
         repository_capabilities = extractor.extract(ROOT)
-        if len(repository_capabilities) != 5 or extractor.last_scan_report["errors"]:
+        forecast_names = {
+            capability.name
+            for capability in repository_capabilities
+            if capability.implementation_kind == "forecast_model"
+        }
+        function_count = sum(
+            capability.implementation_kind == "function"
+            for capability in repository_capabilities
+        )
+        if (
+            forecast_names
+            != {
+                "last_value",
+                "moving_average",
+                "seasonal_naive",
+                "croston",
+                "ridge_lag",
+            }
+            or function_count == 0
+            or extractor.last_scan_report["errors"]
+        ):
             raise RuntimeError("Local repository capability extraction failed")
         moving_average = next(
             capability
@@ -133,6 +153,7 @@ def main() -> int:
             result["selected_model"],
             f"target_inventory={result['benchmark']['target_inventory']:.2f}",
             f"repository_capabilities={len(repository_capabilities)}",
+            f"repository_functions={function_count}",
         )
     return 0
 

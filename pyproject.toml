@@ -29,6 +29,9 @@ inventory-agent = "inventory_agent.cli:main"
 [tool.setuptools.packages.find]
 include = ["inventory_agent*"]
 
+[tool.setuptools.package-data]
+inventory_agent = ["web/static/*"]
+
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]

@@ -170,6 +170,22 @@ def _inspect_plugins(args: argparse.Namespace) -> int:
     return 0
 
 
+def _serve_web(args: argparse.Namespace, settings: Settings) -> int:
+    """Start the local Web dashboard and JSON API."""
+
+    from inventory_agent.web import serve
+
+    serve(
+        host=args.host,
+        port=args.port,
+        open_browser=args.open_browser,
+        output_root=args.output_root,
+        knowledge_path=args.knowledge,
+        settings=settings,
+    )
+    return 0
+
+
 def _extract_capabilities(args: argparse.Namespace, settings: Settings) -> int:
     """Extract capability specs and optionally merge them into a knowledge graph."""
 
@@ -489,6 +505,23 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         help="Trusted module:callable or path.py:callable registration plugin",
     )
+
+    web = subparsers.add_parser(
+        "web",
+        help="Start the local visual dashboard and JSON API",
+    )
+    web.add_argument("--host", default="127.0.0.1")
+    web.add_argument("--port", type=int, default=8000)
+    web.add_argument(
+        "--open-browser",
+        action="store_true",
+        help="Open the dashboard in the default browser after startup",
+    )
+    web.add_argument("--output-root", default="artifacts/runs")
+    web.add_argument(
+        "--knowledge",
+        default="artifacts/knowledge/capability_graph.json",
+    )
     return parser
 
 
@@ -519,4 +552,6 @@ def main(argv: list[str] | None = None) -> int:
         return _visualize_graph(args)
     if args.command == "plugins":
         return _inspect_plugins(args)
+    if args.command == "web":
+        return _serve_web(args, settings)
     raise SystemExit(f"Unknown command: {args.command}")

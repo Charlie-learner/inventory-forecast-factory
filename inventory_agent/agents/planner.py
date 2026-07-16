@@ -1,4 +1,4 @@
-"""Knowledge-augmented candidate algorithm planning."""
+"""Knowledge-augmented candidate planning with explainable design evidence."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 
 
 class PlanningAgent:
-    """Plan candidate algorithms with demand profiles and graph knowledge."""
+    """Plan candidate algorithms and explain the evidence behind the design."""
 
     def plan(
         self,
@@ -18,7 +18,7 @@ class PlanningAgent:
         knowledge: CapabilityKnowledgeGraph,
         available_models: Collection[str] | None = None,
     ) -> AlgorithmPlan:
-        """Retrieve suitable models and return a bounded validation plan."""
+        """Retrieve suitable models and return an evidence-backed validation plan."""
 
         retrieval_limit = (
             request.candidate_count
@@ -29,19 +29,105 @@ class PlanningAgent:
             str(profile["demand_type"]), limit=retrieval_limit
         )
         allowed = set(available_models) if available_models is not None else None
-        names = [
-            record["name"]
+        selected_records = [
+            record
             for record in retrieved
             if allowed is None or record["name"] in allowed
         ]
+        names = [record["name"] for record in selected_records]
         if "last_value" not in names and (allowed is None or "last_value" in allowed):
             names.append("last_value")
+            selected_records.append(
+                {
+                    "name": "last_value",
+                    "description": "以最后一个观测值作为可解释的保底基线。",
+                    "validation_count": 0,
+                    "success_rate": None,
+                    "mean_inventory_cost": None,
+                }
+            )
         names = names[: request.candidate_count]
+        selected_records = [
+            record for record in selected_records if record["name"] in names
+        ]
         if not names:
             raise ValueError("No executable forecasting capability is available")
+
+        zero_ratio = float(profile.get("zero_ratio", 0.0))
+        demand_type = str(profile.get("demand_type", "unknown"))
+        history_points = int(profile.get("observations", 0))
+        risks = []
+        if zero_ratio >= 0.5:
+            risks.append("零需求比例较高，普通均值模型可能持续高估需求。")
+        if history_points < max(request.horizon * 3, 42):
+            risks.append("历史样本较短，复杂模型的参数稳定性有限。")
+        if demand_type == "volatile":
+            risks.append("需求波动较大，单一模型在不同回测窗口可能表现不一致。")
+        if not risks:
+            risks.append("历史回测只能反映样本内表现，仍需监控未来分布漂移。")
+
+        candidate_evidence = []
+        for record in selected_records:
+            history = (
+                f"已有 {record.get('validation_count', 0)} 次历史验证"
+                if record.get("validation_count")
+                else "暂无历史验证，作为待比较候选"
+            )
+            if record.get("success_rate") is not None:
+                history += f"，成功率 {float(record['success_rate']):.0%}"
+            if record.get("mean_inventory_cost") is not None:
+                history += (
+                    f"，历史平均库存成本 "
+                    f"{float(record['mean_inventory_cost']):.2f}"
+                )
+            candidate_evidence.append(
+                {
+                    "name": record["name"],
+                    "description": record.get("description", ""),
+                    "history_evidence": history,
+                    "matched_demand_type": demand_type,
+                }
+            )
+
         rationale = (
-            f"需求类型为 {profile['demand_type']}，零需求比例为 "
-            f"{profile['zero_ratio']:.2%}；从能力图谱检索 "
-            f"{', '.join(names)}，使用 {request.objective} 进行滚动验证。"
+            f"该任务要求为商品 {request.item_id} 在仓库 {request.store_code} "
+            f"预测未来 {request.horizon} 天，并以 {request.objective} 为主要目标。"
+            f"历史序列被识别为 {demand_type}，共有 {history_points} 个观测，"
+            f"零需求比例为 {zero_ratio:.2%}。因此先从知识图谱检索与该需求画像"
+            f"匹配的能力，再保留可解释基线，形成 {', '.join(names)} 三类候选。"
+            f"最终不由语言模型主观决定，而是使用 {request.objective} 及决胜指标"
+            "执行无时间泄漏滚动回测；生成代码还必须通过安全、接口、稳定性和"
+            "参考行为等价验证后才允许沉淀为新版本。"
         )
-        return AlgorithmPlan(tuple(names), rationale, request.objective)
+        design_basis = {
+            "business_goal": {
+                "item_id": request.item_id,
+                "store_code": request.store_code,
+                "horizon": request.horizon,
+                "task_type": request.task_type,
+                "objective": request.objective,
+            },
+            "demand_evidence": {
+                "demand_type": demand_type,
+                "observations": history_points,
+                "zero_ratio": zero_ratio,
+                "coefficient_of_variation": profile.get(
+                    "coefficient_of_variation"
+                ),
+            },
+            "knowledge_evidence": candidate_evidence,
+            "selection_rule": (
+                f"按 {request.objective} 排序，使用验证配置中的 tie-breakers 决胜；"
+                "模型名仅用于完全相同时的确定性排序。"
+            ),
+            "release_gate": (
+                "语法、导入安全、统一接口、受限运行、确定性、边界输入和数值等价。"
+            ),
+        }
+        return AlgorithmPlan(
+            tuple(names),
+            rationale,
+            request.objective,
+            design_basis=design_basis,
+            risks=tuple(risks),
+        )

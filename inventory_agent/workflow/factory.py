@@ -464,12 +464,34 @@ class InventoryCapabilityWorkflow:
         logger.warning("Repair attempt=%s reason=%s", len(state["repairs"]), reason)
         return state
 
-    @staticmethod
-    def _capability_version(state: dict[str, Any]) -> dict[str, Any]:
+    def _capability_version(self, state: dict[str, Any]) -> dict[str, Any]:
         """Build lineage metadata for the generated implementation version."""
 
         generated = state["generated"]
         spec = state["capability_spec"]
+        existing_versions = self.knowledge.capability_versions(
+            state["selected_model"]
+        )
+        same_version = next(
+            (
+                version
+                for version in existing_versions
+                if version.get("source_hash") == generated.source_hash
+            ),
+            None,
+        )
+        parent = (
+            None
+            if same_version
+            else next(
+                (
+                    version
+                    for version in existing_versions
+                    if version.get("lifecycle_status") == "active"
+                ),
+                existing_versions[0] if existing_versions else None,
+            )
+        )
         return {
             "capability_version": spec.version,
             "generation_mode": generated.generation_mode,
@@ -477,6 +499,13 @@ class InventoryCapabilityWorkflow:
             "source_hash": generated.source_hash,
             "source_ref": spec.source_ref,
             "generated_path": str(generated.path),
+            "parent_version": (
+                same_version.get("parent_version", "")
+                if same_version
+                else parent["id"] if parent else ""
+            ),
+            "repair_count": len(state.get("repairs", [])),
+            "validation_profile": state["request"].task_type,
         }
 
     def _failed(self, state: dict[str, Any]) -> dict[str, Any]:

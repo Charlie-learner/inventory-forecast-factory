@@ -1,8 +1,8 @@
 from pathlib import Path
 
 from inventory_agent.agents.repair import RepairAgent
-from inventory_agent.codegen.validator import GeneratedCodeValidator
 from inventory_agent.codegen.generator import GeneratedCapability
+from inventory_agent.codegen.validator import GeneratedCodeValidator
 
 
 class _RepairLLM:
@@ -30,6 +30,7 @@ def test_repair_agent_replaces_invalid_capability(tmp_path: Path):
     )
     assert "syntax error" in reason
     assert "第 2 轮修复" in reason
+    assert "根因=" in reason
     assert GeneratedCodeValidator().validate(generated.path).valid
 
 
@@ -47,7 +48,8 @@ def test_first_api_repair_uses_llm_source_before_safe_fallback(tmp_path: Path):
         current=current,
     )
     assert generated.generation_mode == "llm_repair"
-    assert "LLM 按错误修复源码" in reason
+    assert "LLM 根据结构化根因修复源码" in reason
+    assert "建议动作" in reason
     assert GeneratedCodeValidator().validate(generated.path).valid
 
 

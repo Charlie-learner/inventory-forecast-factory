@@ -395,6 +395,61 @@ class WebApplication:
         )
         return result
 
+    def versions(self, model: str) -> dict[str, Any]:
+        """Return capability versions and lifecycle events for one model."""
+
+        if not model.strip():
+            raise WebRequestError("请提供模型名称。")
+        if not self.knowledge_path.exists():
+            return {"model": model, "versions": [], "events": []}
+        knowledge = CapabilityKnowledgeGraph.load(self.knowledge_path)
+        return {
+            "model": model,
+            "versions": knowledge.capability_versions(model),
+            "events": knowledge.version_events(model),
+        }
+
+    def manage_version(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Compare, promote, or roll back validated capability versions."""
+
+        if not self.knowledge_path.exists():
+            raise WebRequestError("运行知识图谱尚不存在，请先执行一次完整工作流。")
+        model = str(payload.get("model", "")).strip()
+        action = str(payload.get("action", "")).strip()
+        if not model:
+            raise WebRequestError("请提供模型名称。")
+        knowledge = CapabilityKnowledgeGraph.load(self.knowledge_path)
+        if action == "compare":
+            result = knowledge.compare_versions(
+                model,
+                str(payload.get("left", "")),
+                str(payload.get("right", "")),
+            )
+        elif action == "promote":
+            result = {
+                "event": knowledge.promote_version(
+                    model, str(payload.get("version", ""))
+                )
+            }
+        elif action == "rollback":
+            result = {
+                "event": knowledge.rollback_version(
+                    model, str(payload.get("version", ""))
+                )
+            }
+        else:
+            raise WebRequestError("版本操作必须是 compare、promote 或 rollback。")
+        knowledge.save(
+            self.knowledge_path,
+            self.knowledge_path.with_suffix(".graphml"),
+            self.knowledge_path.with_suffix(".html"),
+        )
+        return {
+            "action": action,
+            "result": result,
+            **self.versions(model),
+        }
+
     def _available_graph_path(self) -> Path | None:
         candidates = [
             self.knowledge_path,

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import hashlib
+import re
 from html import escape
 from datetime import datetime, timezone
 from pathlib import Path
@@ -119,6 +120,10 @@ class CapabilityKnowledgeGraph:
                 review_status=capability.review_status,
                 evidence_refs=list(capability.evidence_refs),
                 extraction_warnings=list(capability.extraction_warnings),
+                implementation_kind=capability.implementation_kind,
+                entrypoints=list(capability.entrypoints),
+                internal_dependencies=list(capability.internal_dependencies),
+                complexity=capability.complexity,
             )
             for metric in capability.metrics:
                 metric_node = f"metric:{metric}"
@@ -235,6 +240,14 @@ class CapabilityKnowledgeGraph:
             extraction_warnings=tuple(
                 attributes.get("extraction_warnings", [])
             ),
+            implementation_kind=str(
+                attributes.get("implementation_kind", "algorithm")
+            ),
+            entrypoints=tuple(attributes.get("entrypoints", [])),
+            internal_dependencies=tuple(
+                attributes.get("internal_dependencies", [])
+            ),
+            complexity=dict(attributes.get("complexity", {})),
         )
 
     def retrieve_algorithms(self, demand_type: str, limit: int = 3) -> list[dict]:
@@ -343,6 +356,18 @@ class CapabilityKnowledgeGraph:
                 lifecycle_status=lifecycle_status,
                 **capability_version,
             )
+            version_attributes = self.graph.nodes[version_node]
+            version_attributes["validation_status"] = status
+            version_attributes["validation_count"] = int(
+                version_attributes.get("validation_count", 0)
+            ) + 1
+            version_attributes["last_validated_at"] = recorded_at
+            version_attributes["latest_metrics"] = json.dumps(
+                metrics, sort_keys=True
+            )
+            version_attributes["latest_validation_checks"] = json.dumps(
+                validation_checks or {}, sort_keys=True
+            )
             self.graph.add_edge(version_node, model_node, relation="VERSION_OF")
             self.graph.add_edge(run_id, version_node, relation="VALIDATED_VERSION")
         failure_nodes = []
@@ -361,6 +386,12 @@ class CapabilityKnowledgeGraph:
                 fingerprint=fingerprint,
                 normalized_error=str(failure.get("normalized_error", "")),
                 retryable=bool(failure.get("retryable", True)),
+                severity=str(failure.get("severity", "medium")),
+                likely_stage=str(failure.get("likely_stage", "unknown")),
+                root_cause=str(failure.get("root_cause", "")),
+                recommended_actions=list(
+                    failure.get("recommended_actions", [])
+                ),
                 occurrence_count=previous_count + 1,
                 last_seen=recorded_at,
             )
@@ -368,12 +399,37 @@ class CapabilityKnowledgeGraph:
             self.graph.add_edge(run_id, failure_node, relation="OBSERVED_FAILURE")
             failure_nodes.append(failure_node)
         if repair:
-            repair_node = f"repair:{uuid4().hex[:10]}"
+            normalized_repair = " ".join(str(repair).lower().split())[:1000]
+            normalized_repair = normalized_repair.replace("\\", "/")
+            normalized_repair = re.sub(
+                r"(?:[a-z]:)?/[\w./-]+\.py", "<path>.py", normalized_repair
+            )
+            normalized_repair = re.sub(
+                r"\b\d+(?:\.\d+)?\b", "<n>", normalized_repair
+            )
+            strategy_key = hashlib.sha256(
+                f"{model}|{normalized_repair}".encode("utf-8")
+            ).hexdigest()[:16]
+            repair_node = f"repair:{strategy_key}"
+            previous_attempts = (
+                int(self.graph.nodes[repair_node].get("attempt_count", 0))
+                if self.graph.has_node(repair_node)
+                else 0
+            )
+            previous_successes = (
+                int(self.graph.nodes[repair_node].get("success_count", 0))
+                if self.graph.has_node(repair_node)
+                else 0
+            )
             self.graph.add_node(
                 repair_node,
                 type="RepairStrategy",
                 name=f"修复:{model}",
                 description=repair,
+                strategy_fingerprint=strategy_key,
+                attempt_count=previous_attempts + 1,
+                success_count=previous_successes + (1 if status == "success" else 0),
+                last_used=recorded_at,
             )
             self.graph.add_edge(run_id, repair_node, relation="REPAIRED_BY")
             for failure_node in failure_nodes:
@@ -408,12 +464,36 @@ class CapabilityKnowledgeGraph:
                         {
                             "category": category,
                             "fingerprint": attributes.get("fingerprint"),
+                            "root_cause": attributes.get("root_cause", ""),
+                            "recommended_actions": attributes.get(
+                                "recommended_actions", []
+                            ),
                             "strategy": repair.get("description", ""),
+                            "strategy_fingerprint": repair.get(
+                                "strategy_fingerprint", ""
+                            ),
+                            "attempt_count": int(
+                                repair.get("attempt_count", 0)
+                            ),
+                            "success_count": int(
+                                repair.get("success_count", 0)
+                            ),
+                            "success_rate": (
+                                int(repair.get("success_count", 0))
+                                / max(int(repair.get("attempt_count", 0)), 1)
+                            ),
                             "run_id": run_node,
                             "timestamp": run.get("timestamp"),
                         }
                     )
-        experiences.sort(key=lambda item: str(item.get("timestamp", "")), reverse=True)
+        experiences.sort(
+            key=lambda item: (
+                float(item.get("success_rate", 0.0)),
+                int(item.get("success_count", 0)),
+                str(item.get("timestamp", "")),
+            ),
+            reverse=True,
+        )
         return experiences[:limit]
 
     def capability_versions(self, model: str) -> list[dict]:
@@ -450,7 +530,7 @@ class CapabilityKnowledgeGraph:
         return versions
 
     def compare_versions(self, model: str, left: str, right: str) -> dict:
-        """Compare provenance, generation, and lifecycle metadata for two versions."""
+        """Compare provenance, metrics, validation, and lifecycle metadata."""
 
         left_node = self._resolve_version_node(model, left)
         right_node = self._resolve_version_node(model, right)
@@ -466,12 +546,74 @@ class CapabilityKnowledgeGraph:
             for key in keys
             if left_attributes.get(key) != right_attributes.get(key)
         }
+        def json_mapping(attributes: dict, key: str) -> dict:
+            value = attributes.get(key, {})
+            if isinstance(value, dict):
+                return value
+            try:
+                parsed = json.loads(str(value))
+            except json.JSONDecodeError:
+                return {}
+            return parsed if isinstance(parsed, dict) else {}
+
+        left_metrics = json_mapping(left_attributes, "latest_metrics")
+        right_metrics = json_mapping(right_attributes, "latest_metrics")
+        metric_names = sorted(left_metrics.keys() | right_metrics.keys())
+        metric_differences = {
+            metric: {
+                "left": left_metrics.get(metric),
+                "right": right_metrics.get(metric),
+                "delta": (
+                    float(right_metrics[metric]) - float(left_metrics[metric])
+                    if metric in left_metrics
+                    and metric in right_metrics
+                    and isinstance(left_metrics[metric], (int, float))
+                    and isinstance(right_metrics[metric], (int, float))
+                    else None
+                ),
+            }
+            for metric in metric_names
+            if left_metrics.get(metric) != right_metrics.get(metric)
+        }
         return {
             "model": model,
             "left": left_node,
             "right": right_node,
             "differences": differences,
+            "metric_differences": metric_differences,
+            "validation": {
+                "left": {
+                    "status": left_attributes.get("validation_status"),
+                    "checks": json_mapping(
+                        left_attributes, "latest_validation_checks"
+                    ),
+                    "count": left_attributes.get("validation_count", 0),
+                },
+                "right": {
+                    "status": right_attributes.get("validation_status"),
+                    "checks": json_mapping(
+                        right_attributes, "latest_validation_checks"
+                    ),
+                    "count": right_attributes.get("validation_count", 0),
+                },
+            },
+            "lineage": {
+                "left_parent": left_attributes.get("parent_version", ""),
+                "right_parent": right_attributes.get("parent_version", ""),
+            },
         }
+
+    def version_events(self, model: str) -> list[dict]:
+        """List auditable promote and rollback events for one model."""
+
+        events = [
+            {"id": node, **attributes}
+            for node, attributes in self.graph.nodes(data=True)
+            if attributes.get("type") == "VersionEvent"
+            and attributes.get("model") == model
+        ]
+        events.sort(key=lambda item: str(item.get("timestamp", "")), reverse=True)
+        return events
 
     def promote_version(self, model: str, selector: str) -> str:
         """Mark one successfully validated version active and supersede the prior active one."""

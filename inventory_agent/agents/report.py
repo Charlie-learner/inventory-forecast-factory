@@ -16,28 +16,25 @@ class ReportAgent:
 
     @staticmethod
     def _metric(value: object, digits: int = 4) -> str:
-        """Format an optional numeric metric without hiding missing evidence."""
-
         if value is None:
             return "-"
         return f"{float(value):.{digits}f}"
 
     def create(self, payload: dict, output_dir: str | Path) -> dict[str, str]:
-        """Write JSON and Markdown reports and return their file paths."""
+        """Write JSON and a teacher-readable Markdown evidence report."""
 
         output = Path(output_dir)
         output.mkdir(parents=True, exist_ok=True)
         json_path = output / "validation_report.json"
         markdown_path = output / "validation_report.md"
         json_path.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2),
-            encoding="utf-8",
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
 
         llm_response = self.llm.complete(
             (
                 "你是库存预测验证报告 Agent。请简洁说明模型选择、主要指标、"
-                "风险，以及目标库存的使用边界。"
+                "设计依据、风险以及目标库存的使用边界。"
             ),
             json.dumps(payload, ensure_ascii=False, default=str),
         )
@@ -51,17 +48,19 @@ class ReportAgent:
 
         candidates = payload["benchmark"]["candidates"]
         costs = payload["benchmark"]["costs"]
-        scanned_files = sum(
-            int(report.get("files_scanned", 0))
-            for report in payload["capability_extraction"].get("scan_reports", [])
-        )
-        rows = [
+        profile = payload["validation_profile"]
+        plan = payload.get("plan", {})
+        basis = plan.get("design_basis", {})
+        validation = payload["code_validation"]
+        failures = payload.get("failure_history", [])
+
+        candidate_rows = [
             "| 模型 | WAPE | sMAPE | Bias | MAE | 库存成本 |",
             "|---|---:|---:|---:|---:|---:|",
         ]
         for candidate in candidates:
             metrics = candidate["metrics"]
-            rows.append(
+            candidate_rows.append(
                 f"| {candidate['model']} | {self._metric(metrics.get('wape'))} | "
                 f"{self._metric(metrics.get('smape'))} | "
                 f"{self._metric(metrics.get('bias'))} | "
@@ -69,33 +68,47 @@ class ReportAgent:
                 f"{self._metric(metrics.get('inventory_cost'), 2)} |"
             )
 
+        design_rows = [
+            "| 候选能力 | 能力说明 | 历史验证证据 |",
+            "|---|---|---|",
+        ]
+        for record in basis.get("knowledge_evidence", []):
+            design_rows.append(
+                f"| {record.get('name', '-')} | "
+                f"{record.get('description', '-')} | "
+                f"{record.get('history_evidence', '-')} |"
+            )
+        if len(design_rows) == 2:
+            design_rows.append("| - | 未记录结构化候选依据 | - |")
+
         code_rows = [
-            "| 代码方案 | 回测选中 | 生成方式 | 代码验证 | 等价误差 | 文件 |",
-            "|---|---|---|---|---:|---|",
+            "| 代码方案 | 回测选中 | 生成方式 | 验证通过 | 等价误差 |",
+            "|---|---|---|---|---:|",
         ]
         for solution in payload.get("candidate_code_solutions", []):
-            validation = solution["code_validation"]
-            generated = solution["generated"]
+            code_validation = solution["code_validation"]
             code_rows.append(
                 f"| {solution['model']} | {solution['selected']} | "
-                f"{generated['generation_mode']} | {validation['valid']} | "
-                f"{self._metric(validation.get('equivalence_max_error'), 8)} | "
-                f"`{generated['path']}` |"
+                f"{solution['generated']['generation_mode']} | "
+                f"{code_validation['valid']} | "
+                f"{self._metric(code_validation.get('equivalence_max_error'), 8)} |"
             )
         if len(code_rows) == 2:
-            code_rows.append("| 未启用完整追踪 | - | - | - | - | - |")
+            code_rows.append("| 未启用完整追踪 | - | - | - | - |")
 
         repair_rows = [
-            "| 轮次 | 修复策略 | 对应失败 |",
-            "|---:|---|---|",
+            "| 轮次 | 失败根因 | 建议动作 | 修复策略 |",
+            "|---:|---|---|---|",
         ]
-        failures = payload.get("failure_history", [])
         for index, repair in enumerate(payload.get("repairs", []), start=1):
             failure = failures[index - 1] if index <= len(failures) else {}
-            failure_text = failure.get("category") or failure.get("fingerprint") or "-"
-            repair_rows.append(f"| {index} | {repair} | {failure_text} |")
+            repair_rows.append(
+                f"| {index} | {failure.get('root_cause', '-')} | "
+                f"{' / '.join(failure.get('recommended_actions', [])) or '-'} | "
+                f"{repair} |"
+            )
         if len(repair_rows) == 2:
-            repair_rows.append("| 0 | 无需修复，首次验证通过 | - |")
+            repair_rows.append("| 0 | 首次验证通过 | - | 无需修复 |")
 
         plugin_rows = [
             "| 插件 | 新增指标 | 新增验证配置 |",
@@ -110,71 +123,71 @@ class ReportAgent:
         if len(plugin_rows) == 2:
             plugin_rows.append("| 内置注册表 | 无外部插件 | 无外部插件 |")
 
+        runtime = validation.get("runtime_seconds")
         trace_path = (payload.get("execution_trace", {}).get("paths") or {}).get(
             "markdown"
         )
-        validation = payload["code_validation"]
-        runtime = validation.get("runtime_seconds")
-        runtime_text = f"{runtime:.3f} 秒" if runtime is not None else "-"
-        profile = payload["validation_profile"]
+        version = payload.get("generated", {})
+        scanned_files = sum(
+            int(report.get("files_scanned", 0))
+            for report in payload["capability_extraction"].get("scan_reports", [])
+        )
         markdown = "\n".join(
             [
                 "# 库存预测能力验证报告",
                 "",
-                f"- 能力描述：{payload['request']['description']}",
-                f"- 商品：{payload['request']['item_id']}",
-                f"- 仓库：{payload['request']['store_code']}",
+                f"- 任务：{payload['request']['description']}",
+                f"- 商品 / 仓库：{payload['request']['item_id']} / "
+                f"{payload['request']['store_code']}",
                 f"- 预测周期：{payload['request']['horizon']} 天",
                 f"- 任务类型：{payload['request']['task_type']}",
+                f"- 需求画像：{payload['profile']['demand_type']}，"
+                f"零需求比例 {payload['profile']['zero_ratio']:.2%}",
+                f"- 选中模型：{payload['benchmark']['selected_model']}",
+                f"- 目标库存：{payload['benchmark']['target_inventory']:.2f}",
                 f"- 主验证指标：{profile['primary_metric']}",
                 f"- 决胜指标：{', '.join(profile['tie_breakers']) or '-'}",
-                f"- 回测折数：{profile['folds']}",
-                f"- 最短历史：{profile['min_history_days']} 天",
-                f"- 需求类型：{payload['profile']['demand_type']}",
-                f"- 历史状态：{payload['profile']['history_status']}",
-                f"- 选中模型：{payload['benchmark']['selected_model']}",
-                f"- 未来 {payload['request']['horizon']} 天目标库存："
-                f"{payload['benchmark']['target_inventory']:.2f}",
-                f"- 成本 A（缺货）：{costs['understock_cost']:.2f}",
-                f"- 成本 B（积压）：{costs['overstock_cost']:.2f}",
-                f"- 成本来源：{costs['source']}",
-                f"- 评价口径：{payload['benchmark']['evaluation_unit']}",
-                f"- 能力抽取数量：{payload['capability_extraction']['count']}",
+                f"- 缺货 / 积压成本：{costs['understock_cost']:.2f} / "
+                f"{costs['overstock_cost']:.2f}",
                 f"- 能力来源扫描文件数：{scanned_files}",
-                f"- 能力来源：{payload['capability_spec']['source_ref'] or '内置能力图谱'}",
+                "",
+                "## 方案设计依据",
+                "",
+                plan.get("rationale", "未记录自然语言设计依据。"),
+                "",
+                *design_rows,
+                "",
+                f"- 选择规则：{basis.get('selection_rule', '-')}",
+                f"- 发布门禁：{basis.get('release_gate', '-')}",
+                f"- 主要风险：{'；'.join(plan.get('risks', [])) or '-'}",
                 "",
                 "## 候选模型自动比较",
                 "",
-                *rows,
+                *candidate_rows,
                 "",
-                "## 候选代码方案生成与比较",
+                "## 候选代码生成与验证",
                 "",
                 *code_rows,
                 "",
-                "## 多轮修复记录",
+                "## 失败分析与多轮修复",
                 "",
                 *repair_rows,
+                "",
+                f"- 复用历史修复经验："
+                f"{len(payload.get('repair_experience_used', []))} 条",
                 "",
                 "## 插件与验证配置",
                 "",
                 *plugin_rows,
                 "",
-                f"- 可用指标：{', '.join(payload.get('plugins', {}).get('available_metrics', []))}",
-                "- 可用验证配置："
-                f"{', '.join(payload.get('plugins', {}).get('available_validation_profiles', []))}",
+                "## 最终代码与版本证据",
                 "",
-                "## 生成代码验证",
-                "",
-                f"- 生成方式：{payload['generated']['generation_mode']}",
-                f"- 能力规格哈希：{payload['generated']['spec_hash'][:16]}",
-                f"- 生成源码哈希：{payload['generated']['source_hash'][:16]}",
-                f"- 语法、导入、接口、运行、稳定性检查：{validation['checks']}",
-                f"- 与参考能力最大误差：{validation['equivalence_max_error']}",
-                f"- 等价性验证用例数：{validation['equivalence_cases']}",
-                f"- 受限运行耗时：{runtime_text}",
-                f"- 修复次数：{len(payload.get('repairs', []))}",
-                f"- 结构化失败记录数：{len(failures)}",
-                f"- 复用历史修复经验数：{len(payload.get('repair_experience_used', []))}",
+                f"- 生成方式：{version.get('generation_mode', '-')}",
+                f"- 能力规格哈希：{version.get('spec_hash', '')[:16]}",
+                f"- 生成源码哈希：{version.get('source_hash', '')[:16]}",
+                f"- 验证矩阵：{validation.get('checks', {})}",
+                f"- 等价性用例数：{validation.get('equivalence_cases', 0)}",
+                f"- 受限运行耗时：{runtime:.3f} 秒" if runtime is not None else "- 受限运行耗时：-",
                 f"- 详细中间过程：{trace_path or '未启用'}",
                 "",
                 "## Agent 总结",
@@ -185,7 +198,7 @@ class ReportAgent:
                 "",
                 (
                     "目标库存 T 是预测周期内非聚划算需求总量。实际补货量仍需结合"
-                    "现货、在途库存、供应提前期、安全库存和业务服务水平约束。"
+                    "现货、在途库存、供应提前期、安全库存和服务水平约束。"
                 ),
             ]
         )

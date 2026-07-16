@@ -33,6 +33,10 @@ class CapabilitySpec:
     review_status: str = "auto_extracted"
     evidence_refs: tuple[str, ...] = field(default_factory=tuple)
     extraction_warnings: tuple[str, ...] = field(default_factory=tuple)
+    implementation_kind: str = "algorithm"
+    entrypoints: tuple[str, ...] = field(default_factory=tuple)
+    internal_dependencies: tuple[str, ...] = field(default_factory=tuple)
+    complexity: dict[str, int] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         """Reject incomplete specifications before graph ingestion or generation."""
@@ -60,6 +64,8 @@ class CapabilitySpec:
             raise ValueError("Capability confidence must be between 0 and 1")
         if not self.review_status.strip():
             raise ValueError("Capability review_status cannot be empty")
+        if not self.implementation_kind.strip():
+            raise ValueError("Capability implementation_kind cannot be empty")
 
     @property
     def capability_id(self) -> str:
@@ -103,3 +109,5 @@ class AlgorithmPlan:
     rationale: str
     validation_metric: str = "inventory_cost"
     max_repairs: int = 2
+    design_basis: dict[str, Any] = field(default_factory=dict)
+    risks: tuple[str, ...] = field(default_factory=tuple)

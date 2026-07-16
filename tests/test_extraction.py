@@ -61,17 +61,32 @@ def test_recursively_extract_capabilities_from_local_repository():
     extractor = CapabilityExtractor()
     specs = extractor.extract(ROOT)
 
-    assert {spec.name for spec in specs} == {
+    names = {spec.name for spec in specs}
+    assert {
         "last_value",
         "moving_average",
         "seasonal_naive",
         "croston",
         "ridge_lag",
-    }
+    } <= names
+    repository_functions = [
+        spec for spec in specs if spec.implementation_kind == "function"
+    ]
+    assert repository_functions
+    loader = next(
+        spec
+        for spec in repository_functions
+        if spec.name.endswith("__load_location_frame")
+    )
+    assert loader.entrypoints == ("load_location_frame",)
+    assert loader.input_contract.startswith("load_location_frame(")
+    assert loader.complexity["lines"] > 1
     assert extractor.last_scan_report["source_kind"] == "repository"
     assert extractor.last_scan_report["files_scanned"] > 1
-    assert extractor.last_scan_report["files_matched"] == 1
-    assert extractor.last_scan_report["capabilities_found"] == 5
+    assert extractor.last_scan_report["files_matched"] > 1
+    assert extractor.last_scan_report["forecast_models_found"] == 5
+    assert extractor.last_scan_report["functions_found"] == len(repository_functions)
+    assert extractor.last_scan_report["capabilities_found"] == len(specs)
 
 
 def test_repository_scan_has_a_configurable_file_limit(tmp_path: Path):
@@ -80,6 +95,45 @@ def test_repository_scan_has_a_configurable_file_limit(tmp_path: Path):
 
     with pytest.raises(ValueError, match="exceeds 1 Python files"):
         CapabilityExtractor(max_repository_files=1).extract(tmp_path)
+
+
+def test_repository_function_extraction_captures_calls_dependencies_and_complexity(
+    tmp_path: Path,
+):
+    source = tmp_path / "inventory_policy.py"
+    source.write_text(
+        '''"""Repository module."""
+
+import numpy as np
+
+
+def normalize(values):
+    """Normalize an input vector."""
+    return np.asarray(values, dtype=float)
+
+
+def build_reorder_point(history, lead_time=7):
+    """Build a reorder point from demand history and lead time."""
+    values = normalize(history)
+    if len(values) == 0:
+        return 0.0
+    return float(values.mean() * lead_time)
+''',
+        encoding="utf-8",
+    )
+
+    specs = CapabilityExtractor().extract(tmp_path)
+    reorder = next(
+        spec for spec in specs if spec.name.endswith("__build_reorder_point")
+    )
+
+    assert reorder.implementation_kind == "function"
+    assert reorder.dependencies == ("numpy",)
+    assert reorder.internal_dependencies == ("normalize",)
+    assert reorder.parameters == {"lead_time": 7}
+    assert reorder.entrypoints == ("build_reorder_point",)
+    assert reorder.complexity["branches"] == 1
+    assert "reorder point" in reorder.description
 
 
 def test_extraction_result_and_graph_ingestion_are_auditable(tmp_path: Path):

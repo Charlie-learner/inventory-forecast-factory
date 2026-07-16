@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI Agent 库存算法能力工厂可视化工作台">
+  <title>库存算法能力工厂</title>
+  <style>
+    :root {
+      --bg: #f4f7fb; --surface: #fff; --ink: #142033; --muted: #6d788a;
+      --line: #e3e9f2; --nav: #0c1830; --blue: #3468ed; --cyan: #17a4c4;
+      --green: #19a763; --orange: #f59e0b; --violet: #7449e8; --red: #e5484d;
+      --shadow: 0 14px 40px rgba(26, 45, 78, .09); --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--bg); font: 14px/1.55 Inter, "Microsoft YaHei", system-ui, sans-serif; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 246px 1fr; }
+    .sidebar { position: sticky; top: 0; height: 100vh; padding: 24px 18px; color: #dbe6fb; background: linear-gradient(180deg, #0c1830, #111f3d 70%, #0c1830); }
+    .brand { display: flex; gap: 12px; align-items: center; margin: 0 8px 30px; }
+    .logo { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; color: white; background: linear-gradient(135deg, #4c7dff, #19b88b); box-shadow: 0 10px 24px rgba(53, 105, 237, .35); font-weight: 900; }
+    .brand strong { display: block; color: white; font-size: 17px; }.brand small { color: #8fa0bf; }
+    nav { display: grid; gap: 6px; }
+    nav button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-radius: 11px; color: #aebbd2; background: transparent; text-align: left; }
+    nav button:hover, nav button.active { color: white; background: rgba(83, 126, 218, .18); }
+    nav i { width: 22px; font-style: normal; text-align: center; }
+    .sidebar-foot { position: absolute; left: 20px; right: 20px; bottom: 24px; padding: 14px; border: 1px solid rgba(255,255,255,.08); border-radius: 13px; background: rgba(255,255,255,.04); }
+    .online { display: flex; align-items: center; gap: 8px; color: white; font-size: 13px; }.dot { width: 8px; height: 8px; border-radius: 50%; background: #31d07e; box-shadow: 0 0 0 5px rgba(49,208,126,.12); }
+    .sidebar-foot small { display: block; margin-top: 5px; color: #8fa0bf; }
+    main { min-width: 0; }
+    .topbar { position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; height: 72px; padding: 0 32px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.88); backdrop-filter: blur(16px); }
+    .topbar h1 { margin: 0; font-size: 18px; }.topbar p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+    .mode { display: flex; gap: 10px; align-items: center; padding: 8px 13px; border: 1px solid var(--line); border-radius: 30px; background: white; }
+    .mode b { color: var(--blue); font-size: 12px; }.mode small { color: var(--muted); }
+    .content { padding: 28px 32px 60px; }
+    .view { display: none; }.view.active { display: block; animation: rise .25s ease; } @keyframes rise { from { opacity: .3; transform: translateY(6px); } }
+    .hero { position: relative; overflow: hidden; padding: 34px; border-radius: 24px; color: white; background: linear-gradient(118deg, #112a58, #1f55c8 58%, #168ba7); box-shadow: var(--shadow); }
+    .hero:after { content:""; position:absolute; width:330px; height:330px; right:-90px; top:-155px; border:1px solid rgba(255,255,255,.22); border-radius:50%; box-shadow: 0 0 0 48px rgba(255,255,255,.045), 0 0 0 100px rgba(255,255,255,.035); }
+    .hero .eyebrow { color: #9de8d2; font-weight: 700; letter-spacing: .12em; }.hero h2 { max-width: 720px; margin: 10px 0; font-size: 32px; line-height: 1.25; }.hero p { max-width: 760px; margin: 0; color: #d4e2fb; font-size: 15px; }
+    .flow { display: flex; gap: 0; margin-top: 26px; overflow-x: auto; }
+    .flow div { position: relative; min-width: 138px; padding: 11px 22px 11px 14px; border-radius: 10px; background: rgba(255,255,255,.1); }
+    .flow div+div { margin-left: 16px; }.flow div+div:before { content:"→"; position:absolute; left:-15px; color:#8ee7d0; }.flow b { display:block; }.flow small { color:#b9cbea; }
+    .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 22px 0; }
+    .stat { padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: 0 8px 24px rgba(30,55,90,.05); }
+    .stat span { color: var(--muted); }.stat strong { display: block; margin: 8px 0 2px; font-size: 28px; }.stat small { color: #97a1b0; }
+    .grid { display: grid; grid-template-columns: 1.35fr .85fr; gap: 20px; }.grid.equal { grid-template-columns: 1fr 1fr; }
+    .card { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: 0 8px 26px rgba(30,55,90,.055); }
+    .card-head { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 18px; }.card-head h3 { margin: 0; font-size: 17px; }.card-head p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .section-title { margin: 0 0 20px; }.section-title h2 { margin: 0; font-size: 25px; }.section-title p { margin: 5px 0 0; color: var(--muted); }
+    .runs { display: grid; gap: 10px; }.run { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 13px; border: 1px solid var(--line); border-radius: 12px; transition: .2s; }.run:hover { border-color:#b8c9ee; transform: translateY(-1px); }.run b { display:block; }.run small { color:var(--muted); }.badge { display:inline-flex; align-items:center; padding:3px 8px; border-radius:20px; color:#147744; background:#e6f8ef; font-size:11px; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }.chip { padding:6px 10px; border:1px solid var(--line); border-radius:20px; color:#41506a; background:#f8faff; font-size:12px; }
+    form { display:grid; gap:15px; }.row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }.row.three { grid-template-columns:repeat(3,1fr); }
+    label > span { display:block; margin-bottom:6px; color:#445066; font-size:12px; font-weight:700; }
+    input, select, textarea { width:100%; padding:11px 12px; border:1px solid #d8e0ec; border-radius:10px; outline:none; color:var(--ink); background:white; transition:.15s; }
+    input:focus, select:focus, textarea:focus { border-color:#6d91ed; box-shadow:0 0 0 3px rgba(52,104,237,.1); } textarea { resize:vertical; min-height:88px; }
+    .btn { padding:11px 16px; border:0; border-radius:10px; color:white; background:linear-gradient(135deg, var(--blue), #4c78ec); box-shadow:0 8px 18px rgba(52,104,237,.22); font-weight:700; }.btn:hover { filter:brightness(1.04); }.btn:disabled { opacity:.55; cursor:wait; }
+    .btn.alt { color:#33415b; background:#eef2f8; box-shadow:none; }.actions { display:flex; justify-content:flex-end; gap:10px; margin-top:3px; }
+    .tabs { display:flex; gap:8px; margin-bottom:18px; padding:5px; border-radius:12px; background:#f1f4f9; }.tabs button { flex:1; padding:9px; border:0; border-radius:9px; color:var(--muted); background:transparent; }.tabs button.active { color:var(--blue); background:white; box-shadow:0 3px 10px rgba(30,55,90,.08); font-weight:700; }
+    .panel { display:none; }.panel.active { display:block; }
+    .activity { min-height:400px; max-height:600px; overflow:auto; }.empty { display:grid; place-items:center; min-height:330px; color:var(--muted); text-align:center; }.spinner { width:34px; height:34px; border:3px solid #dce5f6; border-top-color:var(--blue); border-radius:50%; animation:spin .8s linear infinite; } @keyframes spin { to { transform:rotate(360deg); } }
+    .result-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }.mini { padding:15px; border-radius:13px; background:#f7f9fd; }.mini small { color:var(--muted); }.mini strong { display:block; margin-top:4px; font-size:19px; }
+    table { width:100%; border-collapse:collapse; } th,td { padding:10px 9px; border-bottom:1px solid var(--line); text-align:left; } th { color:var(--muted); font-size:11px; text-transform:uppercase; } td { font-size:13px; }
+    .bar { height:8px; border-radius:6px; background:#e8edf6; overflow:hidden; }.bar i { display:block; height:100%; border-radius:6px; background:linear-gradient(90deg, var(--blue), var(--cyan)); }
+    .timeline { display:grid; gap:10px; }.event { display:grid; grid-template-columns:28px 1fr; gap:10px; }.event-index { display:grid; place-items:center; width:26px; height:26px; border-radius:50%; color:white; background:var(--blue); font-size:11px; }.event-body { padding:10px 12px; border:1px solid var(--line); border-radius:10px; }.event-body b { display:block; }.event-body small { color:var(--muted); }
+    .graph-frame { width:100%; height:calc(100vh - 170px); min-height:650px; border:1px solid var(--line); border-radius:var(--radius); background:white; }
+    .notice { padding:12px 14px; border-radius:10px; color:#7a5510; background:#fff7df; }.error { color:#a9282d; background:#ffecee; }
+    .toast { position:fixed; right:26px; bottom:26px; z-index:30; max-width:420px; padding:13px 17px; border-radius:12px; color:white; background:#17243a; box-shadow:var(--shadow); opacity:0; transform:translateY(15px); pointer-events:none; transition:.2s; }.toast.show { opacity:1; transform:none; }
+    .mobile-menu { display:none; }
+    @media (max-width: 1050px) { .stats { grid-template-columns:repeat(3,1fr); }.grid,.grid.equal { grid-template-columns:1fr; }.result-summary { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width: 760px) {
+      .app { grid-template-columns:1fr; }.sidebar { position:fixed; z-index:20; width:246px; transform:translateX(-105%); transition:.2s; }.sidebar.open { transform:none; }
+      .mobile-menu { display:block; border:0; background:transparent; font-size:22px; }.topbar { padding:0 18px; }.content { padding:20px 16px 40px; }
+      .stats { grid-template-columns:1fr 1fr; }.row,.row.three { grid-template-columns:1fr; }.hero { padding:25px; }.hero h2 { font-size:25px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="logo">AI</div><div><strong>ForeSight</strong><small>库存能力工厂</small></div></div>
+    <nav>
+      <button class="active" data-view="overview"><i>◈</i>系统总览</button>
+      <button data-view="factory"><i>⚙</i>完整能力工厂</button>
+      <button data-view="capability"><i>⌘</i>能力抽取与复刻</button>
+      <button data-view="benchmark"><i>≋</i>算法回测比较</button>
+      <button data-view="runs"><i>◎</i>运行证据</button>
+      <button data-view="graph"><i>⬡</i>知识图谱</button>
+      <button data-view="extensions"><i>＋</i>插件与配置</button>
+    </nav>
+    <div class="sidebar-foot"><div class="online"><span class="dot"></span>本地服务在线</div><small id="sideMode">正在读取配置……</small></div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div style="display:flex;gap:12px;align-items:center"><button class="mobile-menu" id="menu">☰</button><div><h1 id="pageTitle">系统总览</h1><p>可审计、可复现、可扩展的 AI Agent 算法生产闭环</p></div></div>
+      <div class="mode"><span class="dot"></span><b id="llmMode">LOADING</b><small id="modelName"></small></div>
+    </header>
+    <div class="content">
+      <section class="view active" id="view-overview">
+        <div class="hero">
+          <div class="eyebrow">AI AGENT ALGORITHM FACTORY</div>
+          <h2>把库存预测算法从“代码片段”变成可验证、可沉淀的能力资产</h2>
+          <p>从自然语言需求开始，自动完成知识检索、候选规划、滚动回测、代码生成、安全验证、多轮修复、报告生成与知识图谱回写。</p>
+          <div class="flow"><div><b>需求理解</b><small>任务结构化</small></div><div><b>能力检索</b><small>图谱增强</small></div><div><b>方案比较</b><small>滚动回测</small></div><div><b>代码复刻</b><small>自动验证</small></div><div><b>经验沉淀</b><small>版本入图</small></div></div>
+        </div>
+        <div class="stats">
+          <article class="stat"><span>注册算法</span><strong id="countAlgorithms">--</strong><small>可执行预测能力</small></article>
+          <article class="stat"><span>评估指标</span><strong id="countMetrics">--</strong><small>统一验证口径</small></article>
+          <article class="stat"><span>验证配置</span><strong id="countProfiles">--</strong><small>不同业务目标</small></article>
+          <article class="stat"><span>知识图谱</span><strong id="countGraph">--</strong><small id="countEdges">-- 条关系</small></article>
+          <article class="stat"><span>历史运行</span><strong id="countRuns">--</strong><small>完整证据包</small></article>
+        </div>
+        <div class="grid">
+          <article class="card"><div class="card-head"><div><h3>最近运行</h3><p>点击记录可直接查看候选比较、验证矩阵和 Agent 时间线</p></div><button class="btn alt" data-jump="runs">查看全部</button></div><div class="runs" id="recentRuns"></div></article>
+          <article class="card"><div class="card-head"><div><h3>当前能力资产</h3><p>内置算法与统一指标注册表</p></div></div><div class="chips" id="algorithmChips"></div><div style="height:14px"></div><div class="chips" id="metricChips"></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-factory">
+        <div class="section-title"><h2>完整 Agent 能力工厂</h2><p>输入业务需求，执行能力抽取—候选比较—代码生成—验证修复—知识沉淀全流程。</p></div>
+        <div class="grid">
+          <article class="card">
+            <form id="runForm">
+              <label><span>自然语言任务描述</span><textarea name="description">为商品 3424 在仓库 1 预测未来14天目标库存</textarea></label>
+              <div class="row"><label><span>业务数据路径</span><input name="data_path" value="examples/data/cainiao_demo.csv"></label><label><span>验证任务类型</span><select name="task_type" id="runTaskType"></select></label></div>
+              <div class="row"><label><span>能力来源（每行一个，可选）</span><textarea name="capability_sources">examples/capabilities/moving_average.md</textarea></label><label><span>插件（每行一个，可选）</span><textarea name="plugins" placeholder="examples/plugins/stockout_priority.py:register"></textarea></label></div>
+              <div class="row"><label><span>追踪级别</span><select name="trace_level"><option value="full">full：候选代码逐一生成验证</option><option value="basic">basic：核心流程追踪</option><option value="off">off：不保存详细追踪</option></select></label><label><span>保留最近运行数</span><input type="number" name="keep_runs" value="10" min="1"></label></div>
+              <div class="actions"><button class="btn" type="submit">启动完整工作流</button></div>
+            </form>
+          </article>
+          <aside class="card activity"><div class="card-head"><div><h3>实时任务状态</h3><p>长任务完成后自动加载真实报告与 trace</p></div></div><div id="runActivity" class="empty"><div><b>Agent 已就绪</b><br>提交任务后，这里会显示执行状态与结果摘要。</div></div></aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-capability">
+        <div class="section-title"><h2>能力抽取与代码复刻</h2><p>从 Markdown、JSON 或 Python 中抽取 CapabilitySpec，再生成可运行代码并自动验证。</p></div>
+        <div class="grid equal">
+          <article class="card"><div class="card-head"><div><h3>能力抽取</h3><p>解析来源、记录哈希与证据，并可写入知识图谱</p></div></div><form id="extractForm"><label><span>来源路径（每行一个）</span><textarea name="sources">examples/capabilities/moving_average.md</textarea></label><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="update_knowledge" checked>抽取后更新知识图谱</label><div class="actions"><button class="btn" type="submit">开始抽取</button></div></form><div id="extractResult"></div></article>
+          <article class="card"><div class="card-head"><div><h3>能力复刻</h3><p>生成独立算法模块，执行接口、安全、稳定性和等价验证</p></div></div><form id="replicateForm"><label><span>能力来源</span><input name="sources" value="examples/capabilities/moving_average.md"></label><div class="row"><label><span>能力名称（多能力来源时填写）</span><input name="capability" placeholder="moving_average"></label><label><span>参考模型</span><input name="reference_model" value="moving_average"></label></div><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="approved">记录人工审核通过</label><div class="actions"><button class="btn" type="submit">生成并验证</button></div></form><div id="replicateResult"></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-benchmark">
+        <div class="section-title"><h2>候选算法自动比较</h2><p>按指定验证配置执行无时间泄漏的滚动回测，并自动选择最优方案。</p></div>
+        <div class="grid">
+          <article class="card"><form id="benchmarkForm"><div class="row"><label><span>数据路径</span><input name="data_path" value="examples/data/cainiao_demo.csv"></label><label><span>验证配置</span><select name="task_type" id="benchmarkTaskType"></select></label></div><div class="row three"><label><span>商品 ID</span><input type="number" name="item_id" value="3424"></label><label><span>仓库</span><input name="store_code" value="1"></label><label><span>预测周期</span><input type="number" name="horizon" value="14"></label></div><label><span>候选模型（每行一个；留空使用全部）</span><textarea name="models">last_value
+moving_average
+seasonal_naive
+croston
+ridge_lag</textarea></label><div class="actions"><button class="btn" type="submit">执行滚动回测</button></div></form></article>
+          <article class="card"><div class="card-head"><div><h3>比较结果</h3><p>主指标和业务成本会同时展示</p></div></div><div id="benchmarkResult" class="empty">尚未执行回测。</div></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-runs">
+        <div class="section-title"><h2>运行结果与审计证据</h2><p>每次运行都保留候选方案、代码验证、修复记录、报告和工具调用时间线。</p></div>
+        <div class="grid">
+          <article class="card"><div class="card-head"><div><h3>历史运行</h3><p>最近 20 次任务</p></div><button class="btn alt" id="refreshRuns">刷新</button></div><div class="runs" id="allRuns"></div></article>
+          <article class="card"><div class="card-head"><div><h3>运行详情</h3><p id="detailHint">请选择一条运行记录</p></div></div><div id="runDetail" class="empty">候选算法比较和验证证据将在这里呈现。</div></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-graph">
+        <div class="section-title"><h2>能力知识图谱</h2><p>查看算法、需求画像、指标、验证运行、失败案例、修复策略和能力版本之间的关系。</p></div>
+        <iframe class="graph-frame" id="graphFrame" title="库存算法能力知识图谱"></iframe>
+      </section>
+
+      <section class="view" id="view-extensions">
+        <div class="section-title"><h2>插件与验证配置</h2><p>统一注册表让新指标和任务验证策略无需修改核心工作流即可接入。</p></div>
+        <div class="grid equal"><article class="card"><div class="card-head"><div><h3>验证配置</h3><p>不同业务目标使用不同主指标、决胜指标和回测要求</p></div></div><div id="profileCards"></div></article><article class="card"><div class="card-head"><div><h3>指标与算法</h3><p>当前可执行的扩展点</p></div></div><h4>指标</h4><div class="chips" id="extensionMetrics"></div><h4>算法</h4><div class="chips" id="extensionAlgorithms"></div><div class="notice" style="margin-top:18px">可通过可信本地插件注册自定义指标和验证配置；插件执行普通 Python 代码，只应加载已审核文件。</div></article></div>
+        <article class="card" style="margin-top:20px">
+          <div class="card-head"><div><h3>算法能力版本管理</h3><p>查看验证证据、指标变化和版本血缘，并执行发布或回滚</p></div></div>
+          <div class="row">
+            <label><span>模型</span><select id="versionModel"></select></label>
+            <div class="actions" style="align-items:end;justify-content:start"><button class="btn alt" id="loadVersions">加载版本</button></div>
+          </div>
+          <div id="versionResult" style="margin-top:16px" class="empty">选择模型后加载版本记录。</div>
+        </article>
+      </section>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  const state = { overview: null, graphLoaded: false };
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt = (value, digits=2) => value == null ? "—" : Number(value).toFixed(digits);
+  const lines = value => String(value || "").split(/\n/).map(x=>x.trim()).filter(Boolean);
+  function toast(message, error=false) { const el=$("toast"); el.textContent=message; el.style.background=error?"#a92c35":"#17243a"; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),3200); }
+  async function api(path, options={}) { const response=await fetch(path,{headers:{'Content-Type':'application/json'},...options}); const data=await response.json(); if(!response.ok) throw new Error(data.error||`HTTP ${response.status}`); return data; }
+  function formObject(form) { const data=new FormData(form), out={}; for(const [key,value] of data) out[key]=value; form.querySelectorAll('input[type=checkbox]').forEach(x=>out[x.name]=x.checked); return out; }
+  function setBusy(form,busy,text="处理中……") { const button=form.querySelector('button[type=submit]'); if(!button)return; if(!button.dataset.label)button.dataset.label=button.textContent; button.disabled=busy; button.textContent=busy?text:button.dataset.label; }
+  function navigate(name) {
+    document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===`view-${name}`));
+    document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===name));
+    const labels={overview:"系统总览",factory:"完整能力工厂",capability:"能力抽取与复刻",benchmark:"算法回测比较",runs:"运行证据",graph:"知识图谱",extensions:"插件与配置"};
+    $("pageTitle").textContent=labels[name]; $("sidebar").classList.remove("open");
+    if(name==="graph"&&!state.graphLoaded){ $("graphFrame").src="/graph"; state.graphLoaded=true; }
+  }
+  document.querySelectorAll("[data-view]").forEach(x=>x.onclick=()=>navigate(x.dataset.view));
+  document.querySelectorAll("[data-jump]").forEach(x=>x.onclick=()=>navigate(x.dataset.jump));
+  $("menu").onclick=()=>$("sidebar").classList.toggle("open");
+
+  function renderRunList(target,runs) {
+    target.innerHTML=runs.length?runs.map(run=>`<div class="run" data-run="${esc(run.id)}"><div><b>${esc(run.selected_model||run.description||run.id)}</b><small>${esc(run.id)} · ${esc(run.task_type||"未生成报告")}</small></div><div><span class="badge">${esc(run.status)}</span><small style="display:block;text-align:right">${run.target_inventory==null?"":fmt(run.target_inventory)}</small></div></div>`).join(""):`<div class="empty">暂无运行记录</div>`;
+    target.querySelectorAll("[data-run]").forEach(x=>x.onclick=()=>loadRun(x.dataset.run,true));
+  }
+  function renderOverview(data) {
+    state.overview=data; const c=data.counts;
+    $("countAlgorithms").textContent=c.algorithms; $("countMetrics").textContent=c.metrics; $("countProfiles").textContent=c.validation_profiles; $("countGraph").textContent=c.graph_nodes; $("countEdges").textContent=`${c.graph_edges} 条关系`; $("countRuns").textContent=c.runs;
+    $("llmMode").textContent=data.project.llm_mode.toUpperCase(); $("modelName").textContent=data.project.model; $("sideMode").textContent=`${data.project.llm_mode.toUpperCase()} LLM · ${data.project.model}`;
+    $("algorithmChips").innerHTML=data.algorithms.map(x=>`<span class="chip">算法 · ${esc(x.name)}</span>`).join("");
+    $("metricChips").innerHTML=data.metrics.map(x=>`<span class="chip">指标 · ${esc(x)}</span>`).join("");
+    renderRunList($("recentRuns"),data.recent_runs);
+    const options=data.validation_profiles.map(x=>`<option value="${esc(x.name)}">${esc(x.name)} · ${esc(x.primary_metric)}</option>`).join("");
+    $("runTaskType").innerHTML=options; $("benchmarkTaskType").innerHTML=options;
+    $("profileCards").innerHTML=data.validation_profiles.map(x=>`<div class="run"><div><b>${esc(x.name)}</b><small>${esc(x.description)}</small></div><div><span class="badge">${esc(x.primary_metric)}</span><small style="display:block">${x.folds} folds</small></div></div>`).join("");
+    $("extensionMetrics").innerHTML=data.metrics.map(x=>`<span class="chip">${esc(x)}</span>`).join("");
+    $("extensionAlgorithms").innerHTML=data.algorithms.map(x=>`<span class="chip">${esc(x.name)}</span>`).join("");
+    $("versionModel").innerHTML=data.algorithms.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join("");
+  }
+  async function loadOverview(){ try{ renderOverview(await api("/api/overview")); }catch(error){ toast(error.message,true); } }
+  async function loadRuns(){ try{ const data=await api("/api/runs"); renderRunList($("allRuns"),data.runs); }catch(error){ toast(error.message,true); } }
+  async function loadRun(id,jump=false) {
+    if(jump)navigate("runs"); $("runDetail").innerHTML='<div class="empty"><div class="spinner"></div><br>正在读取运行证据……</div>';
+    try {
+      const data=await api(`/api/runs/${encodeURIComponent(id)}`), report=data.report||{}, bench=report.benchmark||{}, validation=report.code_validation||{}, candidates=bench.candidates||[], events=data.events||[];
+      const max=Math.max(...candidates.map(x=>Number(x.metrics?.[report.validation_profile?.primary_metric]||0)),1);
+      $("detailHint").textContent=id;
+      $("runDetail").innerHTML=`<div class="result-summary"><div class="mini"><small>选中模型</small><strong>${esc(bench.selected_model)}</strong></div><div class="mini"><small>目标库存</small><strong>${fmt(bench.target_inventory)}</strong></div><div class="mini"><small>候选方案</small><strong>${candidates.length}</strong></div><div class="mini"><small>修复轮次</small><strong>${(report.repairs||[]).length}</strong></div></div>
+      <h4>自然语言设计依据</h4><div class="notice">${esc(report.plan?.rationale||"未记录设计依据")}</div><div class="chips" style="margin-top:10px">${(report.plan?.risks||[]).map(x=>`<span class="chip">风险 · ${esc(x)}</span>`).join("")}</div>
+      <h4>候选模型比较</h4><table><thead><tr><th>模型</th><th>${esc(report.validation_profile?.primary_metric||"主指标")}</th><th>库存成本</th><th>相对表现</th></tr></thead><tbody>${candidates.map(x=>{const v=Number(x.metrics?.[report.validation_profile?.primary_metric]||0);return`<tr><td><b>${esc(x.model)}</b></td><td>${fmt(v,4)}</td><td>${fmt(x.metrics?.inventory_cost)}</td><td><div class="bar"><i style="width:${Math.max(4,100-v/max*85)}%"></i></div></td></tr>`}).join("")}</tbody></table>
+      <h4>代码验证</h4><div class="chips">${Object.entries(validation.checks||{}).map(([k,v])=>`<span class="chip" style="${v?'color:#147744;background:#e6f8ef':'color:#a9282d;background:#ffecee'}">${esc(k)} · ${v?"通过":"失败"}</span>`).join("")}</div>
+      <h4>Agent 时间线（${events.length} 个事件）</h4><div class="timeline">${events.map(e=>`<div class="event"><div class="event-index">${e.sequence}</div><div class="event-body"><b>${esc(e.stage)} · ${esc(e.component)}</b><small>${esc(e.action)} · ${esc(e.status)}</small></div></div>`).join("")}</div>`;
+    } catch(error){ $("runDetail").innerHTML=`<div class="notice error">${esc(error.message)}</div>`; }
+  }
+
+  $("runForm").onsubmit=async event=>{
+    event.preventDefault(); const form=event.currentTarget, payload=formObject(form); payload.capability_sources=lines(payload.capability_sources); payload.plugins=lines(payload.plugins); payload.keep_runs=Number(payload.keep_runs);
+    setBusy(form,true,"Agent 正在执行……"); $("runActivity").innerHTML='<div class="empty"><div><div class="spinner" style="margin:auto"></div><br><b>正在执行完整能力闭环</b><br>候选代码验证可能需要数秒，请勿关闭页面。</div></div>';
+    try{const result=await api("/api/run",{method:"POST",body:JSON.stringify(payload)}); $("runActivity").innerHTML=`<div class="notice"><b>运行成功：${esc(result.selected_model)}</b><br>目标库存 ${fmt(result.target_inventory)} · ${result.candidate_count} 个候选 · ${result.repairs} 次修复<br><button class="btn alt" style="margin-top:12px" id="openNewRun">查看完整证据</button></div>`; $("openNewRun").onclick=()=>loadRun(result.run_id,true); toast("完整 Agent 工作流执行成功"); await loadOverview(); await loadRuns();}catch(error){$("runActivity").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;toast(error.message,true);}finally{setBusy(form,false);}
+  };
+  $("benchmarkForm").onsubmit=async event=>{
+    event.preventDefault(); const form=event.currentTarget,payload=formObject(form); payload.models=lines(payload.models); payload.item_id=Number(payload.item_id); payload.horizon=Number(payload.horizon); setBusy(form,true,"正在回测……"); $("benchmarkResult").innerHTML='<div class="empty"><div class="spinner"></div></div>';
+    try{const r=await api("/api/benchmark",{method:"POST",body:JSON.stringify(payload)}), metric=r.validation_profile.primary_metric, max=Math.max(...r.candidates.map(x=>Number(x.metrics[metric])),1); $("benchmarkResult").innerHTML=`<div class="notice"><b>推荐模型：${esc(r.selected_model)}</b><br>主指标：${esc(metric)} · 目标库存：${fmt(r.target_inventory)}</div><table><thead><tr><th>模型</th><th>${esc(metric)}</th><th>WAPE</th><th>表现</th></tr></thead><tbody>${r.candidates.map(x=>{const v=Number(x.metrics[metric]);return`<tr><td><b>${esc(x.model)}</b></td><td>${fmt(v,4)}</td><td>${fmt(x.metrics.wape,4)}</td><td><div class="bar"><i style="width:${Math.max(5,100-v/max*85)}%"></i></div></td></tr>`}).join("")}</tbody></table>`;toast("候选算法比较完成");}catch(error){$("benchmarkResult").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;}finally{setBusy(form,false);}
+  };
+  $("extractForm").onsubmit=async event=>{event.preventDefault();const form=event.currentTarget,p=formObject(form);p.sources=lines(p.sources);setBusy(form,true);try{const r=await api("/api/extract",{method:"POST",body:JSON.stringify(p)});$("extractResult").innerHTML=`<div class="notice" style="margin-top:16px">成功抽取 <b>${r.count}</b> 项能力，并记录函数入口、依赖与源码证据。</div><div style="max-height:360px;overflow:auto"><table><thead><tr><th>能力</th><th>类型</th><th>入口</th><th>外部依赖</th><th>内部调用</th></tr></thead><tbody>${r.capabilities.map(x=>`<tr><td><b>${esc(x.name)}</b><br><small>${esc(x.description)}</small></td><td>${esc(x.implementation_kind)}</td><td>${esc((x.entrypoints||[]).join(", ")||"-")}</td><td>${esc((x.dependencies||[]).join(", ")||"-")}</td><td>${esc((x.internal_dependencies||[]).join(", ")||"-")}</td></tr>`).join("")}</tbody></table></div>`;toast("能力抽取完成");}catch(error){$("extractResult").innerHTML=`<div class="notice error" style="margin-top:16px">${esc(error.message)}</div>`;}finally{setBusy(form,false);}};
+  $("replicateForm").onsubmit=async event=>{event.preventDefault();const form=event.currentTarget,p=formObject(form);p.sources=lines(p.sources);setBusy(form,true);try{const r=await api("/api/replicate",{method:"POST",body:JSON.stringify(p)});$("replicateResult").innerHTML=`<div class="notice" style="margin-top:16px"><b>${esc(r.capability)}</b> 复刻完成<br>验证：${r.validation.valid?"通过":"失败"} · 状态：${esc(r.review.status)}</div>`;toast("能力复刻与验证完成");}catch(error){$("replicateResult").innerHTML=`<div class="notice error" style="margin-top:16px">${esc(error.message)}</div>`;}finally{setBusy(form,false);}};
+  $("refreshRuns").onclick=loadRuns;
+  async function loadVersions() {
+    const model=$("versionModel").value; $("versionResult").innerHTML='<div class="empty"><div class="spinner"></div></div>';
+    try {
+      const data=await api(`/api/versions?model=${encodeURIComponent(model)}`);
+      if(!data.versions.length){$("versionResult").innerHTML='<div class="notice">该模型还没有运行生成的能力版本。请先执行一次完整工作流。</div>';return;}
+      $("versionResult").innerHTML=`<table><thead><tr><th>版本</th><th>语义版本</th><th>状态</th><th>验证</th><th>父版本</th><th>操作</th></tr></thead><tbody>${data.versions.map(v=>`<tr><td><code>${esc(v.id.split(":").pop())}</code></td><td>${esc(v.capability_version||"-")}</td><td><span class="badge">${esc(v.lifecycle_status||"candidate")}</span></td><td>${v.validated?"通过":"未通过"} · ${v.validation_count||0} 次</td><td><small>${esc((v.parent_version||"-").split(":").pop())}</small></td><td><button class="btn alt version-action" data-action="promote" data-version="${esc(v.id)}">发布</button> <button class="btn alt version-action" data-action="rollback" data-version="${esc(v.id)}">回滚</button></td></tr>`).join("")}</tbody></table><div class="notice" style="margin-top:12px">生命周期事件：${data.events.length} 条。版本比较还可通过 CLI 的 <code>versions compare</code> 查看逐字段和指标差异。</div>`;
+      document.querySelectorAll(".version-action").forEach(button=>button.onclick=async()=>{try{await api("/api/versions",{method:"POST",body:JSON.stringify({model,action:button.dataset.action,version:button.dataset.version})});toast(`版本${button.dataset.action==="promote"?"发布":"回滚"}成功`);loadVersions();}catch(error){toast(error.message,true);}});
+    } catch(error){$("versionResult").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;}
+  }
+  $("loadVersions").onclick=loadVersions;
+  loadOverview(); loadRuns();
+</script>
+</body>
+</html>

@@ -91,7 +91,7 @@ class CapabilityExtractionAgent:
         path = Path(output)
         path.parent.mkdir(parents=True, exist_ok=True)
         payload = {
-            "schema_version": "1.1",
+            "schema_version": "1.2",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "count": len(capabilities),
             "scan_reports": scan_reports or [],

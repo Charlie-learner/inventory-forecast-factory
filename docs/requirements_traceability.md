@@ -83,3 +83,10 @@ ruff check inventory_agent tests scripts
 [`docs/advanced_requirements_audit.md`](advanced_requirements_audit.md)。
 本轮新增了第三类内置验证配置、自然语言间歇需求识别、CLI 任务配置覆盖、
 可信本地指标插件加载、插件检查命令，以及报告中的插件与多轮修复证据。
+
+项目现已同时提供可运行的 Web 可视化工作台，启动和页面功能说明见
+[`docs/web_interface.md`](web_interface.md)。Web 页面覆盖完整工作流、能力抽取与
+复刻、候选算法回测、运行证据、知识图谱和插件配置，并直接调用现有后端实现。
+
+真实仓库函数与依赖抽取、失败根因经验、能力版本生命周期和自然语言设计依据的实现
+说明见 [`docs/capability_lifecycle_features.md`](capability_lifecycle_features.md)。

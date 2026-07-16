@@ -55,6 +55,10 @@ def test_planner_uses_demand_profile_and_baseline():
     )
     assert "croston" in plan.candidates
     assert "last_value" in plan.candidates
+    assert "滚动回测" in plan.rationale
+    assert plan.design_basis["business_goal"]["objective"] == request.objective
+    assert plan.design_basis["knowledge_evidence"]
+    assert plan.risks
 
 
 def test_planner_keeps_non_executable_extraction_out_of_automatic_benchmark():

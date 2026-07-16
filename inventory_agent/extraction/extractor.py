@@ -28,9 +28,13 @@ class CapabilityExtractor:
         ".venv",
         "__pycache__",
         "build",
+        "candidate_solutions",
         "dist",
+        "generated",
+        "generated_versions",
         "node_modules",
         "artifacts",
+        "tests",
     }
 
     def __init__(self, max_repository_files: int = 1000) -> None:
@@ -72,11 +76,16 @@ class CapabilityExtractor:
                 source_type="json",
             )
         if suffix == ".py":
-            return self._extract_python(path, text, source_hash)
+            return self._extract_python(
+                path,
+                text,
+                source_hash,
+                function_prefix=path.stem,
+            )
         return self._extract_document(path, text, source_hash)
 
     def _extract_repository(self, root: Path) -> list[CapabilitySpec]:
-        """Recursively scan a local repository for ForecastModel implementations."""
+        """Recursively scan a local repository for classes and public functions."""
 
         candidates = []
         for path in root.rglob("*.py"):
@@ -95,13 +104,22 @@ class CapabilityExtractor:
         capabilities: list[CapabilitySpec] = []
         errors = []
         matched_files = 0
+        function_count = 0
+        class_count = 0
+        dependency_edges = 0
         for path in sorted(candidates):
             try:
                 text = path.read_text(encoding="utf-8")
                 source_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
-                extracted = self._extract_python(path, text, source_hash)
+                module_prefix = "__".join(path.relative_to(root).with_suffix("").parts)
+                extracted = self._extract_python(
+                    path,
+                    text,
+                    source_hash,
+                    function_prefix=module_prefix,
+                )
             except ValueError as exc:
-                if str(exc).startswith("No ForecastModel subclasses found"):
+                if str(exc).startswith("No extractable Python capabilities found"):
                     continue
                 errors.append({"path": str(path), "error": f"ValueError: {exc}"})
                 continue
@@ -111,6 +129,15 @@ class CapabilityExtractor:
                 )
                 continue
             matched_files += 1
+            function_count += sum(
+                item.implementation_kind == "function" for item in extracted
+            )
+            class_count += sum(
+                item.implementation_kind == "forecast_model" for item in extracted
+            )
+            dependency_edges += sum(
+                len(item.internal_dependencies) for item in extracted
+            )
             capabilities.extend(extracted)
 
         self.last_scan_report = {
@@ -119,6 +146,9 @@ class CapabilityExtractor:
             "files_scanned": len(candidates),
             "files_matched": matched_files,
             "capabilities_found": len(capabilities),
+            "functions_found": function_count,
+            "forecast_models_found": class_count,
+            "internal_dependency_edges": dependency_edges,
             "errors": errors,
         }
         if not capabilities:
@@ -219,6 +249,17 @@ class CapabilityExtractor:
             extraction_warnings=self._string_tuple(
                 record.get("extraction_warnings")
             ),
+            implementation_kind=str(
+                record.get("implementation_kind", "algorithm")
+            ).strip(),
+            entrypoints=self._string_tuple(record.get("entrypoints")),
+            internal_dependencies=self._string_tuple(
+                record.get("internal_dependencies")
+            ),
+            complexity={
+                str(key): int(value)
+                for key, value in dict(record.get("complexity", {})).items()
+            },
         )
 
     def _extract_document(
@@ -246,10 +287,37 @@ class CapabilityExtractor:
         )
 
     def _extract_python(
-        self, path: Path, text: str, source_hash: str
+        self,
+        path: Path,
+        text: str,
+        source_hash: str,
+        function_prefix: str,
     ) -> list[CapabilitySpec]:
         tree = ast.parse(text)
         import_roots = self._import_roots(tree)
+        local_function_nodes = {
+            node.name: node
+            for node in tree.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        local_functions = set(local_function_nodes)
+
+        def transitive_dependencies(
+            function_name: str, visited: set[str] | None = None
+        ) -> tuple[str, ...]:
+            visited = set(visited or ())
+            if function_name in visited:
+                return ()
+            visited.add(function_name)
+            function_node = local_function_nodes[function_name]
+            dependencies = set(
+                self._node_dependencies(function_node, import_roots)
+            )
+            for called in self._internal_calls(
+                function_node, local_functions - {function_name}
+            ):
+                dependencies.update(transitive_dependencies(called, visited))
+            return tuple(sorted(dependencies))
         specs = []
         for node in tree.body:
             if not isinstance(node, ast.ClassDef) or not self._is_forecast_model(node):
@@ -280,11 +348,199 @@ class CapabilityExtractor:
                         f"{path}:{node.lineno}",
                         f"{path}:{node.end_lineno or node.lineno}",
                     ),
+                    implementation_kind="forecast_model",
+                    entrypoints=tuple(
+                        f"{node.name}.{method.name}"
+                        for method in node.body
+                        if isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef))
+                        and method.name != "__init__"
+                        and not method.name.startswith("_")
+                    ),
+                    internal_dependencies=self._internal_calls(
+                        node,
+                        {
+                            method.name
+                            for method in node.body
+                            if isinstance(
+                                method, (ast.FunctionDef, ast.AsyncFunctionDef)
+                            )
+                        },
+                    ),
+                    complexity=self._complexity(node),
+                )
+            )
+        for node in tree.body:
+            if (
+                not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                or node.name.startswith("_")
+                or not ast.get_docstring(node)
+            ):
+                continue
+            capability_name = self._safe_symbol_name(
+                f"{function_prefix}__{node.name}"
+            )
+            signature = self._function_signature(node)
+            return_contract = self._return_contract(node)
+            specs.append(
+                CapabilitySpec(
+                    name=capability_name,
+                    task_type="repository_function",
+                    description=self._function_description(node),
+                    template_name="manual_integration",
+                    input_contract=signature,
+                    output_contract=return_contract,
+                    suitable_for=(),
+                    metrics=(),
+                    dependencies=transitive_dependencies(node.name),
+                    parameters=self._function_defaults(node),
+                    source_type="python",
+                    source_ref=f"{path}:{node.lineno}",
+                    source_hash=source_hash,
+                    extracted_by="python_ast",
+                    source_title=path.name,
+                    confidence=0.85,
+                    review_status="review_required",
+                    evidence_refs=(
+                        f"{path}:{node.lineno}",
+                        f"{path}:{node.end_lineno or node.lineno}",
+                    ),
+                    extraction_warnings=(
+                        "Repository function requires capability review before execution.",
+                    ),
+                    implementation_kind="function",
+                    entrypoints=(node.name,),
+                    internal_dependencies=self._internal_calls(
+                        node, local_functions - {node.name}
+                    ),
+                    complexity=self._complexity(node),
                 )
             )
         if not specs:
-            raise ValueError(f"No ForecastModel subclasses found in {path}")
+            raise ValueError(f"No extractable Python capabilities found in {path}")
         return specs
+
+    @staticmethod
+    def _safe_symbol_name(value: str) -> str:
+        """Convert a repository-qualified symbol into a domain-safe identifier."""
+
+        safe = re.sub(r"[^A-Za-z0-9_]+", "_", value).strip("_")
+        return safe or "repository_function"
+
+    @staticmethod
+    def _node_dependencies(
+        node: ast.AST, import_roots: dict[str, str]
+    ) -> tuple[str, ...]:
+        used_names = {
+            child.id for child in ast.walk(node) if isinstance(child, ast.Name)
+        }
+        return tuple(
+            sorted(
+                {
+                    import_roots[name]
+                    for name in used_names
+                    if name in import_roots
+                }
+            )
+        )
+
+    @staticmethod
+    def _internal_calls(node: ast.AST, local_symbols: set[str]) -> tuple[str, ...]:
+        calls = set()
+        for child in ast.walk(node):
+            if not isinstance(child, ast.Call):
+                continue
+            if isinstance(child.func, ast.Name) and child.func.id in local_symbols:
+                calls.add(child.func.id)
+            elif (
+                isinstance(child.func, ast.Attribute)
+                and child.func.attr in local_symbols
+            ):
+                calls.add(child.func.attr)
+        return tuple(sorted(calls))
+
+    @staticmethod
+    def _complexity(node: ast.AST) -> dict[str, int]:
+        """Return small static indicators useful during capability review."""
+
+        branches = sum(
+            isinstance(child, (ast.If, ast.IfExp, ast.Match)) for child in ast.walk(node)
+        )
+        loops = sum(
+            isinstance(child, (ast.For, ast.AsyncFor, ast.While))
+            for child in ast.walk(node)
+        )
+        calls = sum(isinstance(child, ast.Call) for child in ast.walk(node))
+        return {
+            "lines": max(
+                int(getattr(node, "end_lineno", node.lineno)) - int(node.lineno) + 1,
+                1,
+            ),
+            "branches": branches,
+            "loops": loops,
+            "calls": calls,
+        }
+
+    @staticmethod
+    def _function_signature(node: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
+        arguments = []
+        positional = [*node.args.posonlyargs, *node.args.args]
+        for argument in positional:
+            annotation = (
+                ast.unparse(argument.annotation) if argument.annotation else "Any"
+            )
+            arguments.append(f"{argument.arg}: {annotation}")
+        if node.args.vararg:
+            arguments.append(f"*{node.args.vararg.arg}")
+        for argument in node.args.kwonlyargs:
+            annotation = (
+                ast.unparse(argument.annotation) if argument.annotation else "Any"
+            )
+            arguments.append(f"{argument.arg}: {annotation}")
+        if node.args.kwarg:
+            arguments.append(f"**{node.args.kwarg.arg}")
+        return f"{node.name}({', '.join(arguments)})"
+
+    @staticmethod
+    def _return_contract(node: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
+        if node.returns:
+            return f"Returns {ast.unparse(node.returns)}"
+        returns_value = any(
+            isinstance(child, ast.Return) and child.value is not None
+            for child in ast.walk(node)
+        )
+        return "Returns an implementation-defined value" if returns_value else "Returns None"
+
+    @staticmethod
+    def _function_description(
+        node: ast.FunctionDef | ast.AsyncFunctionDef,
+    ) -> str:
+        docstring = ast.get_docstring(node) or ""
+        summary = docstring.strip().splitlines()[0].strip()
+        kind = "Asynchronous function" if isinstance(node, ast.AsyncFunctionDef) else "Function"
+        return summary or f"{kind} {node.name} extracted from a real code repository."
+
+    @staticmethod
+    def _function_defaults(
+        node: ast.FunctionDef | ast.AsyncFunctionDef,
+    ) -> dict[str, Any]:
+        names = [argument.arg for argument in [*node.args.posonlyargs, *node.args.args]]
+        offset = len(names) - len(node.args.defaults)
+        values: dict[str, Any] = {}
+        for index, default in enumerate(node.args.defaults, start=offset):
+            try:
+                values[names[index]] = ast.literal_eval(default)
+            except (ValueError, TypeError):
+                values[names[index]] = ast.unparse(default)
+        for argument, default in zip(
+            node.args.kwonlyargs, node.args.kw_defaults, strict=True
+        ):
+            if default is None:
+                continue
+            try:
+                values[argument.arg] = ast.literal_eval(default)
+            except (ValueError, TypeError):
+                values[argument.arg] = ast.unparse(default)
+        return values
 
     @staticmethod
     def _import_roots(tree: ast.Module) -> dict[str, str]:

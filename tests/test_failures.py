@@ -19,3 +19,7 @@ def test_safety_failure_is_not_automatically_retryable():
 
     assert analysis.category == "safety"
     assert not analysis.retryable
+    assert analysis.severity == "critical"
+    assert analysis.likely_stage == "security_validation"
+    assert "危险调用" in analysis.root_cause
+    assert "停止自动执行" in analysis.recommended_actions

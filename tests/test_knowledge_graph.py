@@ -65,8 +65,47 @@ def test_successful_repair_experience_is_retrievable_by_failure_category():
     assert len(experiences) == 1
     assert experiences[0]["fingerprint"] == "runtime123"
     assert "safe moving-average" in experiences[0]["strategy"]
+    assert experiences[0]["success_rate"] == 1.0
     failure_node = graph.graph.nodes["failure:runtime123"]
     assert failure_node["occurrence_count"] == 1
+
+
+def test_repair_strategy_accumulates_reusable_success_statistics():
+    graph = CapabilityKnowledgeGraph.bootstrap()
+    failure = {
+        "category": "runtime",
+        "fingerprint": "runtime-shape",
+        "normalized_error": "runtime: shape mismatch at line <n>",
+        "retryable": True,
+        "root_cause": "输入形状不符合算法要求。",
+        "recommended_actions": ["补充输入清洗"],
+    }
+    strategy = "第 1 轮修复：补充输入清洗后回退安全模板"
+    graph.record_validation(
+        1,
+        "1",
+        "moving_average",
+        {"inventory_cost": 4.0},
+        status="failure",
+        repair=strategy,
+        failure_history=[failure],
+    )
+    graph.record_validation(
+        1,
+        "1",
+        "moving_average",
+        {"inventory_cost": 2.0},
+        status="success",
+        repair=strategy,
+        failure_history=[failure],
+    )
+
+    experience = graph.repair_experience("moving_average", "runtime")[0]
+
+    assert experience["attempt_count"] == 2
+    assert experience["success_count"] == 1
+    assert experience["success_rate"] == 0.5
+    assert experience["root_cause"] == "输入形状不符合算法要求。"
 
 
 def test_capability_versions_can_be_compared_promoted_and_rolled_back():
@@ -88,16 +127,28 @@ def test_capability_versions_can_be_compared_promoted_and_rolled_back():
         "generated_path": "second.py",
     }
     graph.record_validation(
-        1, "1", "moving_average", {"inventory_cost": 2.0}, capability_version=first
+        1,
+        "1",
+        "moving_average",
+        {"inventory_cost": 2.0, "wape": 0.4},
+        validation_checks={"syntax": True},
+        capability_version=first,
     )
     graph.record_validation(
-        1, "1", "moving_average", {"inventory_cost": 1.5}, capability_version=second
+        1,
+        "1",
+        "moving_average",
+        {"inventory_cost": 1.5, "wape": 0.3},
+        validation_checks={"syntax": True, "equivalence": True},
+        capability_version=second,
     )
 
     versions = graph.capability_versions("moving_average")
     assert len(versions) == 2
     comparison = graph.compare_versions("moving_average", "a" * 12, "b" * 12)
     assert comparison["differences"]["spec_hash"]["left"] == "1" * 64
+    assert comparison["metric_differences"]["inventory_cost"]["delta"] == -0.5
+    assert comparison["validation"]["right"]["checks"]["equivalence"]
 
     graph.promote_version("moving_average", "b" * 12)
     assert graph.graph.nodes["version:moving_average:bbbbbbbbbbbb"][
@@ -108,6 +159,7 @@ def test_capability_versions_can_be_compared_promoted_and_rolled_back():
         "lifecycle_status"
     ] == "active"
     assert graph.graph.nodes[event]["action"] == "rollback"
+    assert len(graph.version_events("moving_average")) == 2
 
 
 def test_ingestion_replaces_stale_source_artifact_for_the_same_file():

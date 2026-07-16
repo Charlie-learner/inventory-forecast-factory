@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import json
+import mimetypes
 import threading
 import webbrowser
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from inventory_agent.config import Settings
 from inventory_agent.web.app import WebApplication, WebRequestError
@@ -79,12 +80,36 @@ def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
                         (ASSET_ROOT / "index.html").read_bytes(),
                         "text/html; charset=utf-8",
                     )
+                elif path.startswith("/static/"):
+                    asset_path = (
+                        ASSET_ROOT / path.removeprefix("/static/")
+                    ).resolve()
+                    if ASSET_ROOT.resolve() not in asset_path.parents:
+                        raise WebRequestError(
+                            "非法静态资源路径。", HTTPStatus.NOT_FOUND
+                        )
+                    if not asset_path.is_file():
+                        raise WebRequestError(
+                            "静态资源不存在。", HTTPStatus.NOT_FOUND
+                        )
+                    content_type = mimetypes.guess_type(asset_path.name)[0]
+                    self._send(
+                        asset_path.read_bytes(),
+                        f"{content_type or 'application/octet-stream'}; charset=utf-8",
+                    )
                 elif path == "/api/overview":
                     self._json(application.overview())
                 elif path == "/api/runs":
                     self._json({"runs": application.list_runs()})
                 elif path.startswith("/api/runs/"):
                     self._json(application.run_detail(path.rsplit("/", 1)[-1]))
+                elif path == "/api/versions":
+                    query = parse_qs(parsed.query)
+                    self._json(
+                        application.versions(
+                            str(query.get("model", [""])[0])
+                        )
+                    )
                 elif path == "/graph":
                     self._send(
                         application.graph_html(),
@@ -109,6 +134,8 @@ def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
                     self._json(application.extract(payload))
                 elif path == "/api/replicate":
                     self._json(application.replicate(payload))
+                elif path == "/api/versions":
+                    self._json(application.manage_version(payload))
                 else:
                     self._json({"error": "接口不存在。"}, HTTPStatus.NOT_FOUND)
             except Exception as exc:
