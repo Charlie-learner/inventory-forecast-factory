@@ -40,7 +40,8 @@ class PlanningAgent:
         if not names:
             raise ValueError("No executable forecasting capability is available")
         rationale = (
-            f"需求类型={profile['demand_type']}，零需求比例={profile['zero_ratio']:.2%}；"
-            f"从能力图谱检索 {', '.join(names)}，使用 {request.objective} 滚动验证。"
+            f"需求类型为 {profile['demand_type']}，零需求比例为 "
+            f"{profile['zero_ratio']:.2%}；从能力图谱检索 "
+            f"{', '.join(names)}，使用 {request.objective} 进行滚动验证。"
         )
         return AlgorithmPlan(tuple(names), rationale, request.objective)

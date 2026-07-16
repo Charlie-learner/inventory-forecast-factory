@@ -77,3 +77,9 @@ ruff check inventory_agent tests scripts
 ```
 
 以上状态只描述当前仓库已被代码和测试证明的能力，不把“可扩展设计”写成“已实现功能”。
+# 最新进阶要求核查
+
+八项进阶要求的逐项运行证据、改进内容和边界已整理到
+[`docs/advanced_requirements_audit.md`](advanced_requirements_audit.md)。
+本轮新增了第三类内置验证配置、自然语言间歇需求识别、CLI 任务配置覆盖、
+可信本地指标插件加载、插件检查命令，以及报告中的插件与多轮修复证据。

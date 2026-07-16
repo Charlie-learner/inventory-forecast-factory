@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import datetime, timezone
 import logging
 from pathlib import Path
@@ -28,7 +28,9 @@ from inventory_agent.forecasting.registry import default_registry
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 from inventory_agent.llm.client import create_llm
 from inventory_agent.observability.trace import RunRetentionManager, RunTraceRecorder
+from inventory_agent.plugins import load_plugins, plugin_manifest
 from inventory_agent.services.benchmark import benchmark_series
+from inventory_agent.validation.metrics import default_metric_registry
 from inventory_agent.validation.profiles import default_validation_profiles
 
 
@@ -42,6 +44,7 @@ class InventoryCapabilityWorkflow:
         self,
         settings: Settings | None = None,
         knowledge_path: str | Path = "artifacts/knowledge/capability_graph.json",
+        plugin_specs: list[str] | tuple[str, ...] | None = None,
     ):
         """Initialize agents, model registry, knowledge graph, and workflow."""
 
@@ -56,7 +59,13 @@ class InventoryCapabilityWorkflow:
         self.experience_agent = ExperienceAgent()
         self.report_agent = ReportAgent(self.llm)
         self.registry = default_registry()
+        self.metric_registry = default_metric_registry()
         self.validation_profiles = default_validation_profiles()
+        self.loaded_plugins = load_plugins(
+            plugin_specs,
+            self.metric_registry,
+            self.validation_profiles,
+        )
         self.knowledge_path = Path(knowledge_path)
         self.knowledge = (
             CapabilityKnowledgeGraph.load(self.knowledge_path)
@@ -76,7 +85,16 @@ class InventoryCapabilityWorkflow:
     def _parse(self, state: dict[str, Any]) -> dict[str, Any]:
         """Parse the natural-language request into a capability contract."""
 
-        state["request"] = self.requirement_agent.parse(state["description"])
+        request = self.requirement_agent.parse(state["description"])
+        task_type_override = state.get("task_type_override")
+        if task_type_override:
+            profile = self.validation_profiles.get(task_type_override)
+            request = replace(
+                request,
+                task_type=profile.name,
+                objective=profile.primary_metric,
+            )
+        state["request"] = request
         self._record_trace(
             state,
             stage="requirement_understanding",
@@ -241,6 +259,7 @@ class InventoryCapabilityWorkflow:
             costs=state["costs"],
             allow_missing=state["raw_data_source"],
             validation_profile=self.validation_profiles.get(request.task_type),
+            metric_registry=self.metric_registry,
             model_parameters=model_parameters,
         )
         state["selected_model"] = state["benchmark"]["selected_model"]
@@ -588,6 +607,11 @@ class InventoryCapabilityWorkflow:
                 "cost_b": "补多/积压成本",
             },
             "validation_profile": state["benchmark"]["validation_profile"],
+            "plugins": {
+                "loaded": plugin_manifest(self.loaded_plugins),
+                "available_metrics": self.metric_registry.names(),
+                "available_validation_profiles": self.validation_profiles.names(),
+            },
             "generated": {
                 "model": state["generated"].model,
                 "path": str(state["generated"].path),
@@ -665,6 +689,7 @@ class InventoryCapabilityWorkflow:
         capability_sources: list[str | Path] | None = None,
         trace_level: str = "basic",
         keep_runs: int = 10,
+        task_type_override: str | None = None,
     ) -> dict[str, Any]:
         """Run the capability factory for one natural-language request."""
 
@@ -688,6 +713,8 @@ class InventoryCapabilityWorkflow:
                 "capability_sources": capability_sources or [],
                 "trace_level": trace_level,
                 "keep_runs": keep_runs,
+                "task_type_override": task_type_override,
+                "plugins": plugin_manifest(self.loaded_plugins),
             },
             outputs={
                 "run_dir": run_dir,
@@ -703,6 +730,7 @@ class InventoryCapabilityWorkflow:
             "repairs": [],
             "capability_sources": [str(source) for source in capability_sources or []],
             "trace_level": trace_level,
+            "task_type_override": task_type_override,
             "_trace_recorder": trace,
         }
         logger.info("Starting capability workflow run_dir=%s", run_dir)

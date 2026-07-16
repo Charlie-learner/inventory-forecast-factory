@@ -12,6 +12,10 @@ def test_default_profiles_rank_different_task_objectives():
     profiles = default_validation_profiles()
     assert profiles.get("inventory_target").ranking_metrics[0] == "inventory_cost"
     assert profiles.get("demand_forecast").ranking_metrics[0] == "wape"
+    intermittent = profiles.get("intermittent_demand")
+    assert intermittent.ranking_metrics[0] == "mae"
+    assert intermittent.folds == 4
+    assert intermittent.min_history_days == 42
 
     low_cost = BacktestResult(
         "low_cost", 1, {"inventory_cost": 1.0, "wape": 0.5, "rmse": 5.0}, ()
@@ -40,4 +44,3 @@ def test_validation_profile_registry_supports_plugins():
     assert registry.get("custom").primary_metric == "smape"
     with pytest.raises(ValueError, match="already registered"):
         registry.register(ValidationProfile("custom", "wape", ()))
-

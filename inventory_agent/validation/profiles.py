@@ -61,7 +61,7 @@ class ValidationProfileRegistry:
 
 
 def default_validation_profiles() -> ValidationProfileRegistry:
-    """Build profiles for inventory-cost and forecast-accuracy tasks."""
+    """Build task profiles for inventory, accuracy, and intermittent demand."""
 
     registry = ValidationProfileRegistry()
     registry.register(
@@ -78,6 +78,18 @@ def default_validation_profiles() -> ValidationProfileRegistry:
             primary_metric="wape",
             tie_breakers=("rmse", "inventory_cost"),
             description="Prioritize daily demand forecast accuracy.",
+        )
+    )
+    registry.register(
+        ValidationProfile(
+            name="intermittent_demand",
+            primary_metric="mae",
+            tie_breakers=("inventory_cost", "wape"),
+            folds=4,
+            min_history_days=42,
+            description=(
+                "Use more origins and absolute error for sparse, zero-heavy demand."
+            ),
         )
     )
     return registry

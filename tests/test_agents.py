@@ -30,6 +30,14 @@ def test_requirement_agent_selects_accuracy_validation_profile():
     assert request.objective == "wape"
 
 
+def test_requirement_agent_selects_intermittent_validation_profile():
+    request = RequirementAgent().parse(
+        "为商品 3424 在仓库 1 预测未来14天间歇性备件需求，大量日期为零需求"
+    )
+    assert request.task_type == "intermittent_demand"
+    assert request.objective == "mae"
+
+
 def test_requirement_agent_rejects_unknown_llm_task_profile():
     request = RequirementAgent(_UnknownTaskLLM()).parse(
         "为商品 3424 在仓库 1 预测未来14天目标库存"

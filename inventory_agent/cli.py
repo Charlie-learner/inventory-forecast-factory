@@ -21,7 +21,9 @@ from inventory_agent.data.loader import (
 from inventory_agent.services.benchmark import benchmark_series
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 from inventory_agent.llm.client import create_llm
+from inventory_agent.plugins import load_plugins, plugin_manifest
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
+from inventory_agent.validation.metrics import default_metric_registry
 from inventory_agent.validation.profiles import default_validation_profiles
 
 
@@ -67,6 +69,13 @@ def _prepare_sample(args: argparse.Namespace, settings: Settings) -> int:
 def _benchmark(args: argparse.Namespace) -> int:
     """Backtest candidate models for one item/location and save a JSON report."""
 
+    metric_registry = default_metric_registry()
+    validation_profiles = default_validation_profiles()
+    loaded_plugins = load_plugins(
+        args.plugin,
+        metric_registry,
+        validation_profiles,
+    )
     source = Path(args.data)
     is_raw_source = source.is_dir() or source.suffix.lower() == ".zip"
     # Raw sources provide real A/B costs; standalone panel CSVs use neutral unit costs.
@@ -89,8 +98,10 @@ def _benchmark(args: argparse.Namespace) -> int:
         folds=args.folds,
         costs=costs,
         allow_missing=is_raw_source,
-        validation_profile=default_validation_profiles().get(args.task_type),
+        validation_profile=validation_profiles.get(args.task_type),
+        metric_registry=metric_registry,
     )
+    report["plugins"] = plugin_manifest(loaded_plugins)
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -101,13 +112,17 @@ def _benchmark(args: argparse.Namespace) -> int:
 def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
     """Run the complete natural-language Agent workflow and print its summary."""
 
-    result = InventoryCapabilityWorkflow(settings=settings).run(
+    result = InventoryCapabilityWorkflow(
+        settings=settings,
+        plugin_specs=args.plugin,
+    ).run(
         args.description,
         args.data,
         args.output_root,
         capability_sources=args.capability_source,
         trace_level=args.trace_level,
         keep_runs=args.keep_runs,
+        task_type_override=args.task_type,
     )
     print(
         json.dumps(
@@ -126,6 +141,27 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
                     result.get("candidate_code_solutions", [])
                 ),
                 "detailed_trace": result.get("trace_paths"),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0
+
+
+def _inspect_plugins(args: argparse.Namespace) -> int:
+    """Load trusted plugins and print the resulting extension registry."""
+
+    metric_registry = default_metric_registry()
+    validation_profiles = default_validation_profiles()
+    loaded = load_plugins(args.plugin, metric_registry, validation_profiles)
+    print(
+        json.dumps(
+            {
+                "loaded_plugins": plugin_manifest(loaded),
+                "metrics": metric_registry.names(),
+                "validation_profiles": validation_profiles.names(),
+                "security_note": "Only load reviewed local Python plugins.",
             },
             ensure_ascii=False,
             indent=2,
@@ -310,9 +346,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     benchmark.add_argument(
         "--task-type",
-        choices=default_validation_profiles().names(),
         default="inventory_target",
-        help="Validation policy used to rank candidate models",
+        help="Built-in or plugin validation policy used to rank candidate models",
+    )
+    benchmark.add_argument(
+        "--plugin",
+        action="append",
+        default=[],
+        help="Trusted module:callable or path.py:callable registration plugin",
     )
     benchmark.add_argument("--output", default="artifacts/benchmark_report.json")
 
@@ -324,6 +365,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Extracted Cainiao directory, original ZIP, or prepared panel CSV",
     )
     run.add_argument("--output-root", default="artifacts/runs")
+    run.add_argument(
+        "--task-type",
+        help="Override the validation profile inferred from the natural-language request",
+    )
+    run.add_argument(
+        "--plugin",
+        action="append",
+        default=[],
+        help="Trusted module:callable or path.py:callable registration plugin",
+    )
     run.add_argument(
         "--trace-level",
         choices=["off", "basic", "full"],
@@ -427,6 +478,17 @@ def build_parser() -> argparse.ArgumentParser:
     visualize.add_argument(
         "--output", default="artifacts/knowledge/capability_graph.html"
     )
+
+    plugins = subparsers.add_parser(
+        "plugins",
+        help="Inspect built-in and trusted local metric/validation plugins",
+    )
+    plugins.add_argument(
+        "--plugin",
+        action="append",
+        default=[],
+        help="Trusted module:callable or path.py:callable registration plugin",
+    )
     return parser
 
 
@@ -455,4 +517,6 @@ def main(argv: list[str] | None = None) -> int:
         return _manage_versions(args)
     if args.command == "visualize-graph":
         return _visualize_graph(args)
+    if args.command == "plugins":
+        return _inspect_plugins(args)
     raise SystemExit(f"Unknown command: {args.command}")
