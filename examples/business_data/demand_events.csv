@@ -1,0 +1,6 @@
+event_id,event_type,item_id,store_code,start_date,end_date,expected_effect
+promotion_1002,promotion,1002,all,2025-02-15,2025-02-19,demand uplift
+promotion_1005,promotion,1005,all,2025-04-01,2025-04-05,demand uplift
+stockout_1005_2,stockout,1005,2,2025-04-11,2025-04-13,observed sales lower than latent demand
+launch_1006,new_product_launch,1006,all,2025-05-01,2025-05-01,cold-start history begins
+promotion_1006,promotion,1006,all,2025-05-26,2025-05-30,new-product demand uplift

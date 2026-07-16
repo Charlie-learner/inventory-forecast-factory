@@ -19,12 +19,16 @@
 | `source_type` / `source_ref` | 来源类型和位置 |
 | `source_hash` | 原始来源 SHA-256 |
 | `extracted_by` | `python_ast`、`deterministic` 或 `llm` |
+| `source_title` / `source_url` / `source_license` | 外部资料标题、地址和使用说明 |
+| `accessed_at` | 外部资料访问日期 |
+| `confidence` / `review_status` | 抽取置信度和审核状态 |
+| `evidence_refs` / `extraction_warnings` | 字段证据位置和抽取边界 |
 
 ## 2. 支持的来源
 
 - JSON：单个对象、对象数组或带 `capabilities` 的对象。
 - Markdown/TXT：标题加 `key: value` 字段；示例见 `examples/capabilities/moving_average.md`。
-- Python 文件或本地仓库目录：递归 AST 扫描 `ForecastModel` 子类，忽略虚拟环境、缓存、构建和产物目录，抽取类名、模型名、文档字符串、构造参数默认值和导入依赖；结果附带扫描文件数、命中文件数和解析错误。
+- Python 文件或本地仓库目录：递归 AST 扫描 `ForecastModel` 子类，忽略虚拟环境、缓存、构建和产物目录，抽取类名、模型名、文档字符串、构造参数默认值、类级适用画像和该类实际引用的导入依赖；结果附带扫描文件数、命中文件数和解析错误。
 - API 模式：Markdown/TXT 优先由 LLM 规范化为 JSON；调用失败时回退确定性解析器。
 
 抽取与执行是两个不同状态：尚未接入本地 `ModelRegistry` 的新算法仍会作为 `Algorithm` 和 `SourceArtifact` 沉淀，但不会进入自动回测；完成实现注册或人工审核后才能成为可执行候选。这样既保留半自动扩展入口，也避免把“抽取到描述”误当成“算法已经可运行”。
@@ -39,6 +43,13 @@ python -m inventory_agent extract-capability \
 ```
 
 图谱会增加 `SourceArtifact` 节点和 `Algorithm -EXTRACTED_FROM-> SourceArtifact` 关系。
+
+仓库另提供两组提交版抽取结果：
+
+- `knowledge/extracted_capabilities.json`：从本地真实 Python 源码抽取；
+- `knowledge/extracted_external_capabilities.json`：从五份带权威来源的能力文档抽取。
+
+结构约束见 `knowledge/capability_spec.schema.json`。
 
 独立的半自动复刻入口：
 

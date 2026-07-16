@@ -1,0 +1,7 @@
+item_id,item_name,category_id,brand_id,supplier_id,launch_date,demand_pattern,unit_of_measure
+1001,demo_sku_1001,10,200,300,2025-01-01,stable,piece
+1002,demo_sku_1002,10,201,301,2025-01-01,weekly_seasonal,piece
+1003,demo_sku_1003,11,202,300,2025-01-01,intermittent,piece
+1004,demo_sku_1004,11,200,301,2025-01-01,trend,piece
+1005,demo_sku_1005,12,201,300,2025-01-01,volatile,piece
+1006,demo_sku_1006,12,202,301,2025-05-01,cold_start,piece

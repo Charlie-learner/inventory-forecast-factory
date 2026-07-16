@@ -1,0 +1,593 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {
+    "schema_version": "1.4"
+  },
+  "nodes": [
+    {
+      "type": "DemandProfile",
+      "name": "stable",
+      "id": "profile:stable"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "volatile",
+      "id": "profile:volatile"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "intermittent",
+      "id": "profile:intermittent"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "weekly_seasonal",
+      "id": "profile:weekly_seasonal"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "dense",
+      "id": "profile:dense"
+    },
+    {
+      "type": "Metric",
+      "name": "inventory_cost",
+      "evaluation_unit": "horizon_total",
+      "formula": "A*max(D-T,0) + B*max(T-D,0)",
+      "scenario": "inventory_forecasting",
+      "cost_a": "understock",
+      "cost_b": "overstock",
+      "id": "metric:inventory_cost"
+    },
+    {
+      "type": "Metric",
+      "name": "wape",
+      "id": "metric:wape"
+    },
+    {
+      "type": "Metric",
+      "name": "smape",
+      "id": "metric:smape"
+    },
+    {
+      "type": "Metric",
+      "name": "bias",
+      "id": "metric:bias"
+    },
+    {
+      "type": "Metric",
+      "name": "rmse",
+      "id": "metric:rmse"
+    },
+    {
+      "type": "Algorithm",
+      "name": "croston",
+      "task_type": "inventory_forecasting",
+      "description": "Estimate non-zero demand size and the interval between demands separately.",
+      "template_name": "croston",
+      "min_history": 14,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history with possible zero-demand periods.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "alpha": 0.1
+      },
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\croston.md",
+      "source_hash": "6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "Forecasting and Stock Control for Intermittent Demands",
+      "source_url": "https://doi.org/10.1057/jors.1972.50",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Croston 1972 method description",
+        "inventory_agent/forecasting/models.py:52"
+      ],
+      "extraction_warnings": [
+        "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+      ],
+      "id": "algorithm:croston"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "many_zeros",
+      "id": "profile:many_zeros"
+    },
+    {
+      "type": "Algorithm",
+      "name": "last_value",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest observed demand as a transparent baseline.",
+      "template_name": "last_value",
+      "min_history": 1,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {},
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\last_value.md",
+      "source_hash": "838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article benchmark discussion",
+        "inventory_agent/forecasting/models.py:12"
+      ],
+      "extraction_warnings": [],
+      "id": "algorithm:last_value"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "short_history",
+      "id": "profile:short_history"
+    },
+    {
+      "type": "Algorithm",
+      "name": "moving_average",
+      "task_type": "inventory_forecasting",
+      "description": "Forecast stable demand with the mean of the most recent observations.",
+      "template_name": "moving_average",
+      "min_history": 7,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "window": 14
+      },
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\moving_average.md",
+      "source_hash": "d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "The accuracy of intermittent demand estimates",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "SMA benchmark description",
+        "inventory_agent/forecasting/models.py:22"
+      ],
+      "extraction_warnings": [],
+      "id": "algorithm:moving_average"
+    },
+    {
+      "type": "Algorithm",
+      "name": "ridge_lag",
+      "task_type": "inventory_forecasting",
+      "description": "Fit regularized autoregression on recent demand lags and forecast recursively.",
+      "template_name": "ridge_lag",
+      "min_history": 30,
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "scikit-learn"
+      ],
+      "input_contract": "Dense non-negative daily history with enough observations for lag construction.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "lags": 14,
+        "alpha": 1.0
+      },
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\ridge_lag.md",
+      "source_hash": "62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "scikit-learn Ridge regression API",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
+      "source_license": "BSD-3-Clause documentation and citation metadata",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Ridge L2 objective",
+        "inventory_agent/forecasting/models.py:84"
+      ],
+      "extraction_warnings": [],
+      "id": "algorithm:ridge_lag"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "trend",
+      "id": "profile:trend"
+    },
+    {
+      "type": "Algorithm",
+      "name": "seasonal_naive",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest weekly pattern over the forecast horizon.",
+      "template_name": "seasonal_naive",
+      "min_history": 14,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "period": 7
+      },
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\seasonal_naive.md",
+      "source_hash": "4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article seasonal-naive benchmark discussion",
+        "inventory_agent/forecasting/models.py:36"
+      ],
+      "extraction_warnings": [],
+      "id": "algorithm:seasonal_naive"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "Forecasting and Stock Control for Intermittent Demands",
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\croston.md",
+      "source_hash": "6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b",
+      "extracted_by": "deterministic",
+      "source_url": "https://doi.org/10.1057/jors.1972.50",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:6ad85105ef03db15"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "M5 accuracy competition results, findings, and conclusions",
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\last_value.md",
+      "source_hash": "838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081",
+      "extracted_by": "deterministic",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:838b2dcd738ae125"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "The accuracy of intermittent demand estimates",
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\moving_average.md",
+      "source_hash": "d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2",
+      "extracted_by": "deterministic",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:d0a66653269bec07"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "scikit-learn Ridge regression API",
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\ridge_lag.md",
+      "source_hash": "62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65",
+      "extracted_by": "deterministic",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
+      "source_license": "BSD-3-Clause documentation and citation metadata",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:62f20d513a95bd60"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "M5 accuracy competition results, findings, and conclusions",
+      "source_type": "document",
+      "source_ref": "examples\\capabilities\\seasonal_naive.md",
+      "source_hash": "4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1",
+      "extracted_by": "deterministic",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:4304d58cabda939c"
+    },
+    {
+      "type": "ValidationRun",
+      "item_id": 1002,
+      "store_code": "1",
+      "status": "success",
+      "metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
+      "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "timestamp": "2026-07-16T08:59:43.790343+00:00",
+      "id": "run:313314a77fe8"
+    },
+    {
+      "type": "CapabilityVersion",
+      "name": "seasonal_naive@c8baa3ac039b",
+      "created_at": "2026-07-16T08:59:43.790343+00:00",
+      "lifecycle_status": "active",
+      "capability_version": "1.1.0",
+      "generation_mode": "spec_template",
+      "spec_hash": "4d4f5ff275bb71390e2381d2119c72b69fc97b028d9b10ea2713392c3107b67d",
+      "source_hash": "c8baa3ac039bcf62a7db3ae5d05509121ecb38e870dc055607c15aef1805b267",
+      "source_ref": "examples\\capabilities\\seasonal_naive.md",
+      "generated_path": "examples\\repair_run\\20260716_165939_831375\\generated\\forecast_seasonal_naive.py",
+      "id": "version:seasonal_naive:c8baa3ac039b"
+    },
+    {
+      "type": "FailureCase",
+      "name": "syntax:4c06ea656e7e460b",
+      "category": "syntax",
+      "fingerprint": "4c06ea656e7e460b",
+      "normalized_error": "syntax: injected demonstration failure before safe repair",
+      "retryable": true,
+      "occurrence_count": 1,
+      "last_seen": "2026-07-16T08:59:43.790343+00:00",
+      "id": "failure:4c06ea656e7e460b"
+    },
+    {
+      "type": "RepairStrategy",
+      "description": "第 1 轮修复（受约束安全模板回退，错误类型=syntax）: syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]",
+      "id": "repair:be050a6f8a"
+    },
+    {
+      "type": "VersionEvent",
+      "name": "promote:seasonal_naive",
+      "action": "promote",
+      "model": "seasonal_naive",
+      "previous_active": "",
+      "selected_version": "version:seasonal_naive:c8baa3ac039b",
+      "timestamp": "2026-07-16T08:59:43.811473+00:00",
+      "id": "version_event:71b8901ae23f"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:croston",
+      "target": "profile:intermittent"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:croston",
+      "target": "profile:many_zeros"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:croston",
+      "target": "source:6ad85105ef03db15"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:last_value",
+      "target": "profile:short_history"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:last_value",
+      "target": "source:838b2dcd738ae125"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:moving_average",
+      "target": "profile:stable"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:moving_average",
+      "target": "profile:short_history"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:moving_average",
+      "target": "source:d0a66653269bec07"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:trend"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:dense"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:volatile"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:ridge_lag",
+      "target": "source:62f20d513a95bd60"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:seasonal_naive",
+      "target": "profile:weekly_seasonal"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:seasonal_naive",
+      "target": "profile:stable"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:seasonal_naive",
+      "target": "source:4304d58cabda939c"
+    },
+    {
+      "relation": "VALIDATED",
+      "source": "run:313314a77fe8",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "VALIDATED_VERSION",
+      "source": "run:313314a77fe8",
+      "target": "version:seasonal_naive:c8baa3ac039b"
+    },
+    {
+      "relation": "OBSERVED_FAILURE",
+      "source": "run:313314a77fe8",
+      "target": "failure:4c06ea656e7e460b"
+    },
+    {
+      "relation": "REPAIRED_BY",
+      "source": "run:313314a77fe8",
+      "target": "repair:be050a6f8a"
+    },
+    {
+      "relation": "VERSION_OF",
+      "source": "version:seasonal_naive:c8baa3ac039b",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "FAILURE_OF",
+      "source": "failure:4c06ea656e7e460b",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "ADDRESSES",
+      "source": "repair:be050a6f8a",
+      "target": "failure:4c06ea656e7e460b"
+    },
+    {
+      "relation": "ACTIVATED_VERSION",
+      "source": "version_event:71b8901ae23f",
+      "target": "version:seasonal_naive:c8baa3ac039b"
+    }
+  ]
+}

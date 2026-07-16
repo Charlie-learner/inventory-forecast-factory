@@ -13,6 +13,7 @@ class LastValueModel(ForecastModel):
     """Repeat the latest observed demand as a simple baseline."""
 
     name = "last_value"
+    suitable_for = ("short_history",)
 
     def predict(self, history: pd.Series, horizon: int) -> np.ndarray:
         clean = self.validate_input(history, horizon)
@@ -23,6 +24,7 @@ class MovingAverageModel(ForecastModel):
     """Forecast with the mean of the most recent demand window."""
 
     name = "moving_average"
+    suitable_for = ("stable", "short_history")
 
     def __init__(self, window: int = 14):
         self.window = window
@@ -37,6 +39,7 @@ class SeasonalNaiveModel(ForecastModel):
     """Repeat the latest seasonal pattern over the forecast horizon."""
 
     name = "seasonal_naive"
+    suitable_for = ("weekly_seasonal", "stable")
 
     def __init__(self, period: int = 7):
         self.period = period
@@ -53,6 +56,7 @@ class CrostonModel(ForecastModel):
     """Classic Croston forecast for intermittent demand."""
 
     name = "croston"
+    suitable_for = ("intermittent", "many_zeros")
 
     def __init__(self, alpha: float = 0.1):
         if not 0 < alpha <= 1:
@@ -85,6 +89,7 @@ class RidgeLagModel(ForecastModel):
     """Autoregressive ridge model using leakage-safe lag features."""
 
     name = "ridge_lag"
+    suitable_for = ("trend", "dense", "volatile")
 
     def __init__(self, lags: int = 14, alpha: float = 1.0):
         self.lags = lags

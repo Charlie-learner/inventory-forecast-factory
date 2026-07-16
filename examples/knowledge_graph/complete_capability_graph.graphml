@@ -1,0 +1,464 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d52" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d51" for="node" attr.name="selected_version" attr.type="string" />
+  <key id="d50" for="node" attr.name="previous_active" attr.type="string" />
+  <key id="d49" for="node" attr.name="model" attr.type="string" />
+  <key id="d48" for="node" attr.name="action" attr.type="string" />
+  <key id="d47" for="node" attr.name="last_seen" attr.type="string" />
+  <key id="d46" for="node" attr.name="occurrence_count" attr.type="long" />
+  <key id="d45" for="node" attr.name="retryable" attr.type="boolean" />
+  <key id="d44" for="node" attr.name="normalized_error" attr.type="string" />
+  <key id="d43" for="node" attr.name="fingerprint" attr.type="string" />
+  <key id="d42" for="node" attr.name="category" attr.type="string" />
+  <key id="d41" for="node" attr.name="generated_path" attr.type="string" />
+  <key id="d40" for="node" attr.name="spec_hash" attr.type="string" />
+  <key id="d39" for="node" attr.name="generation_mode" attr.type="string" />
+  <key id="d38" for="node" attr.name="capability_version" attr.type="string" />
+  <key id="d37" for="node" attr.name="lifecycle_status" attr.type="string" />
+  <key id="d36" for="node" attr.name="created_at" attr.type="string" />
+  <key id="d35" for="node" attr.name="timestamp" attr.type="string" />
+  <key id="d34" for="node" attr.name="validation_checks" attr.type="string" />
+  <key id="d33" for="node" attr.name="metrics" attr.type="string" />
+  <key id="d32" for="node" attr.name="status" attr.type="string" />
+  <key id="d31" for="node" attr.name="store_code" attr.type="string" />
+  <key id="d30" for="node" attr.name="item_id" attr.type="long" />
+  <key id="d29" for="node" attr.name="extraction_warnings" attr.type="string" />
+  <key id="d28" for="node" attr.name="evidence_refs" attr.type="string" />
+  <key id="d27" for="node" attr.name="review_status" attr.type="string" />
+  <key id="d26" for="node" attr.name="confidence" attr.type="double" />
+  <key id="d25" for="node" attr.name="accessed_at" attr.type="string" />
+  <key id="d24" for="node" attr.name="source_license" attr.type="string" />
+  <key id="d23" for="node" attr.name="source_url" attr.type="string" />
+  <key id="d22" for="node" attr.name="source_title" attr.type="string" />
+  <key id="d21" for="node" attr.name="extracted_by" attr.type="string" />
+  <key id="d20" for="node" attr.name="version" attr.type="string" />
+  <key id="d19" for="node" attr.name="source_hash" attr.type="string" />
+  <key id="d18" for="node" attr.name="source_ref" attr.type="string" />
+  <key id="d17" for="node" attr.name="source_type" attr.type="string" />
+  <key id="d16" for="node" attr.name="parameters" attr.type="string" />
+  <key id="d15" for="node" attr.name="locations" attr.type="string" />
+  <key id="d14" for="node" attr.name="output_contract" attr.type="string" />
+  <key id="d13" for="node" attr.name="input_contract" attr.type="string" />
+  <key id="d12" for="node" attr.name="dependencies" attr.type="string" />
+  <key id="d11" for="node" attr.name="min_history" attr.type="long" />
+  <key id="d10" for="node" attr.name="template_name" attr.type="string" />
+  <key id="d9" for="node" attr.name="description" attr.type="string" />
+  <key id="d8" for="node" attr.name="task_type" attr.type="string" />
+  <key id="d7" for="node" attr.name="cost_b" attr.type="string" />
+  <key id="d6" for="node" attr.name="cost_a" attr.type="string" />
+  <key id="d5" for="node" attr.name="scenario" attr.type="string" />
+  <key id="d4" for="node" attr.name="formula" attr.type="string" />
+  <key id="d3" for="node" attr.name="evaluation_unit" attr.type="string" />
+  <key id="d2" for="node" attr.name="name" attr.type="string" />
+  <key id="d1" for="node" attr.name="type" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="profile:stable">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">stable</data>
+    </node>
+    <node id="profile:volatile">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">volatile</data>
+    </node>
+    <node id="profile:intermittent">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">intermittent</data>
+    </node>
+    <node id="profile:weekly_seasonal">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">weekly_seasonal</data>
+    </node>
+    <node id="profile:dense">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">dense</data>
+    </node>
+    <node id="metric:inventory_cost">
+      <data key="d1">Metric</data>
+      <data key="d2">inventory_cost</data>
+      <data key="d3">horizon_total</data>
+      <data key="d4">A*max(D-T,0) + B*max(T-D,0)</data>
+      <data key="d5">inventory_forecasting</data>
+      <data key="d6">understock</data>
+      <data key="d7">overstock</data>
+    </node>
+    <node id="metric:wape">
+      <data key="d1">Metric</data>
+      <data key="d2">wape</data>
+    </node>
+    <node id="metric:smape">
+      <data key="d1">Metric</data>
+      <data key="d2">smape</data>
+    </node>
+    <node id="metric:bias">
+      <data key="d1">Metric</data>
+      <data key="d2">bias</data>
+    </node>
+    <node id="metric:rmse">
+      <data key="d1">Metric</data>
+      <data key="d2">rmse</data>
+    </node>
+    <node id="algorithm:croston">
+      <data key="d1">Algorithm</data>
+      <data key="d2">croston</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Estimate non-zero demand size and the interval between demands separately.</data>
+      <data key="d10">croston</data>
+      <data key="d11">14</data>
+      <data key="d12">["pandas"]</data>
+      <data key="d13">Non-negative daily demand history with possible zero-demand periods.</data>
+      <data key="d14">Non-negative daily forecast and horizon-total target inventory.</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{"alpha": 0.1}</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\croston.md</data>
+      <data key="d19">6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b</data>
+      <data key="d20">1.1.0</data>
+      <data key="d21">deterministic</data>
+      <data key="d22">Forecasting and Stock Control for Intermittent Demands</data>
+      <data key="d23">https://doi.org/10.1057/jors.1972.50</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d26">0.9</data>
+      <data key="d27">source_reviewed</data>
+      <data key="d28">["Croston 1972 method description", "inventory_agent/forecasting/models.py:52"]</data>
+      <data key="d29">["This implementation is classic Croston rather than the Syntetos-Boylan adjustment."]</data>
+    </node>
+    <node id="profile:many_zeros">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">many_zeros</data>
+    </node>
+    <node id="algorithm:last_value">
+      <data key="d1">Algorithm</data>
+      <data key="d2">last_value</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Repeat the latest observed demand as a transparent baseline.</data>
+      <data key="d10">last_value</data>
+      <data key="d11">1</data>
+      <data key="d12">["pandas"]</data>
+      <data key="d13">Non-negative daily demand history and a positive forecast horizon.</data>
+      <data key="d14">Non-negative daily forecast and horizon-total target inventory.</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{}</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\last_value.md</data>
+      <data key="d19">838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081</data>
+      <data key="d20">1.1.0</data>
+      <data key="d21">deterministic</data>
+      <data key="d22">M5 accuracy competition results, findings, and conclusions</data>
+      <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207021001874</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d26">0.95</data>
+      <data key="d27">source_reviewed</data>
+      <data key="d28">["article benchmark discussion", "inventory_agent/forecasting/models.py:12"]</data>
+      <data key="d29">[]</data>
+    </node>
+    <node id="profile:short_history">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">short_history</data>
+    </node>
+    <node id="algorithm:moving_average">
+      <data key="d1">Algorithm</data>
+      <data key="d2">moving_average</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Forecast stable demand with the mean of the most recent observations.</data>
+      <data key="d10">moving_average</data>
+      <data key="d11">7</data>
+      <data key="d12">["pandas"]</data>
+      <data key="d13">Non-negative daily demand history and a positive forecast horizon.</data>
+      <data key="d14">Non-negative daily forecast and horizon-total target inventory.</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{"window": 14}</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\moving_average.md</data>
+      <data key="d19">d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2</data>
+      <data key="d20">1.1.0</data>
+      <data key="d21">deterministic</data>
+      <data key="d22">The accuracy of intermittent demand estimates</data>
+      <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207004000792</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d26">0.9</data>
+      <data key="d27">source_reviewed</data>
+      <data key="d28">["SMA benchmark description", "inventory_agent/forecasting/models.py:22"]</data>
+      <data key="d29">[]</data>
+    </node>
+    <node id="algorithm:ridge_lag">
+      <data key="d1">Algorithm</data>
+      <data key="d2">ridge_lag</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Fit regularized autoregression on recent demand lags and forecast recursively.</data>
+      <data key="d10">ridge_lag</data>
+      <data key="d11">30</data>
+      <data key="d12">["numpy", "pandas", "scikit-learn"]</data>
+      <data key="d13">Dense non-negative daily history with enough observations for lag construction.</data>
+      <data key="d14">Non-negative daily forecast and horizon-total target inventory.</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{"lags": 14, "alpha": 1.0}</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\ridge_lag.md</data>
+      <data key="d19">62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65</data>
+      <data key="d20">1.1.0</data>
+      <data key="d21">deterministic</data>
+      <data key="d22">scikit-learn Ridge regression API</data>
+      <data key="d23">https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html</data>
+      <data key="d24">BSD-3-Clause documentation and citation metadata</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d26">0.9</data>
+      <data key="d27">source_reviewed</data>
+      <data key="d28">["Ridge L2 objective", "inventory_agent/forecasting/models.py:84"]</data>
+      <data key="d29">[]</data>
+    </node>
+    <node id="profile:trend">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">trend</data>
+    </node>
+    <node id="algorithm:seasonal_naive">
+      <data key="d1">Algorithm</data>
+      <data key="d2">seasonal_naive</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Repeat the latest weekly pattern over the forecast horizon.</data>
+      <data key="d10">seasonal_naive</data>
+      <data key="d11">14</data>
+      <data key="d12">["pandas"]</data>
+      <data key="d13">Non-negative daily demand history and a positive forecast horizon.</data>
+      <data key="d14">Non-negative daily forecast and horizon-total target inventory.</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{"period": 7}</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\seasonal_naive.md</data>
+      <data key="d19">4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1</data>
+      <data key="d20">1.1.0</data>
+      <data key="d21">deterministic</data>
+      <data key="d22">M5 accuracy competition results, findings, and conclusions</data>
+      <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207021001874</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d26">0.95</data>
+      <data key="d27">source_reviewed</data>
+      <data key="d28">["article seasonal-naive benchmark discussion", "inventory_agent/forecasting/models.py:36"]</data>
+      <data key="d29">[]</data>
+    </node>
+    <node id="source:6ad85105ef03db15">
+      <data key="d1">SourceArtifact</data>
+      <data key="d2">Forecasting and Stock Control for Intermittent Demands</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\croston.md</data>
+      <data key="d19">6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b</data>
+      <data key="d21">deterministic</data>
+      <data key="d23">https://doi.org/10.1057/jors.1972.50</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d27">source_reviewed</data>
+    </node>
+    <node id="source:838b2dcd738ae125">
+      <data key="d1">SourceArtifact</data>
+      <data key="d2">M5 accuracy competition results, findings, and conclusions</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\last_value.md</data>
+      <data key="d19">838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081</data>
+      <data key="d21">deterministic</data>
+      <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207021001874</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d27">source_reviewed</data>
+    </node>
+    <node id="source:d0a66653269bec07">
+      <data key="d1">SourceArtifact</data>
+      <data key="d2">The accuracy of intermittent demand estimates</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\moving_average.md</data>
+      <data key="d19">d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2</data>
+      <data key="d21">deterministic</data>
+      <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207004000792</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d27">source_reviewed</data>
+    </node>
+    <node id="source:62f20d513a95bd60">
+      <data key="d1">SourceArtifact</data>
+      <data key="d2">scikit-learn Ridge regression API</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\ridge_lag.md</data>
+      <data key="d19">62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65</data>
+      <data key="d21">deterministic</data>
+      <data key="d23">https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html</data>
+      <data key="d24">BSD-3-Clause documentation and citation metadata</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d27">source_reviewed</data>
+    </node>
+    <node id="source:4304d58cabda939c">
+      <data key="d1">SourceArtifact</data>
+      <data key="d2">M5 accuracy competition results, findings, and conclusions</data>
+      <data key="d17">document</data>
+      <data key="d18">examples\capabilities\seasonal_naive.md</data>
+      <data key="d19">4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1</data>
+      <data key="d21">deterministic</data>
+      <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207021001874</data>
+      <data key="d24">citation_only</data>
+      <data key="d25">2026-07-16</data>
+      <data key="d27">source_reviewed</data>
+    </node>
+    <node id="run:313314a77fe8">
+      <data key="d1">ValidationRun</data>
+      <data key="d30">1002</data>
+      <data key="d31">1</data>
+      <data key="d32">success</data>
+      <data key="d33">{"bias": 0.0, "inventory_cost": 0.0, "mae": 0.0, "mean_actual_total": 184.0, "mean_target_inventory": 184.0, "rmse": 0.0, "smape": 0.0, "wape": 0.0}</data>
+      <data key="d34">{"equivalence": true, "imports": true, "interface": true, "runtime": true, "stability": true, "syntax": true}</data>
+      <data key="d35">2026-07-16T08:59:43.790343+00:00</data>
+    </node>
+    <node id="version:seasonal_naive:c8baa3ac039b">
+      <data key="d1">CapabilityVersion</data>
+      <data key="d2">seasonal_naive@c8baa3ac039b</data>
+      <data key="d36">2026-07-16T08:59:43.790343+00:00</data>
+      <data key="d37">active</data>
+      <data key="d38">1.1.0</data>
+      <data key="d39">spec_template</data>
+      <data key="d40">4d4f5ff275bb71390e2381d2119c72b69fc97b028d9b10ea2713392c3107b67d</data>
+      <data key="d19">c8baa3ac039bcf62a7db3ae5d05509121ecb38e870dc055607c15aef1805b267</data>
+      <data key="d18">examples\capabilities\seasonal_naive.md</data>
+      <data key="d41">examples\repair_run\20260716_165939_831375\generated\forecast_seasonal_naive.py</data>
+    </node>
+    <node id="failure:4c06ea656e7e460b">
+      <data key="d1">FailureCase</data>
+      <data key="d2">syntax:4c06ea656e7e460b</data>
+      <data key="d42">syntax</data>
+      <data key="d43">4c06ea656e7e460b</data>
+      <data key="d44">syntax: injected demonstration failure before safe repair</data>
+      <data key="d45">True</data>
+      <data key="d46">1</data>
+      <data key="d47">2026-07-16T08:59:43.790343+00:00</data>
+    </node>
+    <node id="repair:be050a6f8a">
+      <data key="d1">RepairStrategy</data>
+      <data key="d9">第 1 轮修复（受约束安全模板回退，错误类型=syntax）: syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]</data>
+    </node>
+    <node id="version_event:71b8901ae23f">
+      <data key="d1">VersionEvent</data>
+      <data key="d2">promote:seasonal_naive</data>
+      <data key="d48">promote</data>
+      <data key="d49">seasonal_naive</data>
+      <data key="d50" />
+      <data key="d51">version:seasonal_naive:c8baa3ac039b</data>
+      <data key="d35">2026-07-16T08:59:43.811473+00:00</data>
+    </node>
+    <edge source="algorithm:croston" target="metric:inventory_cost">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:wape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="profile:intermittent">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:croston" target="profile:many_zeros">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="source:6ad85105ef03db15">
+      <data key="d52">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:inventory_cost">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:wape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="profile:short_history">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="source:838b2dcd738ae125">
+      <data key="d52">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:inventory_cost">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:wape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="profile:stable">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="profile:short_history">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="source:d0a66653269bec07">
+      <data key="d52">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:inventory_cost">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:wape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:trend">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:dense">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:volatile">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="source:62f20d513a95bd60">
+      <data key="d52">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:inventory_cost">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:wape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="profile:weekly_seasonal">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="profile:stable">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="source:4304d58cabda939c">
+      <data key="d52">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="run:313314a77fe8" target="algorithm:seasonal_naive">
+      <data key="d52">VALIDATED</data>
+    </edge>
+    <edge source="run:313314a77fe8" target="version:seasonal_naive:c8baa3ac039b">
+      <data key="d52">VALIDATED_VERSION</data>
+    </edge>
+    <edge source="run:313314a77fe8" target="failure:4c06ea656e7e460b">
+      <data key="d52">OBSERVED_FAILURE</data>
+    </edge>
+    <edge source="run:313314a77fe8" target="repair:be050a6f8a">
+      <data key="d52">REPAIRED_BY</data>
+    </edge>
+    <edge source="version:seasonal_naive:c8baa3ac039b" target="algorithm:seasonal_naive">
+      <data key="d52">VERSION_OF</data>
+    </edge>
+    <edge source="failure:4c06ea656e7e460b" target="algorithm:seasonal_naive">
+      <data key="d52">FAILURE_OF</data>
+    </edge>
+    <edge source="repair:be050a6f8a" target="failure:4c06ea656e7e460b">
+      <data key="d52">ADDRESSES</data>
+    </edge>
+    <edge source="version_event:71b8901ae23f" target="version:seasonal_naive:c8baa3ac039b">
+      <data key="d52">ACTIVATED_VERSION</data>
+    </edge>
+    <data key="d0">1.4</data>
+  </graph>
+</graphml>

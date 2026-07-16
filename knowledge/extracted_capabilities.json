@@ -1,12 +1,12 @@
 {
-  "schema_version": "1.0",
-  "created_at": "2026-07-15T23:11:15.417940+00:00",
+  "schema_version": "1.1",
+  "created_at": "2026-07-16T08:49:50.542360+00:00",
   "count": 5,
   "scan_reports": [
     {
       "source": ".",
       "source_kind": "repository",
-      "files_scanned": 59,
+      "files_scanned": 76,
       "files_matched": 1,
       "capabilities_found": 5,
       "errors": []
@@ -20,7 +20,9 @@
       "template_name": "last_value",
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
-      "suitable_for": [],
+      "suitable_for": [
+        "short_history"
+      ],
       "metrics": [
         "inventory_cost",
         "wape",
@@ -28,15 +30,25 @@
       ],
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "parameters": {},
       "source_type": "python",
       "source_ref": "inventory_agent\\forecasting\\models.py:12",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
-      "extracted_by": "python_ast"
+      "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:12",
+        "inventory_agent\\forecasting\\models.py:20"
+      ],
+      "extraction_warnings": []
     },
     {
       "name": "moving_average",
@@ -45,7 +57,10 @@
       "template_name": "moving_average",
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
-      "suitable_for": [],
+      "suitable_for": [
+        "stable",
+        "short_history"
+      ],
       "metrics": [
         "inventory_cost",
         "wape",
@@ -53,17 +68,27 @@
       ],
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "parameters": {
         "window": 14
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:22",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:23",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
-      "extracted_by": "python_ast"
+      "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:23",
+        "inventory_agent\\forecasting\\models.py:35"
+      ],
+      "extraction_warnings": []
     },
     {
       "name": "seasonal_naive",
@@ -72,7 +97,10 @@
       "template_name": "seasonal_naive",
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
-      "suitable_for": [],
+      "suitable_for": [
+        "weekly_seasonal",
+        "stable"
+      ],
       "metrics": [
         "inventory_cost",
         "wape",
@@ -80,17 +108,27 @@
       ],
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "parameters": {
         "period": 7
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:36",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:38",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
-      "extracted_by": "python_ast"
+      "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:38",
+        "inventory_agent\\forecasting\\models.py:52"
+      ],
+      "extraction_warnings": []
     },
     {
       "name": "croston",
@@ -99,7 +137,10 @@
       "template_name": "croston",
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
-      "suitable_for": [],
+      "suitable_for": [
+        "intermittent",
+        "many_zeros"
+      ],
       "metrics": [
         "inventory_cost",
         "wape",
@@ -107,17 +148,27 @@
       ],
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "parameters": {
         "alpha": 0.1
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:52",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:55",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
-      "extracted_by": "python_ast"
+      "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:55",
+        "inventory_agent\\forecasting\\models.py:85"
+      ],
+      "extraction_warnings": []
     },
     {
       "name": "ridge_lag",
@@ -126,7 +177,11 @@
       "template_name": "ridge_lag",
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
-      "suitable_for": [],
+      "suitable_for": [
+        "trend",
+        "dense",
+        "volatile"
+      ],
       "metrics": [
         "inventory_cost",
         "wape",
@@ -142,10 +197,21 @@
         "alpha": 1.0
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:84",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:88",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
-      "extracted_by": "python_ast"
+      "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:88",
+        "inventory_agent\\forecasting\\models.py:116"
+      ],
+      "extraction_warnings": []
     }
   ]
 }

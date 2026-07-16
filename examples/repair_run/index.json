@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "run_dir": "examples\\repair_run\\20260716_165939_831375",
+  "status": "success_after_repair",
+  "selected_model": "seasonal_naive",
+  "repair_count": 1,
+  "failure_history": [
+    {
+      "category": "syntax",
+      "fingerprint": "4c06ea656e7e460b",
+      "normalized_error": "syntax: injected demonstration failure before safe repair",
+      "retryable": true
+    }
+  ],
+  "trace_paths": {
+    "jsonl": "examples\\repair_run\\20260716_165939_831375\\detailed_trace.jsonl",
+    "markdown": "examples\\repair_run\\20260716_165939_831375\\detailed_trace.md",
+    "manifest": "examples\\repair_run\\20260716_165939_831375\\run_manifest.json"
+  },
+  "knowledge_graph": {
+    "json": "examples/knowledge_graph/complete_capability_graph.json",
+    "graphml": "examples/knowledge_graph/complete_capability_graph.graphml",
+    "html": "examples/knowledge_graph/complete_capability_graph.html"
+  }
+}

@@ -25,6 +25,14 @@ class CapabilitySpec:
     source_hash: str = ""
     version: str = "1.0.0"
     extracted_by: str = "deterministic"
+    source_title: str = ""
+    source_url: str = ""
+    source_license: str = ""
+    accessed_at: str = ""
+    confidence: float = 1.0
+    review_status: str = "auto_extracted"
+    evidence_refs: tuple[str, ...] = field(default_factory=tuple)
+    extraction_warnings: tuple[str, ...] = field(default_factory=tuple)
 
     def __post_init__(self) -> None:
         """Reject incomplete specifications before graph ingestion or generation."""
@@ -48,6 +56,10 @@ class CapabilitySpec:
         )
         if safe_name != self.name:
             raise ValueError(f"Unsafe capability name: {self.name!r}")
+        if not 0 <= float(self.confidence) <= 1:
+            raise ValueError("Capability confidence must be between 0 and 1")
+        if not self.review_status.strip():
+            raise ValueError("Capability review_status cannot be empty")
 
     @property
     def capability_id(self) -> str:

@@ -60,12 +60,15 @@ data/              本地原始/处理中间数据（大文件由 Git 忽略）
 
 知识图谱包含 `Algorithm`、`SourceArtifact`、`CapabilityVersion`、`VersionEvent`、`DemandProfile`、`Metric`、`ValidationRun`、`FailureCase` 和 `RepairStrategy` 节点。算法节点保留输入输出、适用条件、依赖、参数、模板、来源哈希和版本；运行节点与实际生成源码版本、归一化失败和修复策略建立关联。
 
-抽取、复刻、验证和版本沉淀说明见 [docs/capability_extraction.md](docs/capability_extraction.md)，图谱结构见 [docs/knowledge_graph_schema.md](docs/knowledge_graph_schema.md)，详细中间过程和自动清理说明见 [docs/execution_trace.md](docs/execution_trace.md)，按笔试四类评分标准整理的运行证据见 [docs/scoring_alignment.md](docs/scoring_alignment.md)。可直接检查：
+抽取、复刻、验证和版本沉淀说明见 [docs/capability_extraction.md](docs/capability_extraction.md)，图谱结构见 [docs/knowledge_graph_schema.md](docs/knowledge_graph_schema.md)，库存业务场景见 [docs/business/inventory_forecasting_scenario.md](docs/business/inventory_forecasting_scenario.md)，权威资料清单见 [docs/references.md](docs/references.md)，详细中间过程和自动清理说明见 [docs/execution_trace.md](docs/execution_trace.md)，按笔试四类评分标准整理的运行证据见 [docs/scoring_alignment.md](docs/scoring_alignment.md)。可直接检查：
 
 - `knowledge/base_capability_graph.json`
 - `knowledge/base_capability_graph.graphml`
 - `knowledge/base_capability_graph.html`
 - `knowledge/extracted_capabilities.json`
+- `knowledge/extracted_external_capabilities.json`
+- `knowledge/capability_spec.schema.json`
+- `examples/knowledge_graph/complete_capability_graph.html`
 
 运行后的验证结果写入 `artifacts/knowledge/`，避免修改版本化基础图谱。
 
@@ -212,6 +215,25 @@ uv run python -m inventory_agent prepare-sample \
 
 字段定义见 [docs/data_schema.md](docs/data_schema.md)，库存指标契约见 [docs/inventory_evaluation.md](docs/inventory_evaluation.md)。仓库附带一个从菜鸟数据抽取的 140 天最小演示文件：`examples/data/cainiao_demo.csv`。
 
+此外，`examples/business_data/` 提供可随 Git 分发的确定性合成业务数据：6 个商品、3 个仓库、
+2880 条需求历史，并包含商品主数据、库存快照、补货策略和需求事件。它覆盖稳定、周期、间歇、
+趋势、波动和冷启动需求，字段关系见 [docs/business/data_contract.md](docs/business/data_contract.md)。
+
+重新生成并校验这套业务材料：
+
+```bash
+python scripts/generate_business_demo.py
+```
+
+直接在合成多仓数据上运行：
+
+```bash
+python -m inventory_agent run \
+  --description "为商品 1002 在仓库 1 预测未来14天目标库存" \
+  --data examples/business_data/demand_history.csv \
+  --trace-level full
+```
+
 直接使用解压后的真实数据运行分仓任务：
 
 ```bash
@@ -252,7 +274,13 @@ def build_inventory_target(history: list[float], horizon: int) -> dict:
     return {"daily_forecast": daily_forecast, "target_inventory": sum(daily_forecast)}
 ```
 
-来源文档到完整业务流程的结果见 `examples/extraction_run/`；独立复刻和审核清单见 `examples/replication_run/`；包含 17 个 Agent/工具/LLM 事件和三个候选代码方案的教师评审运行包见 `examples/detailed_run/`；真实菜鸟目录数据运行结果见 `examples/complete_run/`。
+来源文档到完整业务流程的结果见 `examples/extraction_run/`；独立复刻和审核清单见 `examples/replication_run/`；包含 17 个 Agent/工具/LLM 事件和三个候选代码方案的教师评审运行包见 `examples/detailed_run/`；真实菜鸟目录数据运行结果见 `examples/complete_run/`；首次验证失败后自动修复成功的证据见 `examples/repair_run/`；包含来源、失败、修复、版本和发布事件的完整图谱见 `examples/knowledge_graph/`。
+
+重新生成外部知识抽取、修复闭环和完整图谱证据：
+
+```bash
+python scripts/generate_submission_examples.py
+```
 
 生成接口保留 14 个日预测用于解释和精度诊断；对外目标库存为这些日预测之和 `target_inventory`。
 

@@ -2,7 +2,7 @@
   "directed": true,
   "multigraph": false,
   "graph": {
-    "schema_version": "1.3"
+    "schema_version": "1.4"
   },
   "nodes": [
     {
@@ -67,8 +67,7 @@
       "min_history": 14,
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
@@ -86,10 +85,21 @@
         "alpha": 0.1
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:52",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:55",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
       "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:55",
+        "inventory_agent\\forecasting\\models.py:85"
+      ],
+      "extraction_warnings": [],
       "id": "algorithm:croston"
     },
     {
@@ -104,8 +114,7 @@
       "min_history": 1,
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
@@ -122,9 +131,20 @@
       "parameters": {},
       "source_type": "python",
       "source_ref": "inventory_agent\\forecasting\\models.py:12",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
       "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:12",
+        "inventory_agent\\forecasting\\models.py:20"
+      ],
+      "extraction_warnings": [],
       "id": "algorithm:last_value"
     },
     {
@@ -139,8 +159,7 @@
       "min_history": 7,
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
@@ -158,10 +177,21 @@
         "window": 14
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:22",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:23",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
       "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:23",
+        "inventory_agent\\forecasting\\models.py:35"
+      ],
+      "extraction_warnings": [],
       "id": "algorithm:moving_average"
     },
     {
@@ -191,10 +221,21 @@
         "alpha": 1.0
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:84",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:88",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
       "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:88",
+        "inventory_agent\\forecasting\\models.py:116"
+      ],
+      "extraction_warnings": [],
       "id": "algorithm:ridge_lag"
     },
     {
@@ -209,8 +250,7 @@
       "min_history": 14,
       "dependencies": [
         "numpy",
-        "pandas",
-        "sklearn"
+        "pandas"
       ],
       "input_contract": "non-negative daily demand history and positive horizon",
       "output_contract": "non-negative daily forecast and horizon-total target inventory",
@@ -228,10 +268,21 @@
         "period": 7
       },
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:36",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
+      "source_ref": "inventory_agent\\forecasting\\models.py:38",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "version": "1.0.0",
       "extracted_by": "python_ast",
+      "source_title": "models.py",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "confidence": 0.95,
+      "review_status": "auto_extracted",
+      "evidence_refs": [
+        "inventory_agent\\forecasting\\models.py:38",
+        "inventory_agent\\forecasting\\models.py:52"
+      ],
+      "extraction_warnings": [],
       "id": "algorithm:seasonal_naive"
     },
     {
@@ -242,6 +293,19 @@
       "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
       "extracted_by": "python_ast",
       "id": "source:bf92696f90fe0841"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "models.py",
+      "source_type": "python",
+      "source_ref": "inventory_agent\\forecasting\\models.py",
+      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
+      "extracted_by": "python_ast",
+      "source_url": "",
+      "source_license": "",
+      "accessed_at": "",
+      "review_status": "auto_extracted",
+      "id": "source:6ae88282402d0c9f"
     }
   ],
   "edges": [
@@ -276,6 +340,11 @@
       "target": "source:bf92696f90fe0841"
     },
     {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:croston",
+      "target": "source:6ae88282402d0c9f"
+    },
+    {
       "relation": "EVALUATED_BY",
       "source": "algorithm:last_value",
       "target": "metric:inventory_cost"
@@ -299,6 +368,11 @@
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:last_value",
       "target": "source:bf92696f90fe0841"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:last_value",
+      "target": "source:6ae88282402d0c9f"
     },
     {
       "relation": "EVALUATED_BY",
@@ -329,6 +403,11 @@
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:moving_average",
       "target": "source:bf92696f90fe0841"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:moving_average",
+      "target": "source:6ae88282402d0c9f"
     },
     {
       "relation": "EVALUATED_BY",
@@ -366,6 +445,11 @@
       "target": "source:bf92696f90fe0841"
     },
     {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:ridge_lag",
+      "target": "source:6ae88282402d0c9f"
+    },
+    {
       "relation": "EVALUATED_BY",
       "source": "algorithm:seasonal_naive",
       "target": "metric:inventory_cost"
@@ -394,6 +478,11 @@
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:seasonal_naive",
       "target": "source:bf92696f90fe0841"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:seasonal_naive",
+      "target": "source:6ae88282402d0c9f"
     }
   ]
 }

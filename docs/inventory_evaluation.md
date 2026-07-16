@@ -54,3 +54,9 @@ target_inventory = sum(daily_forecast)
 ## 使用边界
 
 `T` 是未来两周需求对应的目标库存，不是最终采购或调拨数量。生产补货还需要结合现货、在途、提前期、服务水平、安全库存、包装和仓容约束。
+
+更完整的业务关系见：
+
+- [库存预测业务场景](business/inventory_forecasting_scenario.md)
+- [目标库存与补货策略](business/replenishment_policy.md)
+- [多表业务数据契约](business/data_contract.md)

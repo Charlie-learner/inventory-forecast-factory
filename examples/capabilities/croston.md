@@ -1,0 +1,22 @@
+# Croston intermittent-demand forecasting capability
+
+- name: croston
+- task_type: inventory_forecasting
+- description: Estimate non-zero demand size and the interval between demands separately.
+- template_name: croston
+- input_contract: Non-negative daily demand history with possible zero-demand periods.
+- output_contract: Non-negative daily forecast and horizon-total target inventory.
+- suitable_for: intermittent, many_zeros
+- metrics: inventory_cost, wape, rmse
+- dependencies: pandas
+- parameters: {"alpha": 0.1}
+- version: 1.1.0
+- source_title: Forecasting and Stock Control for Intermittent Demands
+- source_url: https://doi.org/10.1057/jors.1972.50
+- source_license: citation_only
+- accessed_at: 2026-07-16
+- confidence: 0.9
+- review_status: source_reviewed
+- evidence_refs: Croston 1972 method description, inventory_agent/forecasting/models.py:52
+- extraction_warnings: This implementation is classic Croston rather than the Syntetos-Boylan adjustment.
+

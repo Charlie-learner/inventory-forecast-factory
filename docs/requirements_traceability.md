@@ -11,13 +11,13 @@
 | 要求 | 状态 | 实现与证据 | 尚存边界 |
 |---|---|---|---|
 | 完整项目代码库 | 完成 | `inventory_agent/`、`tests/`、`scripts/` | 无 |
-| 示例行业数据或模拟材料 | 完成 | `examples/data/cainiao_demo.csv`、`docs/data_schema.md` | 完整原始数据因体积不提交 Git |
+| 示例行业数据或模拟材料 | 完成 | `examples/data/cainiao_demo.csv`；`examples/business_data/` 提供 6 商品、3 仓、2880 条需求历史，以及商品主数据、库存快照、补货策略和需求事件；`docs/business/` 说明业务流程与数据契约 | 完整原始菜鸟数据因体积和再分发边界不提交 Git |
 | 能力知识图谱 schema 说明 | 完成 | `docs/knowledge_graph_schema.md` | 无 |
-| 知识抽取结果文件 | 完成 | `knowledge/extracted_capabilities.json` 来自真实 `forecasting/models.py`；基础图谱提供 JSON/GraphML/HTML | 当前解析器支持 JSON、结构化 Markdown/TXT 和 ForecastModel Python AST，不是任意文件格式 |
+| 知识抽取结果文件 | 完成 | `knowledge/extracted_capabilities.json` 来自真实 `forecasting/models.py`；`knowledge/extracted_external_capabilities.json` 来自五份带权威来源、许可、置信度和证据位置的能力文档；结构由 `capability_spec.schema.json` 说明 | 当前解析器支持 JSON、结构化 Markdown/TXT 和 ForecastModel Python AST，不是任意文件格式 |
 | Agent 工作流代码或配置 | 完成 | `inventory_agent/workflow/factory.py` 的 LangGraph 流程 | 无 |
 | 至少一个描述到代码的完整示例 | 完成 | `examples/extraction_run/` 展示完整业务闭环；`examples/replication_run/` 展示独立复刻；`examples/detailed_run/` 保存 17 个事件、三个候选代码及逐一验证结果 | Mock 使用受约束模板；API 模式支持 LLM 首次生成 |
 | 自动验证脚本 | 完成 | `scripts/validate_project.py` | 无 |
-| 验证报告样例 | 完成 | `examples/complete_run/validation_report.{json,md}`；`examples/detailed_run/` 另含完整 JSONL/Markdown 中间过程和运行清单 | 样例需在重要逻辑变化后重新生成 |
+| 验证报告样例 | 完成 | `examples/complete_run/validation_report.{json,md}`；`examples/detailed_run/` 含完整事件流；`examples/repair_run/` 展示首次失败、修复和再验证 | 样例由提交证据生成脚本维护 |
 | README | 完成 | `README.md` 覆盖题目要求的十个章节 | 无 |
 | 环境依赖文件 | 完成 | `pyproject.toml`、`uv.lock`、`requirements.txt` | 无 |
 | 使用示例和测试用例 | 完成 | README 命令、`tests/` | 无 |

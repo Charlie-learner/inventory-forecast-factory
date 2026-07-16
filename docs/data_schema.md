@@ -52,3 +52,9 @@ data/
 
 These large raw CSV files are ignored by Git. The checked-in demo remains the small, headed
 panel file under `examples/data/`.
+
+For a richer, redistributable business example, `examples/business_data/` contains deterministic
+synthetic demand history, product master data, inventory positions, replenishment policies, and
+demand events. Its relational contract is documented in `docs/business/data_contract.md`.
+The provenance and sampling method of `cainiao_demo.csv` are recorded in
+`examples/data/source_metadata.json`.

@@ -60,7 +60,9 @@ class CapabilityExtractionAgent:
         response = self.llm.complete(
             "你是算法能力抽取 Agent。只返回 JSON。提取 name、task_type、description、"
             "template_name、input_contract、output_contract、suitable_for、metrics、"
-            "dependencies、parameters 和 version。数组字段必须返回 JSON 数组。",
+            "dependencies、parameters、version、source_title、source_url、source_license、"
+            "accessed_at、confidence、review_status、evidence_refs 和 extraction_warnings。"
+            "数组字段必须返回 JSON 数组。",
             text,
         )
         payload_text = response.strip()
@@ -89,7 +91,7 @@ class CapabilityExtractionAgent:
         path = Path(output)
         path.parent.mkdir(parents=True, exist_ok=True)
         payload = {
-            "schema_version": "1.0",
+            "schema_version": "1.1",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "count": len(capabilities),
             "scan_reports": scan_reports or [],

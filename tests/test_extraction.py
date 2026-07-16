@@ -1,9 +1,11 @@
 import json
+from dataclasses import fields
 from pathlib import Path
 
 import pytest
 
 from inventory_agent.agents.extraction import CapabilityExtractionAgent
+from inventory_agent.domain import CapabilitySpec
 from inventory_agent.extraction.extractor import CapabilityExtractor
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 
@@ -47,7 +49,11 @@ def test_extract_forecast_capabilities_from_real_python_source():
         "ridge_lag",
     }
     assert by_name["moving_average"].parameters == {"window": 14}
+    assert by_name["last_value"].dependencies == ("numpy", "pandas")
+    assert by_name["croston"].dependencies == ("numpy", "pandas")
     assert by_name["ridge_lag"].dependencies == ("numpy", "pandas", "sklearn")
+    assert by_name["croston"].suitable_for == ("intermittent", "many_zeros")
+    assert by_name["ridge_lag"].suitable_for == ("trend", "dense", "volatile")
     assert by_name["croston"].extracted_by == "python_ast"
 
 
@@ -99,3 +105,12 @@ def test_extraction_result_and_graph_ingestion_are_auditable(tmp_path: Path):
         if edge[2].get("relation") == "EXTRACTED_FROM"
     ]
     assert len(source_edges) == 1
+
+
+def test_capability_spec_json_schema_covers_every_exported_field():
+    schema = json.loads(
+        (ROOT / "knowledge/capability_spec.schema.json").read_text(encoding="utf-8")
+    )
+
+    assert set(schema["properties"]) == {field.name for field in fields(CapabilitySpec)}
+    assert {"source_hash", "confidence", "review_status"} <= set(schema["required"])

@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+import pandas as pd
 
 from inventory_agent.config import Settings
 from inventory_agent.codegen.replication import CapabilityReplicator
@@ -25,6 +28,48 @@ def run(command: list[str]) -> None:
 def main() -> int:
     run([sys.executable, "-m", "pytest"])
     run([sys.executable, "-m", "ruff", "check", "inventory_agent", "tests", "scripts"])
+    demand_demo = pd.read_csv(ROOT / "examples/business_data/demand_history.csv")
+    if (
+        len(demand_demo) < 2800
+        or demand_demo["item_id"].nunique() != 6
+        or demand_demo["store_code"].nunique() != 3
+    ):
+        raise RuntimeError("Multi-table inventory business demo is incomplete")
+    external = json.loads(
+        (ROOT / "knowledge/extracted_external_capabilities.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    if external["count"] != 5 or not all(
+        capability["source_url"] and capability["evidence_refs"]
+        for capability in external["capabilities"]
+    ):
+        raise RuntimeError("External capability extraction evidence is incomplete")
+    complete_graph = CapabilityKnowledgeGraph.load(
+        ROOT / "examples/knowledge_graph/complete_capability_graph.json"
+    )
+    required_node_types = {
+        "Algorithm",
+        "SourceArtifact",
+        "ValidationRun",
+        "FailureCase",
+        "RepairStrategy",
+        "CapabilityVersion",
+        "VersionEvent",
+    }
+    actual_node_types = {
+        attributes.get("type")
+        for _, attributes in complete_graph.graph.nodes(data=True)
+    }
+    if not required_node_types <= actual_node_types:
+        raise RuntimeError("Complete submission knowledge graph lacks lifecycle evidence")
+    repair_index = json.loads(
+        (ROOT / "examples/repair_run/index.json").read_text(encoding="utf-8")
+    )
+    if repair_index["status"] != "success_after_repair" or repair_index[
+        "repair_count"
+    ] != 1:
+        raise RuntimeError("Repair-loop submission example is incomplete")
     with tempfile.TemporaryDirectory(prefix="inventory-agent-validation-") as temp:
         output = Path(temp)
         extractor = CapabilityExtractor()

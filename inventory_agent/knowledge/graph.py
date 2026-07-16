@@ -20,7 +20,7 @@ from inventory_agent.domain import CapabilitySpec
 class CapabilityKnowledgeGraph:
     """Store algorithm metadata and validation experience in a directed graph."""
 
-    SCHEMA_VERSION = "1.3"
+    SCHEMA_VERSION = "1.4"
 
     def __init__(self, graph: nx.DiGraph | None = None):
         """Initialize a graph and attach the current schema version."""
@@ -107,6 +107,14 @@ class CapabilityKnowledgeGraph:
                 source_hash=capability.source_hash,
                 version=capability.version,
                 extracted_by=capability.extracted_by,
+                source_title=capability.source_title,
+                source_url=capability.source_url,
+                source_license=capability.source_license,
+                accessed_at=capability.accessed_at,
+                confidence=capability.confidence,
+                review_status=capability.review_status,
+                evidence_refs=list(capability.evidence_refs),
+                extraction_warnings=list(capability.extraction_warnings),
             )
             for metric in capability.metrics:
                 metric_node = f"metric:{metric}"
@@ -132,11 +140,17 @@ class CapabilityKnowledgeGraph:
                 self.graph.add_node(
                     source_node,
                     type="SourceArtifact",
-                    name=Path(source_path).name or capability.source_ref,
+                    name=capability.source_title
+                    or Path(source_path).name
+                    or capability.source_ref,
                     source_type=capability.source_type,
-                    source_ref=capability.source_ref,
+                    source_ref=source_path,
                     source_hash=capability.source_hash,
                     extracted_by=capability.extracted_by,
+                    source_url=capability.source_url,
+                    source_license=capability.source_license,
+                    accessed_at=capability.accessed_at,
+                    review_status=capability.review_status,
                 )
                 self.graph.add_edge(model_node, source_node, relation="EXTRACTED_FROM")
             ingested.append(model_node)
@@ -192,6 +206,16 @@ class CapabilityKnowledgeGraph:
             source_hash=str(attributes.get("source_hash", "")),
             version=str(attributes.get("version", "1.0.0")),
             extracted_by=str(attributes.get("extracted_by", "knowledge_graph")),
+            source_title=str(attributes.get("source_title", "")),
+            source_url=str(attributes.get("source_url", "")),
+            source_license=str(attributes.get("source_license", "")),
+            accessed_at=str(attributes.get("accessed_at", "")),
+            confidence=float(attributes.get("confidence", 1.0)),
+            review_status=str(attributes.get("review_status", "auto_extracted")),
+            evidence_refs=tuple(attributes.get("evidence_refs", [])),
+            extraction_warnings=tuple(
+                attributes.get("extraction_warnings", [])
+            ),
         )
 
     def retrieve_algorithms(self, demand_type: str, limit: int = 3) -> list[dict]:

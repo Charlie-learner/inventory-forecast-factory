@@ -241,5 +241,7 @@ class RunRetentionManager:
             if resolved_candidate.parent != resolved_root:
                 raise RuntimeError(f"Refusing to delete outside run root: {candidate}")
             shutil.rmtree(resolved_candidate)
-            deleted.append(str(resolved_candidate))
+            # Preserve the caller's relative root in traces while verifying deletion
+            # against the fully resolved path above.
+            deleted.append(str(candidate))
         return deleted

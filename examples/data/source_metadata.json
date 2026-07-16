@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "dataset_name": "菜鸟-需求预测与分仓规划",
+  "publisher": "阿里云天池",
+  "source_url": "https://tianchi.aliyun.com/dataset/167097",
+  "accessed_at": "2026-07-16",
+  "sample_file": "examples/data/cainiao_demo.csv",
+  "sample_method": "从分仓特征表中抽取商品3424、仓库1的连续140天非聚划算支付件数，仅保留运行所需四列",
+  "rows": 140,
+  "item_ids": [3424],
+  "store_codes": ["1"],
+  "target_column": "qty_alipay_njhs",
+  "anonymized": true,
+  "redistribution_note": "仅提交最小演示子集；完整原始文件不进入Git。使用者应自行核查天池页面的最新许可与使用条款。",
+  "contains_cost_configuration": false
+}

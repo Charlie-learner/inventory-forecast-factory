@@ -8,7 +8,7 @@
 |---|---|---|
 | 能力抽取-复刻-验证-沉淀闭环 | `InventoryCapabilityWorkflow` 的 LangGraph 节点和条件修复边 | 运行 `python scripts/validate_project.py` |
 | LLM Agent、代码生成、知识图谱、算法验证理解 | Extraction/Requirement/Planning/Repair/Experience/Report Agent；规格驱动生成；NetworkX 图谱；滚动回测和等价验证 | 检查 `examples/extraction_run/` |
-| 图谱 schema 合理性 | 来源、算法、指标、画像、验证、失败、修复、版本和版本事件节点 | 打开 `knowledge/base_capability_graph.html` |
+| 图谱 schema 合理性 | 来源、算法、指标、画像、验证、失败、修复、版本和版本事件节点 | 打开 `examples/knowledge_graph/complete_capability_graph.html` |
 | Agent 工作流清晰有效 | 解析、抽取、画像、规划、回测、生成、验证、修复、报告均为独立节点 | 使用 `--verbose` 运行完整流程 |
 | 验证机制可执行、可扩展 | 验证配置注册表、指标插件、AST 安全检查、子进程、四类需求等价验证 | 运行 `pytest tests/test_codegen.py tests/test_validation_profiles.py` |
 | 修复、比较或搜索优化 | 五候选滚动回测；最多两轮修复；失败经验跨运行复用 | 运行 `pytest tests/test_workflow.py -k reuses` |
@@ -41,7 +41,7 @@
 |---|---|
 | 功能完整 | 完整闭环、CLI、图谱、报告、版本管理和失败经验 |
 | 文档质量 | README、schema、数据口径、能力抽取、需求追踪和本文件 |
-| 示例完整 | `examples/complete_run/`、`examples/extraction_run/`、`examples/replication_run/`、带完整事件流和候选代码的 `examples/detailed_run/` |
+| 示例完整 | `examples/complete_run/`、`examples/extraction_run/`、`examples/replication_run/`、带完整事件流和候选代码的 `examples/detailed_run/`、自动修复证据 `examples/repair_run/`、多表行业数据 `examples/business_data/` |
 | 报告清晰 | JSON 机器报告和 Markdown 人类报告 |
 | 用户体验 | 八类 CLI 命令、完整/基础/关闭三级追踪、安全的旧任务保留策略、明确错误、审核状态和版本生命周期 |
 | 端到端结果 | 一键脚本实际抽取 5 个能力、复刻代码、回测、验证、写图谱并管理版本 |

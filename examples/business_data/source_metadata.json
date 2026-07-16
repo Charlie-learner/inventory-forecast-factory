@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "dataset_name": "Synthetic multi-item multi-warehouse inventory planning demo",
+  "source_type": "deterministic_synthetic",
+  "license": "MIT project example",
+  "generated_by": "scripts/generate_business_demo.py",
+  "generated_at": "2026-07-16",
+  "contains_third_party_raw_records": false,
+  "inspired_by": [
+    "AWS Supply Chain Demand Planning data entities",
+    "Microsoft Forecast-to-plan business process",
+    "Oracle Inventory Policy Planning",
+    "Cainiao demand forecasting and warehouse allocation field semantics"
+  ],
+  "tables": {
+    "demand_history.csv": {
+      "rows": 2880,
+      "columns": [
+        "date",
+        "item_id",
+        "store_code",
+        "qty_alipay_njhs",
+        "unit_price",
+        "promotion_flag",
+        "holiday_flag",
+        "stockout_flag"
+      ]
+    },
+    "item_master.csv": {
+      "rows": 6,
+      "columns": [
+        "item_id",
+        "item_name",
+        "category_id",
+        "brand_id",
+        "supplier_id",
+        "launch_date",
+        "demand_pattern",
+        "unit_of_measure"
+      ]
+    },
+    "inventory_snapshot.csv": {
+      "rows": 18,
+      "columns": [
+        "snapshot_date",
+        "item_id",
+        "store_code",
+        "on_hand",
+        "on_order",
+        "backorder",
+        "lead_time_days",
+        "safety_stock",
+        "min_order_qty",
+        "pack_size",
+        "warehouse_capacity"
+      ]
+    },
+    "replenishment_policy.csv": {
+      "rows": 18,
+      "columns": [
+        "item_id",
+        "store_code",
+        "understock_cost",
+        "overstock_cost",
+        "holding_cost_per_day",
+        "target_service_level",
+        "review_period_days",
+        "replenishment_mode"
+      ]
+    },
+    "demand_events.csv": {
+      "rows": 5,
+      "columns": [
+        "event_id",
+        "event_type",
+        "item_id",
+        "store_code",
+        "start_date",
+        "end_date",
+        "expected_effect"
+      ]
+    }
+  },
+  "limitations": [
+    "Values are synthetic and must not be interpreted as real commercial performance.",
+    "The forecasting workflow consumes demand_history.csv; other tables document downstream replenishment inputs."
+  ]
+}

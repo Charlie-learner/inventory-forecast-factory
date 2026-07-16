@@ -182,6 +182,7 @@ class CapabilityExtractor:
             parameters = json.loads(parameters) if parameters.strip() else {}
         if not isinstance(parameters, dict):
             raise TypeError("Capability parameters must be a JSON object")
+        confidence = float(record.get("confidence", 1.0))
         return CapabilitySpec(
             name=name,
             task_type=str(record.get("task_type", "inventory_forecasting")).strip(),
@@ -206,6 +207,18 @@ class CapabilityExtractor:
             source_hash=source_hash,
             version=str(record.get("version", "1.0.0")).strip(),
             extracted_by=extracted_by,
+            source_title=str(record.get("source_title", "")).strip(),
+            source_url=str(record.get("source_url", "")).strip(),
+            source_license=str(record.get("source_license", "")).strip(),
+            accessed_at=str(record.get("accessed_at", "")).strip(),
+            confidence=confidence,
+            review_status=str(
+                record.get("review_status", "auto_extracted")
+            ).strip(),
+            evidence_refs=self._string_tuple(record.get("evidence_refs")),
+            extraction_warnings=self._string_tuple(
+                record.get("extraction_warnings")
+            ),
         )
 
     def _extract_document(
@@ -236,19 +249,7 @@ class CapabilityExtractor:
         self, path: Path, text: str, source_hash: str
     ) -> list[CapabilitySpec]:
         tree = ast.parse(text)
-        dependencies = sorted(
-            {
-                name.split(".", 1)[0]
-                for node in tree.body
-                if isinstance(node, (ast.Import, ast.ImportFrom))
-                for name in (
-                    [alias.name for alias in node.names]
-                    if isinstance(node, ast.Import)
-                    else [node.module or ""]
-                )
-                if name and name.split(".", 1)[0] not in {"__future__", "inventory_agent"}
-            }
-        )
+        import_roots = self._import_roots(tree)
         specs = []
         for node in tree.body:
             if not isinstance(node, ast.ClassDef) or not self._is_forecast_model(node):
@@ -264,18 +265,87 @@ class CapabilityExtractor:
                     template_name=name,
                     input_contract="non-negative daily demand history and positive horizon",
                     output_contract="non-negative daily forecast and horizon-total target inventory",
+                    suitable_for=self._class_string_tuple(node, "suitable_for"),
                     metrics=("inventory_cost", "wape", "rmse"),
-                    dependencies=tuple(dependencies),
+                    dependencies=self._class_dependencies(node, import_roots),
                     parameters=self._constructor_defaults(node),
                     source_type="python",
                     source_ref=f"{path}:{node.lineno}",
                     source_hash=source_hash,
                     extracted_by="python_ast",
+                    source_title=path.name,
+                    confidence=0.95,
+                    review_status="auto_extracted",
+                    evidence_refs=(
+                        f"{path}:{node.lineno}",
+                        f"{path}:{node.end_lineno or node.lineno}",
+                    ),
                 )
             )
         if not specs:
             raise ValueError(f"No ForecastModel subclasses found in {path}")
         return specs
+
+    @staticmethod
+    def _import_roots(tree: ast.Module) -> dict[str, str]:
+        """Map imported aliases to their top-level dependency package."""
+
+        aliases: dict[str, str] = {}
+        for node in tree.body:
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    root = alias.name.split(".", 1)[0]
+                    aliases[alias.asname or root] = root
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                root = node.module.split(".", 1)[0]
+                for alias in node.names:
+                    aliases[alias.asname or alias.name] = root
+        return {
+            alias: root
+            for alias, root in aliases.items()
+            if root not in {"__future__", "inventory_agent"}
+        }
+
+    @staticmethod
+    def _class_dependencies(
+        node: ast.ClassDef, import_roots: dict[str, str]
+    ) -> tuple[str, ...]:
+        """Return only packages referenced inside one model class."""
+
+        used_names = {
+            child.id for child in ast.walk(node) if isinstance(child, ast.Name)
+        }
+        return tuple(
+            sorted(
+                {
+                    import_roots[name]
+                    for name in used_names
+                    if name in import_roots
+                }
+            )
+        )
+
+    @staticmethod
+    def _class_string_tuple(node: ast.ClassDef, field_name: str) -> tuple[str, ...]:
+        """Read a literal class-level tuple/list used as capability metadata."""
+
+        for statement in node.body:
+            if not isinstance(statement, ast.Assign):
+                continue
+            if not any(
+                isinstance(target, ast.Name) and target.id == field_name
+                for target in statement.targets
+            ):
+                continue
+            try:
+                value = ast.literal_eval(statement.value)
+            except (ValueError, TypeError):
+                return ()
+            if isinstance(value, str):
+                return (value,)
+            if isinstance(value, (list, tuple)):
+                return tuple(str(item) for item in value)
+        return ()
 
     @staticmethod
     def _is_forecast_model(node: ast.ClassDef) -> bool:
