@@ -113,7 +113,7 @@
       <data key="d16">{"alpha": 0.1}</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\croston.md</data>
-      <data key="d19">6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b</data>
+      <data key="d19">e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9</data>
       <data key="d20">1.1.0</data>
       <data key="d21">deterministic</data>
       <data key="d22">Forecasting and Stock Control for Intermittent Demands</data>
@@ -143,7 +143,7 @@
       <data key="d16">{}</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\last_value.md</data>
-      <data key="d19">838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081</data>
+      <data key="d19">cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1</data>
       <data key="d20">1.1.0</data>
       <data key="d21">deterministic</data>
       <data key="d22">M5 accuracy competition results, findings, and conclusions</data>
@@ -173,7 +173,7 @@
       <data key="d16">{"window": 14}</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\moving_average.md</data>
-      <data key="d19">d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2</data>
+      <data key="d19">4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d</data>
       <data key="d20">1.1.0</data>
       <data key="d21">deterministic</data>
       <data key="d22">The accuracy of intermittent demand estimates</data>
@@ -199,7 +199,7 @@
       <data key="d16">{"lags": 14, "alpha": 1.0}</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\ridge_lag.md</data>
-      <data key="d19">62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65</data>
+      <data key="d19">a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc</data>
       <data key="d20">1.1.0</data>
       <data key="d21">deterministic</data>
       <data key="d22">scikit-learn Ridge regression API</data>
@@ -229,7 +229,7 @@
       <data key="d16">{"period": 7}</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\seasonal_naive.md</data>
-      <data key="d19">4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1</data>
+      <data key="d19">0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3</data>
       <data key="d20">1.1.0</data>
       <data key="d21">deterministic</data>
       <data key="d22">M5 accuracy competition results, findings, and conclusions</data>
@@ -241,86 +241,87 @@
       <data key="d28">["article seasonal-naive benchmark discussion", "inventory_agent/forecasting/models.py:36"]</data>
       <data key="d29">[]</data>
     </node>
-    <node id="source:6ad85105ef03db15">
+    <node id="source:e7fbe6265bbd3cee">
       <data key="d1">SourceArtifact</data>
       <data key="d2">Forecasting and Stock Control for Intermittent Demands</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\croston.md</data>
-      <data key="d19">6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b</data>
+      <data key="d19">e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9</data>
       <data key="d21">deterministic</data>
       <data key="d23">https://doi.org/10.1057/jors.1972.50</data>
       <data key="d24">citation_only</data>
       <data key="d25">2026-07-16</data>
       <data key="d27">source_reviewed</data>
     </node>
-    <node id="source:838b2dcd738ae125">
+    <node id="source:cc24b90807e0ed4e">
       <data key="d1">SourceArtifact</data>
       <data key="d2">M5 accuracy competition results, findings, and conclusions</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\last_value.md</data>
-      <data key="d19">838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081</data>
+      <data key="d19">cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1</data>
       <data key="d21">deterministic</data>
       <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207021001874</data>
       <data key="d24">citation_only</data>
       <data key="d25">2026-07-16</data>
       <data key="d27">source_reviewed</data>
     </node>
-    <node id="source:d0a66653269bec07">
+    <node id="source:4191b6ea63dffed1">
       <data key="d1">SourceArtifact</data>
       <data key="d2">The accuracy of intermittent demand estimates</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\moving_average.md</data>
-      <data key="d19">d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2</data>
+      <data key="d19">4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d</data>
       <data key="d21">deterministic</data>
       <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207004000792</data>
       <data key="d24">citation_only</data>
       <data key="d25">2026-07-16</data>
       <data key="d27">source_reviewed</data>
     </node>
-    <node id="source:62f20d513a95bd60">
+    <node id="source:a6da8bbaf91c57db">
       <data key="d1">SourceArtifact</data>
       <data key="d2">scikit-learn Ridge regression API</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\ridge_lag.md</data>
-      <data key="d19">62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65</data>
+      <data key="d19">a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc</data>
       <data key="d21">deterministic</data>
       <data key="d23">https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html</data>
       <data key="d24">BSD-3-Clause documentation and citation metadata</data>
       <data key="d25">2026-07-16</data>
       <data key="d27">source_reviewed</data>
     </node>
-    <node id="source:4304d58cabda939c">
+    <node id="source:0d2b62ba65897f56">
       <data key="d1">SourceArtifact</data>
       <data key="d2">M5 accuracy competition results, findings, and conclusions</data>
       <data key="d17">document</data>
       <data key="d18">examples\capabilities\seasonal_naive.md</data>
-      <data key="d19">4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1</data>
+      <data key="d19">0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3</data>
       <data key="d21">deterministic</data>
       <data key="d23">https://www.sciencedirect.com/science/article/pii/S0169207021001874</data>
       <data key="d24">citation_only</data>
       <data key="d25">2026-07-16</data>
       <data key="d27">source_reviewed</data>
     </node>
-    <node id="run:313314a77fe8">
+    <node id="run:be7389b40136">
       <data key="d1">ValidationRun</data>
+      <data key="d2">验证:seasonal_naive@1</data>
       <data key="d30">1002</data>
       <data key="d31">1</data>
       <data key="d32">success</data>
       <data key="d33">{"bias": 0.0, "inventory_cost": 0.0, "mae": 0.0, "mean_actual_total": 184.0, "mean_target_inventory": 184.0, "rmse": 0.0, "smape": 0.0, "wape": 0.0}</data>
       <data key="d34">{"equivalence": true, "imports": true, "interface": true, "runtime": true, "stability": true, "syntax": true}</data>
-      <data key="d35">2026-07-16T08:59:43.790343+00:00</data>
+      <data key="d35">2026-07-16T09:43:16.495916+00:00</data>
     </node>
-    <node id="version:seasonal_naive:c8baa3ac039b">
+    <node id="version:seasonal_naive:a100b5908799">
       <data key="d1">CapabilityVersion</data>
-      <data key="d2">seasonal_naive@c8baa3ac039b</data>
-      <data key="d36">2026-07-16T08:59:43.790343+00:00</data>
+      <data key="d2">seasonal_naive@a100b5908799</data>
+      <data key="d36">2026-07-16T09:43:16.495916+00:00</data>
       <data key="d37">active</data>
       <data key="d38">1.1.0</data>
       <data key="d39">spec_template</data>
-      <data key="d40">4d4f5ff275bb71390e2381d2119c72b69fc97b028d9b10ea2713392c3107b67d</data>
-      <data key="d19">c8baa3ac039bcf62a7db3ae5d05509121ecb38e870dc055607c15aef1805b267</data>
+      <data key="d40">e4c75af347c0866373e03ac2e7abc603e1e8c090940f54b929a070ec0e513db2</data>
+      <data key="d19">a100b590879924e5f86e9377661dd7790355f9623b35555479b3dab5609ef289</data>
       <data key="d18">examples\capabilities\seasonal_naive.md</data>
-      <data key="d41">examples\repair_run\20260716_165939_831375\generated\forecast_seasonal_naive.py</data>
+      <data key="d41">examples\repair_run\20260716_174311_621870\generated\forecast_seasonal_naive.py</data>
     </node>
     <node id="failure:4c06ea656e7e460b">
       <data key="d1">FailureCase</data>
@@ -330,25 +331,35 @@
       <data key="d44">syntax: injected demonstration failure before safe repair</data>
       <data key="d45">True</data>
       <data key="d46">1</data>
-      <data key="d47">2026-07-16T08:59:43.790343+00:00</data>
+      <data key="d47">2026-07-16T09:43:16.495916+00:00</data>
     </node>
-    <node id="repair:be050a6f8a">
+    <node id="repair:122b7d0db4">
       <data key="d1">RepairStrategy</data>
+      <data key="d2">修复:seasonal_naive</data>
       <data key="d9">第 1 轮修复（受约束安全模板回退，错误类型=syntax）: syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]</data>
     </node>
-    <node id="version_event:71b8901ae23f">
+    <node id="version_event:b7a348c7b3aa">
       <data key="d1">VersionEvent</data>
       <data key="d2">promote:seasonal_naive</data>
       <data key="d48">promote</data>
       <data key="d49">seasonal_naive</data>
       <data key="d50" />
-      <data key="d51">version:seasonal_naive:c8baa3ac039b</data>
-      <data key="d35">2026-07-16T08:59:43.811473+00:00</data>
+      <data key="d51">version:seasonal_naive:a100b5908799</data>
+      <data key="d35">2026-07-16T09:43:16.508980+00:00</data>
     </node>
     <edge source="algorithm:croston" target="metric:inventory_cost">
       <data key="d52">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:wape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:smape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:bias">
       <data key="d52">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="profile:intermittent">
@@ -357,10 +368,7 @@
     <edge source="algorithm:croston" target="profile:many_zeros">
       <data key="d52">SUITABLE_FOR</data>
     </edge>
-    <edge source="algorithm:croston" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:croston" target="source:6ad85105ef03db15">
+    <edge source="algorithm:croston" target="source:e7fbe6265bbd3cee">
       <data key="d52">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:inventory_cost">
@@ -369,13 +377,19 @@
     <edge source="algorithm:last_value" target="metric:wape">
       <data key="d52">EVALUATED_BY</data>
     </edge>
-    <edge source="algorithm:last_value" target="profile:short_history">
-      <data key="d52">SUITABLE_FOR</data>
-    </edge>
     <edge source="algorithm:last_value" target="metric:rmse">
       <data key="d52">EVALUATED_BY</data>
     </edge>
-    <edge source="algorithm:last_value" target="source:838b2dcd738ae125">
+    <edge source="algorithm:last_value" target="metric:smape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:bias">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="profile:short_history">
+      <data key="d52">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:last_value" target="source:cc24b90807e0ed4e">
       <data key="d52">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:inventory_cost">
@@ -384,22 +398,37 @@
     <edge source="algorithm:moving_average" target="metric:wape">
       <data key="d52">EVALUATED_BY</data>
     </edge>
+    <edge source="algorithm:moving_average" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:smape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:bias">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
     <edge source="algorithm:moving_average" target="profile:stable">
       <data key="d52">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:moving_average" target="profile:short_history">
       <data key="d52">SUITABLE_FOR</data>
     </edge>
-    <edge source="algorithm:moving_average" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:moving_average" target="source:d0a66653269bec07">
+    <edge source="algorithm:moving_average" target="source:4191b6ea63dffed1">
       <data key="d52">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:inventory_cost">
       <data key="d52">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:wape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:smape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:bias">
       <data key="d52">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="profile:trend">
@@ -411,10 +440,7 @@
     <edge source="algorithm:ridge_lag" target="profile:volatile">
       <data key="d52">SUITABLE_FOR</data>
     </edge>
-    <edge source="algorithm:ridge_lag" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:ridge_lag" target="source:62f20d513a95bd60">
+    <edge source="algorithm:ridge_lag" target="source:a6da8bbaf91c57db">
       <data key="d52">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:inventory_cost">
@@ -423,40 +449,46 @@
     <edge source="algorithm:seasonal_naive" target="metric:wape">
       <data key="d52">EVALUATED_BY</data>
     </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:rmse">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:smape">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:bias">
+      <data key="d52">EVALUATED_BY</data>
+    </edge>
     <edge source="algorithm:seasonal_naive" target="profile:weekly_seasonal">
       <data key="d52">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="profile:stable">
       <data key="d52">SUITABLE_FOR</data>
     </edge>
-    <edge source="algorithm:seasonal_naive" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:seasonal_naive" target="source:4304d58cabda939c">
+    <edge source="algorithm:seasonal_naive" target="source:0d2b62ba65897f56">
       <data key="d52">EXTRACTED_FROM</data>
     </edge>
-    <edge source="run:313314a77fe8" target="algorithm:seasonal_naive">
+    <edge source="run:be7389b40136" target="algorithm:seasonal_naive">
       <data key="d52">VALIDATED</data>
     </edge>
-    <edge source="run:313314a77fe8" target="version:seasonal_naive:c8baa3ac039b">
+    <edge source="run:be7389b40136" target="version:seasonal_naive:a100b5908799">
       <data key="d52">VALIDATED_VERSION</data>
     </edge>
-    <edge source="run:313314a77fe8" target="failure:4c06ea656e7e460b">
+    <edge source="run:be7389b40136" target="failure:4c06ea656e7e460b">
       <data key="d52">OBSERVED_FAILURE</data>
     </edge>
-    <edge source="run:313314a77fe8" target="repair:be050a6f8a">
+    <edge source="run:be7389b40136" target="repair:122b7d0db4">
       <data key="d52">REPAIRED_BY</data>
     </edge>
-    <edge source="version:seasonal_naive:c8baa3ac039b" target="algorithm:seasonal_naive">
+    <edge source="version:seasonal_naive:a100b5908799" target="algorithm:seasonal_naive">
       <data key="d52">VERSION_OF</data>
     </edge>
     <edge source="failure:4c06ea656e7e460b" target="algorithm:seasonal_naive">
       <data key="d52">FAILURE_OF</data>
     </edge>
-    <edge source="repair:be050a6f8a" target="failure:4c06ea656e7e460b">
+    <edge source="repair:122b7d0db4" target="failure:4c06ea656e7e460b">
       <data key="d52">ADDRESSES</data>
     </edge>
-    <edge source="version_event:71b8901ae23f" target="version:seasonal_naive:c8baa3ac039b">
+    <edge source="version_event:b7a348c7b3aa" target="version:seasonal_naive:a100b5908799">
       <data key="d52">ACTIVATED_VERSION</data>
     </edge>
     <data key="d0">1.4</data>

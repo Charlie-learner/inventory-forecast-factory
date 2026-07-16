@@ -61,3 +61,8 @@ python -m inventory_agent visualize-graph \
 The versioned base graph demonstrates deterministic bootstrap knowledge. A tracked, complete
 runtime example containing `ValidationRun`, `FailureCase`, `RepairStrategy`,
 `CapabilityVersion`, and `VersionEvent` is stored under `examples/knowledge_graph/`.
+
+The standalone HTML uses a deterministic layered layout instead of a random force layout.
+It supports node search, type filters, zoom/pan, optional relation labels, connected-edge
+highlighting, and a click-to-inspect property panel. Only node types present in the current
+graph are shown in the legend.

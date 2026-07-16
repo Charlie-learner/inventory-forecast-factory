@@ -1,12 +1,12 @@
 {
   "schema_version": "1.1",
-  "created_at": "2026-07-16T08:49:50.542360+00:00",
+  "created_at": "2026-07-16T09:43:09.995435+00:00",
   "count": 5,
   "scan_reports": [
     {
       "source": ".",
       "source_kind": "repository",
-      "files_scanned": 76,
+      "files_scanned": 80,
       "files_matched": 1,
       "capabilities_found": 5,
       "errors": []
@@ -26,7 +26,9 @@
       "metrics": [
         "inventory_cost",
         "wape",
-        "rmse"
+        "rmse",
+        "smape",
+        "bias"
       ],
       "dependencies": [
         "numpy",
@@ -64,7 +66,9 @@
       "metrics": [
         "inventory_cost",
         "wape",
-        "rmse"
+        "rmse",
+        "smape",
+        "bias"
       ],
       "dependencies": [
         "numpy",
@@ -104,7 +108,9 @@
       "metrics": [
         "inventory_cost",
         "wape",
-        "rmse"
+        "rmse",
+        "smape",
+        "bias"
       ],
       "dependencies": [
         "numpy",
@@ -144,7 +150,9 @@
       "metrics": [
         "inventory_cost",
         "wape",
-        "rmse"
+        "rmse",
+        "smape",
+        "bias"
       ],
       "dependencies": [
         "numpy",
@@ -185,7 +193,9 @@
       "metrics": [
         "inventory_cost",
         "wape",
-        "rmse"
+        "rmse",
+        "smape",
+        "bias"
       ],
       "dependencies": [
         "numpy",

@@ -72,7 +72,8 @@ data/              本地原始/处理中间数据（大文件由 Git 忽略）
 
 运行后的验证结果写入 `artifacts/knowledge/`，避免修改版本化基础图谱。
 
-生成无需外部 JavaScript 依赖的 HTML 可视化：
+生成无需外部 JavaScript 依赖的 HTML 可视化。页面采用来源、算法、画像、指标和运行版本的
+分层布局，支持搜索、类型筛选、缩放拖动、关系名称开关、关联边高亮和节点属性侧栏：
 
 ```bash
 uv run python -m inventory_agent visualize-graph \

@@ -266,7 +266,7 @@ class CapabilityExtractor:
                     input_contract="non-negative daily demand history and positive horizon",
                     output_contract="non-negative daily forecast and horizon-total target inventory",
                     suitable_for=self._class_string_tuple(node, "suitable_for"),
-                    metrics=("inventory_cost", "wape", "rmse"),
+                    metrics=("inventory_cost", "wape", "rmse", "smape", "bias"),
                     dependencies=self._class_dependencies(node, import_roots),
                     parameters=self._constructor_defaults(node),
                     source_type="python",

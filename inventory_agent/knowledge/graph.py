@@ -76,8 +76,12 @@ class CapabilityKnowledgeGraph:
                 version="1.0.0",
                 extracted_by="registry_bootstrap",
             )
-            knowledge.graph.add_edge(model_node, "metric:inventory_cost", relation="EVALUATED_BY")
-            knowledge.graph.add_edge(model_node, "metric:wape", relation="EVALUATED_BY")
+            for metric in ["inventory_cost", "wape", "rmse", "smape", "bias"]:
+                knowledge.graph.add_edge(
+                    model_node,
+                    f"metric:{metric}",
+                    relation="EVALUATED_BY",
+                )
             for profile in metadata.suitable_for:
                 profile_node = f"profile:{profile}"
                 if not knowledge.graph.has_node(profile_node):
@@ -133,10 +137,18 @@ class CapabilityKnowledgeGraph:
                     capability.source_ref.encode("utf-8")
                 ).hexdigest()[:16]
                 source_node = f"source:{source_key}"
-                source_path = capability.source_ref
-                suffix = source_path.rsplit(":", 1)[-1]
-                if suffix.isdigit():
-                    source_path = source_path.rsplit(":", 1)[0]
+                source_path = self._normalized_source_ref(capability.source_ref)
+                stale_sources = [
+                    node
+                    for node, attributes in self.graph.nodes(data=True)
+                    if attributes.get("type") == "SourceArtifact"
+                    and node != source_node
+                    and self._normalized_source_ref(
+                        str(attributes.get("source_ref", ""))
+                    )
+                    == source_path
+                ]
+                self.graph.remove_nodes_from(stale_sources)
                 self.graph.add_node(
                     source_node,
                     type="SourceArtifact",
@@ -155,6 +167,13 @@ class CapabilityKnowledgeGraph:
                 self.graph.add_edge(model_node, source_node, relation="EXTRACTED_FROM")
             ingested.append(model_node)
         return ingested
+
+    @staticmethod
+    def _normalized_source_ref(source_ref: str) -> str:
+        """Remove a trailing Python line number from a source artifact path."""
+
+        suffix = source_ref.rsplit(":", 1)[-1]
+        return source_ref.rsplit(":", 1)[0] if suffix.isdigit() else source_ref
 
     def capability_spec(self, name: str) -> CapabilitySpec:
         """Reconstruct a generation-ready specification from graph knowledge."""
@@ -290,6 +309,7 @@ class CapabilityKnowledgeGraph:
         self.graph.add_node(
             run_id,
             type="ValidationRun",
+            name=f"验证:{model}@{store_code}",
             item_id=int(item_id),
             store_code=str(store_code),
             status=status,
@@ -349,7 +369,12 @@ class CapabilityKnowledgeGraph:
             failure_nodes.append(failure_node)
         if repair:
             repair_node = f"repair:{uuid4().hex[:10]}"
-            self.graph.add_node(repair_node, type="RepairStrategy", description=repair)
+            self.graph.add_node(
+                repair_node,
+                type="RepairStrategy",
+                name=f"修复:{model}",
+                description=repair,
+            )
             self.graph.add_edge(run_id, repair_node, relation="REPAIRED_BY")
             for failure_node in failure_nodes:
                 self.graph.add_edge(repair_node, failure_node, relation="ADDRESSES")
@@ -503,12 +528,10 @@ class CapabilityKnowledgeGraph:
         return matches[0]
 
     def render_html(self, path: str | Path) -> Path:
-        """Render a dependency-free interactive-readable SVG overview as HTML."""
+        """Render a dependency-free layered SVG with filtering and node details."""
 
         output = Path(path)
         output.parent.mkdir(parents=True, exist_ok=True)
-        width, height = 1200, 760
-        positions = nx.spring_layout(self.graph, seed=42) if self.graph.nodes else {}
         colors = {
             "Algorithm": "#2563eb",
             "DemandProfile": "#16a34a",
@@ -520,53 +543,289 @@ class CapabilityKnowledgeGraph:
             "FailureCase": "#ea580c",
             "VersionEvent": "#4f46e5",
         }
+        lanes = [
+            ("知识来源", ("SourceArtifact",)),
+            ("算法能力", ("Algorithm",)),
+            ("需求画像", ("DemandProfile",)),
+            ("评价指标", ("Metric",)),
+            (
+                "运行与版本",
+                (
+                    "ValidationRun",
+                    "FailureCase",
+                    "RepairStrategy",
+                    "CapabilityVersion",
+                    "VersionEvent",
+                ),
+            ),
+        ]
+        active_lanes = [
+            (title, node_types)
+            for title, node_types in lanes
+            if any(
+                attributes.get("type") in node_types
+                for _, attributes in self.graph.nodes(data=True)
+            )
+        ]
+        lane_width = 300
+        width = max(1120, 100 + lane_width * len(active_lanes))
+        lane_nodes: list[tuple[str, tuple[str, ...], list[str]]] = []
+        positions: dict[str, tuple[float, float]] = {}
+        maximum_lane_size = 1
+        for lane_index, (title, node_types) in enumerate(active_lanes):
+            nodes_in_lane = sorted(
+                (
+                    node
+                    for node, attributes in self.graph.nodes(data=True)
+                    if attributes.get("type") in node_types
+                ),
+                key=lambda node: (
+                    node_types.index(
+                        str(self.graph.nodes[node].get("type", "Unknown"))
+                    ),
+                    str(self.graph.nodes[node].get("name", node)).casefold(),
+                ),
+            )
+            maximum_lane_size = max(maximum_lane_size, len(nodes_in_lane))
+            lane_nodes.append((title, node_types, nodes_in_lane))
+            x = 95 + lane_index * lane_width
+            for node_index, node in enumerate(nodes_in_lane):
+                positions[node] = (x, 125 + node_index * 78)
+        height = max(700, 205 + (maximum_lane_size - 1) * 78)
 
-        def point(node: str) -> tuple[float, float]:
-            x, y = positions[node]
-            return 70 + (float(x) + 1) * (width - 140) / 2, 70 + (float(y) + 1) * (height - 140) / 2
+        relation_colors = {
+            "EXTRACTED_FROM": "#0891b2",
+            "SUITABLE_FOR": "#16a34a",
+            "EVALUATED_BY": "#d97706",
+            "VALIDATED": "#7c3aed",
+            "VALIDATED_VERSION": "#db2777",
+            "VERSION_OF": "#db2777",
+            "OBSERVED_FAILURE": "#ea580c",
+            "FAILURE_OF": "#ea580c",
+            "REPAIRED_BY": "#dc2626",
+            "ADDRESSES": "#dc2626",
+            "ACTIVATED_VERSION": "#4f46e5",
+        }
+
+        lane_backgrounds = []
+        lane_headers = []
+        for lane_index, (title, _, _) in enumerate(lane_nodes):
+            x = 12 + lane_index * lane_width
+            lane_backgrounds.append(
+                f'<rect x="{x}" y="62" width="{lane_width - 18}" '
+                f'height="{height - 82}" rx="14" class="lane-bg lane-{lane_index % 2}" />'
+            )
+            lane_headers.append(
+                f'<text x="{x + 16}" y="92" class="lane-title">{escape(title)}</text>'
+            )
 
         edges = []
-        for source, target, attributes in self.graph.edges(data=True):
-            x1, y1 = point(source)
-            x2, y2 = point(target)
-            relation = escape(str(attributes.get("relation", "")))
+        for edge_index, (source, target, attributes) in enumerate(
+            self.graph.edges(data=True)
+        ):
+            x1, y1 = positions[source]
+            x2, y2 = positions[target]
+            relation_value = str(attributes.get("relation", "RELATED_TO"))
+            relation = escape(relation_value)
+            stroke = relation_colors.get(relation_value, "#64748b")
+            curve = 26 if edge_index % 2 else -26
+            control_x = (x1 + x2) / 2
+            control_y = (y1 + y2) / 2 + curve
+            label_x = (x1 + 2 * control_x + x2) / 4
+            label_y = (y1 + 2 * control_y + y2) / 4
             edges.append(
-                f'<g><title>{relation}</title><line x1="{x1:.1f}" y1="{y1:.1f}" '
-                f'x2="{x2:.1f}" y2="{y2:.1f}" class="edge" '
-                'marker-end="url(#arrow)" /></g>'
+                f'<g class="edge-group" data-source="{escape(source)}" '
+                f'data-target="{escape(target)}" data-relation="{relation}">'
+                f'<title>{relation}</title>'
+                f'<path d="M {x1:.1f} {y1:.1f} Q {control_x:.1f} {control_y:.1f} '
+                f'{x2:.1f} {y2:.1f}" class="edge" stroke="{stroke}" '
+                f'marker-end="url(#arrow)" />'
+                f'<text x="{label_x:.1f}" y="{label_y:.1f}" '
+                f'class="edge-label">{relation}</text></g>'
             )
+
+        label_occurrences: dict[str, int] = {}
+        for node, attributes in self.graph.nodes(data=True):
+            label = str(attributes.get("name", node))
+            label_occurrences[label] = label_occurrences.get(label, 0) + 1
 
         nodes = []
+        actual_types = set()
         for node, attributes in self.graph.nodes(data=True):
-            x, y = point(node)
+            x, y = positions[node]
             node_type = str(attributes.get("type", "Unknown"))
-            label = escape(str(attributes.get("name", node)))
-            details = escape(json.dumps(attributes, ensure_ascii=False, default=str))
+            actual_types.add(node_type)
+            full_label = str(attributes.get("name", node))
+            display_label = full_label
+            if (
+                node_type == "SourceArtifact"
+                and label_occurrences.get(full_label, 0) > 1
+            ):
+                source_name = Path(
+                    self._normalized_source_ref(
+                        str(attributes.get("source_ref", "source"))
+                    )
+                ).name
+                display_label = f"{source_name}: {full_label}"
+            short_label = (
+                f"{display_label[:27]}…"
+                if len(display_label) > 28
+                else display_label
+            )
+            details = escape(
+                json.dumps(
+                    {"id": node, **attributes},
+                    ensure_ascii=False,
+                    default=str,
+                    indent=2,
+                )
+            )
+            search_text = escape(f"{node} {node_type} {full_label}".casefold())
             color = colors.get(node_type, "#64748b")
             nodes.append(
-                f'<g><title>{details}</title><circle cx="{x:.1f}" cy="{y:.1f}" r="14" fill="{color}" />'
-                f'<text x="{x + 18:.1f}" y="{y + 4:.1f}" class="label">{label}</text></g>'
+                f'<g class="node" data-node-id="{escape(node)}" '
+                f'data-node-type="{escape(node_type)}" data-search="{search_text}" '
+                f'data-details="{details}" tabindex="0">'
+                f'<title>{escape(full_label)} · {escape(node_type)}</title>'
+                f'<circle cx="{x:.1f}" cy="{y:.1f}" r="17" fill="{color}" />'
+                f'<text x="{x + 23:.1f}" y="{y + 5:.1f}" '
+                f'class="node-label">{escape(short_label)}</text></g>'
             )
 
+        type_order = [node_type for _, types in lanes for node_type in types]
         legend = "".join(
-            f'<span><i style="background:{color}"></i>{escape(node_type)}</span>'
-            for node_type, color in colors.items()
+            f'<button type="button" class="legend-item" '
+            f'data-filter-type="{escape(node_type)}">'
+            f'<i style="background:{colors.get(node_type, "#64748b")}"></i>'
+            f'{escape(node_type)}</button>'
+            for node_type in type_order
+            if node_type in actual_types
         )
-        document = f"""<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+        template = """<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Inventory Capability Knowledge Graph</title>
 <style>
-body{{font-family:system-ui,sans-serif;margin:0;background:#f8fafc;color:#0f172a}}
-header{{padding:18px 28px;background:#0f172a;color:white}} h1{{margin:0 0 6px;font-size:22px}}
-.meta{{color:#cbd5e1}} .legend{{display:flex;gap:18px;flex-wrap:wrap;padding:14px 28px;background:white}}
-.legend span{{display:flex;align-items:center;gap:6px}} .legend i{{width:11px;height:11px;border-radius:50%}}
-svg{{display:block;width:100%;height:auto;background:white;border-top:1px solid #e2e8f0}}
-.edge{{stroke:#94a3b8;stroke-width:1.2}} .label{{font-size:11px;fill:#0f172a}}
-</style></head><body><header><h1>库存算法能力知识图谱</h1>
-<div class="meta">schema {escape(self.SCHEMA_VERSION)} · {self.graph.number_of_nodes()} nodes · {self.graph.number_of_edges()} edges</div></header>
-<div class="legend">{legend}</div><svg viewBox="0 0 {width} {height}" role="img" aria-label="Capability knowledge graph">
-<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="19" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#94a3b8"/></marker></defs>
-{''.join(edges)}{''.join(nodes)}</svg></body></html>"""
+*{box-sizing:border-box} body{font-family:Inter,ui-sans-serif,system-ui,sans-serif;margin:0;
+background:#f1f5f9;color:#0f172a} header{padding:18px 28px;background:#0f172a;color:white}
+h1{margin:0 0 6px;font-size:23px}.meta{color:#cbd5e1}.toolbar,.legend{display:flex;
+align-items:center;gap:10px;flex-wrap:wrap;padding:10px 20px;background:white;
+border-bottom:1px solid #e2e8f0}.toolbar input[type="search"]{min-width:280px;padding:8px 10px;
+border:1px solid #cbd5e1;border-radius:8px}.toolbar button,.legend-item{border:1px solid #cbd5e1;
+background:white;border-radius:8px;padding:7px 10px;cursor:pointer}.toolbar button:hover,
+.legend-item:hover{background:#f8fafc}.legend-item{display:flex;align-items:center;gap:6px}
+.toolbar label{display:flex;align-items:center;gap:6px}
+.legend-item i{width:11px;height:11px;border-radius:50%}.legend-item.is-off{opacity:.38;
+text-decoration:line-through}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 330px;
+min-height:680px}.graph-shell{overflow:auto;background:white}.details{border-left:1px solid #e2e8f0;
+background:#f8fafc;padding:18px;overflow:auto}.details h2{margin:0 0 8px;font-size:17px}
+.details p{color:#64748b;font-size:13px}.details pre{white-space:pre-wrap;word-break:break-word;
+font-size:12px;line-height:1.45;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:9px}
+svg{display:block;min-width:1100px;width:100%;height:auto;background:white;cursor:grab}
+svg.is-dragging{cursor:grabbing}.lane-bg{fill:#f8fafc;stroke:#e2e8f0}.lane-1{fill:#f1f5f9}
+.lane-title{font-size:13px;font-weight:700;fill:#475569}.edge{fill:none;stroke-width:1.45;
+opacity:.42}.edge-group.is-connected .edge{stroke-width:2.8;opacity:1}.edge-label{display:none;
+font-size:8px;fill:#475569;paint-order:stroke;stroke:white;stroke-width:3px}
+body.show-relations .edge-label{display:block}.node{cursor:pointer}.node circle{stroke:white;
+stroke-width:2.5;filter:drop-shadow(0 2px 2px rgb(15 23 42 / .15))}
+.node:hover circle,.node.is-selected circle{stroke:#0f172a;stroke-width:4}
+.node:focus{outline:none}.node:focus-visible circle{stroke:#0f172a;stroke-width:4}
+.node-label{font-size:11px;fill:#0f172a;paint-order:stroke;stroke:white;stroke-width:3px;
+stroke-linejoin:round}.node.is-dimmed,.edge-group.is-dimmed{opacity:.1}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.details{border-left:0;
+border-top:1px solid #e2e8f0}.toolbar input[type="search"]{min-width:180px;flex:1}}
+</style></head><body>
+<header><h1>库存算法能力知识图谱</h1>
+<div class="meta">schema __SCHEMA__ · __NODE_COUNT__ nodes · __EDGE_COUNT__ edges · 分层可交互视图</div>
+</header>
+<div class="toolbar">
+<input id="graph-search" type="search" placeholder="搜索节点名称、类型或ID">
+<button type="button" id="zoom-in">放大</button><button type="button" id="zoom-out">缩小</button>
+<button type="button" id="reset-view">重置</button>
+<label><input id="toggle-relations" type="checkbox"> 显示关系名称</label>
+</div>
+<div class="legend">__LEGEND__</div>
+<div class="workspace"><div class="graph-shell">
+<svg id="graph" viewBox="0 0 __WIDTH__ __HEIGHT__" role="img"
+aria-label="Capability knowledge graph">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="19" refY="3"
+orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#64748b"/></marker></defs>
+<g id="viewport">__LANES____HEADERS____EDGES____NODES__</g></svg></div>
+<aside class="details" id="details-panel"><h2>节点详情</h2>
+<p>点击任一节点查看完整属性；点击图例可筛选节点类型。</p>
+<pre id="details-content">尚未选择节点</pre></aside></div>
+<script>
+const svg=document.getElementById("graph"),viewport=document.getElementById("viewport");
+const nodes=[...document.querySelectorAll(".node")],edges=[...document.querySelectorAll(".edge-group")];
+const disabledTypes=new Set();let scale=1,tx=0,ty=0,dragging=false,lastX=0,lastY=0;
+function transform(){viewport.setAttribute("transform",`translate(${tx} ${ty}) scale(${scale})`)}
+function refreshVisibility(){
+  const query=document.getElementById("graph-search").value.trim().toLowerCase();
+  const visible=new Set();
+  nodes.forEach(node=>{
+    const typeOff=disabledTypes.has(node.dataset.nodeType);
+    const matched=!query||node.dataset.search.includes(query);
+    node.style.display=typeOff?"none":"";
+    node.classList.toggle("is-dimmed",!matched);
+    if(!typeOff)visible.add(node.dataset.nodeId);
+  });
+  edges.forEach(edge=>{
+    const shown=visible.has(edge.dataset.source)&&visible.has(edge.dataset.target);
+    edge.style.display=shown?"":"none";
+    const source=document.querySelector(`[data-node-id="${CSS.escape(edge.dataset.source)}"]`);
+    const target=document.querySelector(`[data-node-id="${CSS.escape(edge.dataset.target)}"]`);
+    edge.classList.toggle("is-dimmed",!!query&&source?.classList.contains("is-dimmed")
+      &&target?.classList.contains("is-dimmed"));
+  });
+}
+function selectNode(node){
+  nodes.forEach(item=>item.classList.toggle("is-selected",item===node));
+  edges.forEach(edge=>edge.classList.toggle("is-connected",
+    edge.dataset.source===node.dataset.nodeId||edge.dataset.target===node.dataset.nodeId));
+  document.getElementById("details-content").textContent=node.dataset.details;
+}
+nodes.forEach(node=>{node.addEventListener("click",()=>selectNode(node));
+node.addEventListener("keydown",event=>{if(event.key==="Enter")selectNode(node)})});
+document.querySelectorAll(".legend-item").forEach(button=>button.addEventListener("click",()=>{
+  const type=button.dataset.filterType;
+  disabledTypes.has(type)?disabledTypes.delete(type):disabledTypes.add(type);
+  button.classList.toggle("is-off");refreshVisibility();
+}));
+document.getElementById("graph-search").addEventListener("input",refreshVisibility);
+document.getElementById("toggle-relations").addEventListener("change",event=>
+  document.body.classList.toggle("show-relations",event.target.checked));
+document.getElementById("zoom-in").addEventListener("click",()=>{scale=Math.min(2.5,scale*1.2);transform()});
+document.getElementById("zoom-out").addEventListener("click",()=>{scale=Math.max(.55,scale/1.2);transform()});
+document.getElementById("reset-view").addEventListener("click",()=>{
+  scale=1;tx=0;ty=0;disabledTypes.clear();transform();
+  document.getElementById("graph-search").value="";
+  document.querySelectorAll(".legend-item").forEach(item=>item.classList.remove("is-off"));
+  nodes.forEach(item=>item.classList.remove("is-selected"));
+  edges.forEach(item=>item.classList.remove("is-connected"));refreshVisibility();
+});
+svg.addEventListener("wheel",event=>{event.preventDefault();
+  scale=Math.max(.55,Math.min(2.5,scale*(event.deltaY<0?1.1:.9)));transform()},{passive:false});
+svg.addEventListener("pointerdown",event=>{if(event.target.closest(".node"))return;
+  dragging=true;lastX=event.clientX;lastY=event.clientY;svg.classList.add("is-dragging");
+  svg.setPointerCapture(event.pointerId)});
+svg.addEventListener("pointermove",event=>{if(!dragging)return;
+  const ratio=__WIDTH__/svg.getBoundingClientRect().width;
+  tx+=(event.clientX-lastX)*ratio;ty+=(event.clientY-lastY)*ratio;
+  lastX=event.clientX;lastY=event.clientY;transform()});
+svg.addEventListener("pointerup",()=>{dragging=false;svg.classList.remove("is-dragging")});
+</script></body></html>"""
+        document = (
+            template.replace("__SCHEMA__", escape(self.SCHEMA_VERSION))
+            .replace("__NODE_COUNT__", str(self.graph.number_of_nodes()))
+            .replace("__EDGE_COUNT__", str(self.graph.number_of_edges()))
+            .replace("__LEGEND__", legend)
+            .replace("__WIDTH__", str(width))
+            .replace("__HEIGHT__", str(height))
+            .replace("__LANES__", "".join(lane_backgrounds))
+            .replace("__HEADERS__", "".join(lane_headers))
+            .replace("__EDGES__", "".join(edges))
+            .replace("__NODES__", "".join(nodes))
+        )
         output.write_text(document, encoding="utf-8")
         return output
 

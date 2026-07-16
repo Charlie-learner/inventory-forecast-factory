@@ -7,7 +7,7 @@
 - input_contract: Dense non-negative daily history with enough observations for lag construction.
 - output_contract: Non-negative daily forecast and horizon-total target inventory.
 - suitable_for: trend, dense, volatile
-- metrics: inventory_cost, wape, rmse
+- metrics: inventory_cost, wape, rmse, smape, bias
 - dependencies: numpy, pandas, scikit-learn
 - parameters: {"lags": 14, "alpha": 1.0}
 - version: 1.1.0
@@ -18,4 +18,3 @@
 - confidence: 0.9
 - review_status: source_reviewed
 - evidence_refs: Ridge L2 objective, inventory_agent/forecasting/models.py:84
-

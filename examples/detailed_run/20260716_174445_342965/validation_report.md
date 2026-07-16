@@ -1,0 +1,57 @@
+# 库存预测能力验证报告
+
+- 能力描述：为商品 3424 在仓库 1 预测未来14天目标库存
+- 商品：3424
+- 仓库：1
+- 预测周期：14 天
+- 任务类型：inventory_target
+- 主验证指标：inventory_cost
+- 需求类型：stable
+- 历史状态：observed
+- 选中模型：last_value
+- 未来 14 天目标库存：308.00
+- 成本 A（补少/缺货）：1.00
+- 成本 B（补多/积压）：1.00
+- 成本来源：unit_default
+- 成本口径：horizon_total
+- 能力抽取数量：1
+- 能力来源扫描文件数：1
+- 能力来源：内置能力图谱
+
+## 候选模型验证
+
+| 模型 | WAPE | sMAPE | Bias | 平均单折库存成本 |
+|---|---:|---:|---:|---:|
+| moving_average | 0.7502 | 0.5510 | 0.7857 | 131.00 |
+| seasonal_naive | 1.7871 | 0.7508 | 6.4762 | 209.33 |
+| last_value | 0.6247 | 0.7039 | -6.9048 | 96.67 |
+
+## 候选代码方案生成与比较
+
+| 代码方案 | 回测选中 | 生成方式 | 代码验证 | 等价误差 | 文件 |
+|---|---|---|---|---:|---|
+| moving_average | False | spec_template | True | 0.0 | `examples\detailed_run\20260716_174445_342965\candidate_solutions\moving_average\forecast_moving_average.py` |
+| seasonal_naive | False | spec_template | True | 0.0 | `examples\detailed_run\20260716_174445_342965\candidate_solutions\seasonal_naive\forecast_seasonal_naive.py` |
+| last_value | True | spec_template | True | 0.0 | `examples\detailed_run\20260716_174445_342965\candidate_solutions\last_value\forecast_last_value.py` |
+
+## 生成代码验证
+
+- 生成方式：spec_template
+- 能力规格哈希：f9a84ff721443679
+- 生成源码哈希：e7546b8aae0d7b37
+- 语法、导入、接口、运行、稳定性检查：{'syntax': True, 'imports': True, 'interface': True, 'runtime': True, 'stability': True, 'equivalence': True}
+- 与参考能力最大误差：0.0
+- 等价性验证用例数：4
+- 受限运行耗时：1.011 秒
+- 修复次数：0
+- 结构化失败记录数：0
+- 复用历史修复经验数：0
+- 详细中间过程：examples\detailed_run\20260716_174445_342965\detailed_trace.md
+
+## Agent 总结
+
+[mock] 使用可复现规则完成需求理解、模型检索与验证。
+
+## 使用边界
+
+目标库存 T 是预测周期内非聚划算需求总量。实际下单量仍需结合现货、在途库存、提前期和安全库存。

@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "status": "success",
+  "started_at": "2026-07-16T09:43:11.622418+00:00",
+  "finished_at": "2026-07-16T09:43:16.507308+00:00",
+  "event_count": 19,
+  "trace": {
+    "jsonl": "examples\\repair_run\\20260716_174311_621870\\detailed_trace.jsonl",
+    "markdown": "examples\\repair_run\\20260716_174311_621870\\detailed_trace.md"
+  },
+  "artifacts": [
+    "examples\\repair_run\\20260716_174311_621870\\extracted_capabilities.json",
+    "examples\\repair_run\\20260716_174311_621870\\candidate_solutions\\moving_average\\forecast_moving_average.py",
+    "examples\\repair_run\\20260716_174311_621870\\candidate_solutions\\seasonal_naive\\forecast_seasonal_naive.py",
+    "examples\\repair_run\\20260716_174311_621870\\candidate_solutions\\croston\\forecast_croston.py",
+    "examples\\repair_run\\20260716_174311_621870\\generated_versions\\01_initial_seasonal_naive.py",
+    "examples\\repair_run\\20260716_174311_621870\\generated\\forecast_seasonal_naive.py",
+    "examples\\repair_run\\20260716_174311_621870\\generated_versions\\02_repair_1_seasonal_naive.py",
+    "examples\\knowledge_graph\\complete_capability_graph.json",
+    "examples\\knowledge_graph\\complete_capability_graph.graphml",
+    "examples\\knowledge_graph\\complete_capability_graph.html",
+    "examples\\repair_run\\20260716_174311_621870\\validation_report.json",
+    "examples\\repair_run\\20260716_174311_621870\\validation_report.md"
+  ],
+  "summary": {
+    "selected_model": "seasonal_naive",
+    "target_inventory": 184.0,
+    "report_paths": {
+      "json": "examples\\repair_run\\20260716_174311_621870\\validation_report.json",
+      "markdown": "examples\\repair_run\\20260716_174311_621870\\validation_report.md"
+    },
+    "candidate_code_solutions": 3
+  }
+}

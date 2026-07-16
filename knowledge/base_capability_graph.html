@@ -1,15 +1,387 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Inventory Capability Knowledge Graph</title>
 <style>
-body{font-family:system-ui,sans-serif;margin:0;background:#f8fafc;color:#0f172a}
-header{padding:18px 28px;background:#0f172a;color:white} h1{margin:0 0 6px;font-size:22px}
-.meta{color:#cbd5e1} .legend{display:flex;gap:18px;flex-wrap:wrap;padding:14px 28px;background:white}
-.legend span{display:flex;align-items:center;gap:6px} .legend i{width:11px;height:11px;border-radius:50%}
-svg{display:block;width:100%;height:auto;background:white;border-top:1px solid #e2e8f0}
-.edge{stroke:#94a3b8;stroke-width:1.2} .label{font-size:11px;fill:#0f172a}
-</style></head><body><header><h1>库存算法能力知识图谱</h1>
-<div class="meta">schema 1.4 · 20 nodes · 35 edges</div></header>
-<div class="legend"><span><i style="background:#2563eb"></i>Algorithm</span><span><i style="background:#16a34a"></i>DemandProfile</span><span><i style="background:#f59e0b"></i>Metric</span><span><i style="background:#7c3aed"></i>ValidationRun</span><span><i style="background:#dc2626"></i>RepairStrategy</span><span><i style="background:#0891b2"></i>SourceArtifact</span><span><i style="background:#db2777"></i>CapabilityVersion</span><span><i style="background:#ea580c"></i>FailureCase</span><span><i style="background:#4f46e5"></i>VersionEvent</span></div><svg viewBox="0 0 1200 760" role="img" aria-label="Capability knowledge graph">
-<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="19" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#94a3b8"/></marker></defs>
-<g><title>EVALUATED_BY</title><line x1="612.4" y1="285.2" x2="252.7" y2="617.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="612.4" y1="285.2" x2="1066.1" y2="188.4" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="612.4" y1="285.2" x2="366.6" y2="109.6" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="612.4" y1="285.2" x2="172.3" y2="297.4" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="612.4" y1="285.2" x2="792.3" y2="121.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="612.4" y1="285.2" x2="594.1" y2="70.0" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="612.4" y1="285.2" x2="1121.3" y2="325.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="633.0" y1="317.3" x2="252.7" y2="617.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="633.0" y1="317.3" x2="1066.1" y2="188.4" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="633.0" y1="317.3" x2="144.9" y2="405.3" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="633.0" y1="317.3" x2="792.3" y2="121.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="633.0" y1="317.3" x2="594.1" y2="70.0" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="633.0" y1="317.3" x2="1121.3" y2="325.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="657.0" y1="358.9" x2="252.7" y2="617.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="657.0" y1="358.9" x2="1066.1" y2="188.4" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="657.0" y1="358.9" x2="760.9" y2="671.8" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="657.0" y1="358.9" x2="144.9" y2="405.3" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="657.0" y1="358.9" x2="792.3" y2="121.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="657.0" y1="358.9" x2="594.1" y2="70.0" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="657.0" y1="358.9" x2="1121.3" y2="325.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="750.8" y1="388.8" x2="252.7" y2="617.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="750.8" y1="388.8" x2="1066.1" y2="188.4" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="750.8" y1="388.8" x2="512.4" y2="682.6" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="750.8" y1="388.8" x2="963.8" y2="590.6" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="750.8" y1="388.8" x2="1113.0" y2="469.1" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="750.8" y1="388.8" x2="792.3" y2="121.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="750.8" y1="388.8" x2="594.1" y2="70.0" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="750.8" y1="388.8" x2="1121.3" y2="325.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="655.6" y1="371.3" x2="252.7" y2="617.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="655.6" y1="371.3" x2="1066.1" y2="188.4" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="655.6" y1="371.3" x2="153.2" y2="512.6" class="edge" marker-end="url(#arrow)" /></g><g><title>SUITABLE_FOR</title><line x1="655.6" y1="371.3" x2="760.9" y2="671.8" class="edge" marker-end="url(#arrow)" /></g><g><title>EVALUATED_BY</title><line x1="655.6" y1="371.3" x2="792.3" y2="121.5" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="655.6" y1="371.3" x2="594.1" y2="70.0" class="edge" marker-end="url(#arrow)" /></g><g><title>EXTRACTED_FROM</title><line x1="655.6" y1="371.3" x2="1121.3" y2="325.5" class="edge" marker-end="url(#arrow)" /></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;stable&quot;}</title><circle cx="760.9" cy="671.8" r="14" fill="#16a34a" /><text x="778.9" y="675.8" class="label">stable</text></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;volatile&quot;}</title><circle cx="1113.0" cy="469.1" r="14" fill="#16a34a" /><text x="1131.0" y="473.1" class="label">volatile</text></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;intermittent&quot;}</title><circle cx="366.6" cy="109.6" r="14" fill="#16a34a" /><text x="384.6" y="113.6" class="label">intermittent</text></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;weekly_seasonal&quot;}</title><circle cx="153.2" cy="512.6" r="14" fill="#16a34a" /><text x="171.2" y="516.6" class="label">weekly_seasonal</text></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;dense&quot;}</title><circle cx="963.8" cy="590.6" r="14" fill="#16a34a" /><text x="981.8" y="594.6" class="label">dense</text></g><g><title>{&quot;type&quot;: &quot;Metric&quot;, &quot;name&quot;: &quot;inventory_cost&quot;, &quot;evaluation_unit&quot;: &quot;horizon_total&quot;, &quot;formula&quot;: &quot;A*max(D-T,0) + B*max(T-D,0)&quot;, &quot;scenario&quot;: &quot;inventory_forecasting&quot;, &quot;cost_a&quot;: &quot;understock&quot;, &quot;cost_b&quot;: &quot;overstock&quot;}</title><circle cx="252.7" cy="617.5" r="14" fill="#f59e0b" /><text x="270.7" y="621.5" class="label">inventory_cost</text></g><g><title>{&quot;type&quot;: &quot;Metric&quot;, &quot;name&quot;: &quot;wape&quot;}</title><circle cx="1066.1" cy="188.4" r="14" fill="#f59e0b" /><text x="1084.1" y="192.4" class="label">wape</text></g><g><title>{&quot;type&quot;: &quot;Metric&quot;, &quot;name&quot;: &quot;smape&quot;}</title><circle cx="226.5" cy="195.1" r="14" fill="#f59e0b" /><text x="244.5" y="199.1" class="label">smape</text></g><g><title>{&quot;type&quot;: &quot;Metric&quot;, &quot;name&quot;: &quot;bias&quot;}</title><circle cx="451.3" cy="621.5" r="14" fill="#f59e0b" /><text x="469.3" y="625.5" class="label">bias</text></g><g><title>{&quot;type&quot;: &quot;Metric&quot;, &quot;name&quot;: &quot;rmse&quot;}</title><circle cx="792.3" cy="121.5" r="14" fill="#f59e0b" /><text x="810.3" y="125.5" class="label">rmse</text></g><g><title>{&quot;type&quot;: &quot;Algorithm&quot;, &quot;name&quot;: &quot;croston&quot;, &quot;description&quot;: &quot;Classic Croston forecast for intermittent demand.&quot;, &quot;min_history&quot;: 14, &quot;dependencies&quot;: [&quot;numpy&quot;, &quot;pandas&quot;], &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;, &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;, &quot;locations&quot;: [&quot;all&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;], &quot;task_type&quot;: &quot;inventory_forecasting&quot;, &quot;template_name&quot;: &quot;croston&quot;, &quot;parameters&quot;: {&quot;alpha&quot;: 0.1}, &quot;source_type&quot;: &quot;python&quot;, &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:55&quot;, &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;, &quot;version&quot;: &quot;1.0.0&quot;, &quot;extracted_by&quot;: &quot;python_ast&quot;, &quot;source_title&quot;: &quot;models.py&quot;, &quot;source_url&quot;: &quot;&quot;, &quot;source_license&quot;: &quot;&quot;, &quot;accessed_at&quot;: &quot;&quot;, &quot;confidence&quot;: 0.95, &quot;review_status&quot;: &quot;auto_extracted&quot;, &quot;evidence_refs&quot;: [&quot;inventory_agent\\forecasting\\models.py:55&quot;, &quot;inventory_agent\\forecasting\\models.py:85&quot;], &quot;extraction_warnings&quot;: []}</title><circle cx="612.4" cy="285.2" r="14" fill="#2563eb" /><text x="630.4" y="289.2" class="label">croston</text></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;many_zeros&quot;}</title><circle cx="172.3" cy="297.4" r="14" fill="#16a34a" /><text x="190.3" y="301.4" class="label">many_zeros</text></g><g><title>{&quot;type&quot;: &quot;Algorithm&quot;, &quot;name&quot;: &quot;last_value&quot;, &quot;description&quot;: &quot;Repeat the latest observed demand as a simple baseline.&quot;, &quot;min_history&quot;: 1, &quot;dependencies&quot;: [&quot;numpy&quot;, &quot;pandas&quot;], &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;, &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;, &quot;locations&quot;: [&quot;all&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;], &quot;task_type&quot;: &quot;inventory_forecasting&quot;, &quot;template_name&quot;: &quot;last_value&quot;, &quot;parameters&quot;: {}, &quot;source_type&quot;: &quot;python&quot;, &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:12&quot;, &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;, &quot;version&quot;: &quot;1.0.0&quot;, &quot;extracted_by&quot;: &quot;python_ast&quot;, &quot;source_title&quot;: &quot;models.py&quot;, &quot;source_url&quot;: &quot;&quot;, &quot;source_license&quot;: &quot;&quot;, &quot;accessed_at&quot;: &quot;&quot;, &quot;confidence&quot;: 0.95, &quot;review_status&quot;: &quot;auto_extracted&quot;, &quot;evidence_refs&quot;: [&quot;inventory_agent\\forecasting\\models.py:12&quot;, &quot;inventory_agent\\forecasting\\models.py:20&quot;], &quot;extraction_warnings&quot;: []}</title><circle cx="633.0" cy="317.3" r="14" fill="#2563eb" /><text x="651.0" y="321.3" class="label">last_value</text></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;short_history&quot;}</title><circle cx="144.9" cy="405.3" r="14" fill="#16a34a" /><text x="162.9" y="409.3" class="label">short_history</text></g><g><title>{&quot;type&quot;: &quot;Algorithm&quot;, &quot;name&quot;: &quot;moving_average&quot;, &quot;description&quot;: &quot;Forecast with the mean of the most recent demand window.&quot;, &quot;min_history&quot;: 7, &quot;dependencies&quot;: [&quot;numpy&quot;, &quot;pandas&quot;], &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;, &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;, &quot;locations&quot;: [&quot;all&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;], &quot;task_type&quot;: &quot;inventory_forecasting&quot;, &quot;template_name&quot;: &quot;moving_average&quot;, &quot;parameters&quot;: {&quot;window&quot;: 14}, &quot;source_type&quot;: &quot;python&quot;, &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:23&quot;, &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;, &quot;version&quot;: &quot;1.0.0&quot;, &quot;extracted_by&quot;: &quot;python_ast&quot;, &quot;source_title&quot;: &quot;models.py&quot;, &quot;source_url&quot;: &quot;&quot;, &quot;source_license&quot;: &quot;&quot;, &quot;accessed_at&quot;: &quot;&quot;, &quot;confidence&quot;: 0.95, &quot;review_status&quot;: &quot;auto_extracted&quot;, &quot;evidence_refs&quot;: [&quot;inventory_agent\\forecasting\\models.py:23&quot;, &quot;inventory_agent\\forecasting\\models.py:35&quot;], &quot;extraction_warnings&quot;: []}</title><circle cx="657.0" cy="358.9" r="14" fill="#2563eb" /><text x="675.0" y="362.9" class="label">moving_average</text></g><g><title>{&quot;type&quot;: &quot;Algorithm&quot;, &quot;name&quot;: &quot;ridge_lag&quot;, &quot;description&quot;: &quot;Autoregressive ridge model using leakage-safe lag features.&quot;, &quot;min_history&quot;: 30, &quot;dependencies&quot;: [&quot;numpy&quot;, &quot;pandas&quot;, &quot;sklearn&quot;], &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;, &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;, &quot;locations&quot;: [&quot;all&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;], &quot;task_type&quot;: &quot;inventory_forecasting&quot;, &quot;template_name&quot;: &quot;ridge_lag&quot;, &quot;parameters&quot;: {&quot;lags&quot;: 14, &quot;alpha&quot;: 1.0}, &quot;source_type&quot;: &quot;python&quot;, &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:88&quot;, &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;, &quot;version&quot;: &quot;1.0.0&quot;, &quot;extracted_by&quot;: &quot;python_ast&quot;, &quot;source_title&quot;: &quot;models.py&quot;, &quot;source_url&quot;: &quot;&quot;, &quot;source_license&quot;: &quot;&quot;, &quot;accessed_at&quot;: &quot;&quot;, &quot;confidence&quot;: 0.95, &quot;review_status&quot;: &quot;auto_extracted&quot;, &quot;evidence_refs&quot;: [&quot;inventory_agent\\forecasting\\models.py:88&quot;, &quot;inventory_agent\\forecasting\\models.py:116&quot;], &quot;extraction_warnings&quot;: []}</title><circle cx="750.8" cy="388.8" r="14" fill="#2563eb" /><text x="768.8" y="392.8" class="label">ridge_lag</text></g><g><title>{&quot;type&quot;: &quot;DemandProfile&quot;, &quot;name&quot;: &quot;trend&quot;}</title><circle cx="512.4" cy="682.6" r="14" fill="#16a34a" /><text x="530.4" y="686.6" class="label">trend</text></g><g><title>{&quot;type&quot;: &quot;Algorithm&quot;, &quot;name&quot;: &quot;seasonal_naive&quot;, &quot;description&quot;: &quot;Repeat the latest seasonal pattern over the forecast horizon.&quot;, &quot;min_history&quot;: 14, &quot;dependencies&quot;: [&quot;numpy&quot;, &quot;pandas&quot;], &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;, &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;, &quot;locations&quot;: [&quot;all&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;], &quot;task_type&quot;: &quot;inventory_forecasting&quot;, &quot;template_name&quot;: &quot;seasonal_naive&quot;, &quot;parameters&quot;: {&quot;period&quot;: 7}, &quot;source_type&quot;: &quot;python&quot;, &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:38&quot;, &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;, &quot;version&quot;: &quot;1.0.0&quot;, &quot;extracted_by&quot;: &quot;python_ast&quot;, &quot;source_title&quot;: &quot;models.py&quot;, &quot;source_url&quot;: &quot;&quot;, &quot;source_license&quot;: &quot;&quot;, &quot;accessed_at&quot;: &quot;&quot;, &quot;confidence&quot;: 0.95, &quot;review_status&quot;: &quot;auto_extracted&quot;, &quot;evidence_refs&quot;: [&quot;inventory_agent\\forecasting\\models.py:38&quot;, &quot;inventory_agent\\forecasting\\models.py:52&quot;], &quot;extraction_warnings&quot;: []}</title><circle cx="655.6" cy="371.3" r="14" fill="#2563eb" /><text x="673.6" y="375.3" class="label">seasonal_naive</text></g><g><title>{&quot;type&quot;: &quot;SourceArtifact&quot;, &quot;name&quot;: &quot;models.py&quot;, &quot;source_type&quot;: &quot;python&quot;, &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:84&quot;, &quot;source_hash&quot;: &quot;bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4&quot;, &quot;extracted_by&quot;: &quot;python_ast&quot;}</title><circle cx="594.1" cy="70.0" r="14" fill="#0891b2" /><text x="612.1" y="74.0" class="label">models.py</text></g><g><title>{&quot;type&quot;: &quot;SourceArtifact&quot;, &quot;name&quot;: &quot;models.py&quot;, &quot;source_type&quot;: &quot;python&quot;, &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py&quot;, &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;, &quot;extracted_by&quot;: &quot;python_ast&quot;, &quot;source_url&quot;: &quot;&quot;, &quot;source_license&quot;: &quot;&quot;, &quot;accessed_at&quot;: &quot;&quot;, &quot;review_status&quot;: &quot;auto_extracted&quot;}</title><circle cx="1121.3" cy="325.5" r="14" fill="#0891b2" /><text x="1139.3" y="329.5" class="label">models.py</text></g></svg></body></html>
+*{box-sizing:border-box} body{font-family:Inter,ui-sans-serif,system-ui,sans-serif;margin:0;
+background:#f1f5f9;color:#0f172a} header{padding:18px 28px;background:#0f172a;color:white}
+h1{margin:0 0 6px;font-size:23px}.meta{color:#cbd5e1}.toolbar,.legend{display:flex;
+align-items:center;gap:10px;flex-wrap:wrap;padding:10px 20px;background:white;
+border-bottom:1px solid #e2e8f0}.toolbar input[type="search"]{min-width:280px;padding:8px 10px;
+border:1px solid #cbd5e1;border-radius:8px}.toolbar button,.legend-item{border:1px solid #cbd5e1;
+background:white;border-radius:8px;padding:7px 10px;cursor:pointer}.toolbar button:hover,
+.legend-item:hover{background:#f8fafc}.legend-item{display:flex;align-items:center;gap:6px}
+.toolbar label{display:flex;align-items:center;gap:6px}
+.legend-item i{width:11px;height:11px;border-radius:50%}.legend-item.is-off{opacity:.38;
+text-decoration:line-through}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 330px;
+min-height:680px}.graph-shell{overflow:auto;background:white}.details{border-left:1px solid #e2e8f0;
+background:#f8fafc;padding:18px;overflow:auto}.details h2{margin:0 0 8px;font-size:17px}
+.details p{color:#64748b;font-size:13px}.details pre{white-space:pre-wrap;word-break:break-word;
+font-size:12px;line-height:1.45;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:9px}
+svg{display:block;min-width:1100px;width:100%;height:auto;background:white;cursor:grab}
+svg.is-dragging{cursor:grabbing}.lane-bg{fill:#f8fafc;stroke:#e2e8f0}.lane-1{fill:#f1f5f9}
+.lane-title{font-size:13px;font-weight:700;fill:#475569}.edge{fill:none;stroke-width:1.45;
+opacity:.42}.edge-group.is-connected .edge{stroke-width:2.8;opacity:1}.edge-label{display:none;
+font-size:8px;fill:#475569;paint-order:stroke;stroke:white;stroke-width:3px}
+body.show-relations .edge-label{display:block}.node{cursor:pointer}.node circle{stroke:white;
+stroke-width:2.5;filter:drop-shadow(0 2px 2px rgb(15 23 42 / .15))}
+.node:hover circle,.node.is-selected circle{stroke:#0f172a;stroke-width:4}
+.node:focus{outline:none}.node:focus-visible circle{stroke:#0f172a;stroke-width:4}
+.node-label{font-size:11px;fill:#0f172a;paint-order:stroke;stroke:white;stroke-width:3px;
+stroke-linejoin:round}.node.is-dimmed,.edge-group.is-dimmed{opacity:.1}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.details{border-left:0;
+border-top:1px solid #e2e8f0}.toolbar input[type="search"]{min-width:180px;flex:1}}
+</style></head><body>
+<header><h1>库存算法能力知识图谱</h1>
+<div class="meta">schema 1.4 · 19 nodes · 40 edges · 分层可交互视图</div>
+</header>
+<div class="toolbar">
+<input id="graph-search" type="search" placeholder="搜索节点名称、类型或ID">
+<button type="button" id="zoom-in">放大</button><button type="button" id="zoom-out">缩小</button>
+<button type="button" id="reset-view">重置</button>
+<label><input id="toggle-relations" type="checkbox"> 显示关系名称</label>
+</div>
+<div class="legend"><button type="button" class="legend-item" data-filter-type="SourceArtifact"><i style="background:#0891b2"></i>SourceArtifact</button><button type="button" class="legend-item" data-filter-type="Algorithm"><i style="background:#2563eb"></i>Algorithm</button><button type="button" class="legend-item" data-filter-type="DemandProfile"><i style="background:#16a34a"></i>DemandProfile</button><button type="button" class="legend-item" data-filter-type="Metric"><i style="background:#f59e0b"></i>Metric</button></div>
+<div class="workspace"><div class="graph-shell">
+<svg id="graph" viewBox="0 0 1300 751" role="img"
+aria-label="Capability knowledge graph">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="19" refY="3"
+orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#64748b"/></marker></defs>
+<g id="viewport"><rect x="12" y="62" width="282" height="669" rx="14" class="lane-bg lane-0" /><rect x="312" y="62" width="282" height="669" rx="14" class="lane-bg lane-1" /><rect x="612" y="62" width="282" height="669" rx="14" class="lane-bg lane-0" /><rect x="912" y="62" width="282" height="669" rx="14" class="lane-bg lane-1" /><text x="28" y="92" class="lane-title">知识来源</text><text x="328" y="92" class="lane-title">算法能力</text><text x="628" y="92" class="lane-title">需求画像</text><text x="928" y="92" class="lane-title">评价指标</text><g class="edge-group" data-source="algorithm:croston" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 138.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="151.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 307.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="profile:intermittent" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 125.0 Q 545.0 138.0 695.0 203.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="151.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:croston" data-target="profile:many_zeros" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 125.0 Q 545.0 229.0 695.0 281.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="216.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 177.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="190.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="source:6ae88282402d0c9f" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 125.0 Q 245.0 151.0 95.0 125.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="138.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 216.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="229.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 151.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="138.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 177.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="190.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 346.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="333.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="profile:short_history" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 203.0 Q 545.0 255.0 695.0 359.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="268.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 268.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="255.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="source:6ae88282402d0c9f" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 203.0 Q 245.0 138.0 95.0 125.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="151.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 307.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 138.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="151.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 268.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="255.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 333.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="346.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="profile:stable" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 281.0 Q 545.0 385.0 695.0 437.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="372.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="profile:short_history" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 281.0 Q 545.0 294.0 695.0 359.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="307.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 307.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="source:6ae88282402d0c9f" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 281.0 Q 245.0 177.0 95.0 125.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="190.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 346.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="333.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 177.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="190.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 307.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 372.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="385.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="profile:trend" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 359.0 Q 545.0 463.0 695.0 515.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="450.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="profile:dense" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 359.0 Q 545.0 216.0 695.0 125.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="229.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="profile:volatile" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 359.0 Q 545.0 502.0 695.0 593.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="489.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 294.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="307.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="source:6ae88282402d0c9f" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 359.0 Q 245.0 268.0 95.0 125.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="255.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 333.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="346.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 268.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="255.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 294.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="307.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 463.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="450.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="profile:weekly_seasonal" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 437.0 Q 545.0 528.0 695.0 671.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="541.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="profile:stable" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 437.0 Q 545.0 463.0 695.0 437.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="450.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 333.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="346.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="source:6ae88282402d0c9f" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 437.0 Q 245.0 307.0 95.0 125.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="294.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 372.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="385.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 307.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="node" data-node-id="profile:stable" data-node-type="DemandProfile" data-search="profile:stable demandprofile stable" data-details="{
+  &quot;id&quot;: &quot;profile:stable&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;stable&quot;
+}" tabindex="0"><title>stable · DemandProfile</title><circle cx="695.0" cy="437.0" r="17" fill="#16a34a" /><text x="718.0" y="442.0" class="node-label">stable</text></g><g class="node" data-node-id="profile:volatile" data-node-type="DemandProfile" data-search="profile:volatile demandprofile volatile" data-details="{
+  &quot;id&quot;: &quot;profile:volatile&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;volatile&quot;
+}" tabindex="0"><title>volatile · DemandProfile</title><circle cx="695.0" cy="593.0" r="17" fill="#16a34a" /><text x="718.0" y="598.0" class="node-label">volatile</text></g><g class="node" data-node-id="profile:intermittent" data-node-type="DemandProfile" data-search="profile:intermittent demandprofile intermittent" data-details="{
+  &quot;id&quot;: &quot;profile:intermittent&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;intermittent&quot;
+}" tabindex="0"><title>intermittent · DemandProfile</title><circle cx="695.0" cy="203.0" r="17" fill="#16a34a" /><text x="718.0" y="208.0" class="node-label">intermittent</text></g><g class="node" data-node-id="profile:weekly_seasonal" data-node-type="DemandProfile" data-search="profile:weekly_seasonal demandprofile weekly_seasonal" data-details="{
+  &quot;id&quot;: &quot;profile:weekly_seasonal&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;weekly_seasonal&quot;
+}" tabindex="0"><title>weekly_seasonal · DemandProfile</title><circle cx="695.0" cy="671.0" r="17" fill="#16a34a" /><text x="718.0" y="676.0" class="node-label">weekly_seasonal</text></g><g class="node" data-node-id="profile:dense" data-node-type="DemandProfile" data-search="profile:dense demandprofile dense" data-details="{
+  &quot;id&quot;: &quot;profile:dense&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;dense&quot;
+}" tabindex="0"><title>dense · DemandProfile</title><circle cx="695.0" cy="125.0" r="17" fill="#16a34a" /><text x="718.0" y="130.0" class="node-label">dense</text></g><g class="node" data-node-id="metric:inventory_cost" data-node-type="Metric" data-search="metric:inventory_cost metric inventory_cost" data-details="{
+  &quot;id&quot;: &quot;metric:inventory_cost&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;inventory_cost&quot;,
+  &quot;evaluation_unit&quot;: &quot;horizon_total&quot;,
+  &quot;formula&quot;: &quot;A*max(D-T,0) + B*max(T-D,0)&quot;,
+  &quot;scenario&quot;: &quot;inventory_forecasting&quot;,
+  &quot;cost_a&quot;: &quot;understock&quot;,
+  &quot;cost_b&quot;: &quot;overstock&quot;
+}" tabindex="0"><title>inventory_cost · Metric</title><circle cx="995.0" cy="203.0" r="17" fill="#f59e0b" /><text x="1018.0" y="208.0" class="node-label">inventory_cost</text></g><g class="node" data-node-id="metric:wape" data-node-type="Metric" data-search="metric:wape metric wape" data-details="{
+  &quot;id&quot;: &quot;metric:wape&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;wape&quot;
+}" tabindex="0"><title>wape · Metric</title><circle cx="995.0" cy="437.0" r="17" fill="#f59e0b" /><text x="1018.0" y="442.0" class="node-label">wape</text></g><g class="node" data-node-id="metric:smape" data-node-type="Metric" data-search="metric:smape metric smape" data-details="{
+  &quot;id&quot;: &quot;metric:smape&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;smape&quot;
+}" tabindex="0"><title>smape · Metric</title><circle cx="995.0" cy="359.0" r="17" fill="#f59e0b" /><text x="1018.0" y="364.0" class="node-label">smape</text></g><g class="node" data-node-id="metric:bias" data-node-type="Metric" data-search="metric:bias metric bias" data-details="{
+  &quot;id&quot;: &quot;metric:bias&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;bias&quot;
+}" tabindex="0"><title>bias · Metric</title><circle cx="995.0" cy="125.0" r="17" fill="#f59e0b" /><text x="1018.0" y="130.0" class="node-label">bias</text></g><g class="node" data-node-id="metric:rmse" data-node-type="Metric" data-search="metric:rmse metric rmse" data-details="{
+  &quot;id&quot;: &quot;metric:rmse&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;rmse&quot;
+}" tabindex="0"><title>rmse · Metric</title><circle cx="995.0" cy="281.0" r="17" fill="#f59e0b" /><text x="1018.0" y="286.0" class="node-label">rmse</text></g><g class="node" data-node-id="algorithm:croston" data-node-type="Algorithm" data-search="algorithm:croston algorithm croston" data-details="{
+  &quot;id&quot;: &quot;algorithm:croston&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;croston&quot;,
+  &quot;description&quot;: &quot;Classic Croston forecast for intermittent demand.&quot;,
+  &quot;min_history&quot;: 14,
+  &quot;dependencies&quot;: [
+    &quot;numpy&quot;,
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;,
+  &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;template_name&quot;: &quot;croston&quot;,
+  &quot;parameters&quot;: {
+    &quot;alpha&quot;: 0.1
+  },
+  &quot;source_type&quot;: &quot;python&quot;,
+  &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:55&quot;,
+  &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;extracted_by&quot;: &quot;python_ast&quot;,
+  &quot;source_title&quot;: &quot;models.py&quot;,
+  &quot;source_url&quot;: &quot;&quot;,
+  &quot;source_license&quot;: &quot;&quot;,
+  &quot;accessed_at&quot;: &quot;&quot;,
+  &quot;confidence&quot;: 0.95,
+  &quot;review_status&quot;: &quot;auto_extracted&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;inventory_agent\\forecasting\\models.py:55&quot;,
+    &quot;inventory_agent\\forecasting\\models.py:85&quot;
+  ],
+  &quot;extraction_warnings&quot;: []
+}" tabindex="0"><title>croston · Algorithm</title><circle cx="395.0" cy="125.0" r="17" fill="#2563eb" /><text x="418.0" y="130.0" class="node-label">croston</text></g><g class="node" data-node-id="profile:many_zeros" data-node-type="DemandProfile" data-search="profile:many_zeros demandprofile many_zeros" data-details="{
+  &quot;id&quot;: &quot;profile:many_zeros&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;many_zeros&quot;
+}" tabindex="0"><title>many_zeros · DemandProfile</title><circle cx="695.0" cy="281.0" r="17" fill="#16a34a" /><text x="718.0" y="286.0" class="node-label">many_zeros</text></g><g class="node" data-node-id="algorithm:last_value" data-node-type="Algorithm" data-search="algorithm:last_value algorithm last_value" data-details="{
+  &quot;id&quot;: &quot;algorithm:last_value&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;last_value&quot;,
+  &quot;description&quot;: &quot;Repeat the latest observed demand as a simple baseline.&quot;,
+  &quot;min_history&quot;: 1,
+  &quot;dependencies&quot;: [
+    &quot;numpy&quot;,
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;,
+  &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;template_name&quot;: &quot;last_value&quot;,
+  &quot;parameters&quot;: {},
+  &quot;source_type&quot;: &quot;python&quot;,
+  &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:12&quot;,
+  &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;extracted_by&quot;: &quot;python_ast&quot;,
+  &quot;source_title&quot;: &quot;models.py&quot;,
+  &quot;source_url&quot;: &quot;&quot;,
+  &quot;source_license&quot;: &quot;&quot;,
+  &quot;accessed_at&quot;: &quot;&quot;,
+  &quot;confidence&quot;: 0.95,
+  &quot;review_status&quot;: &quot;auto_extracted&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;inventory_agent\\forecasting\\models.py:12&quot;,
+    &quot;inventory_agent\\forecasting\\models.py:20&quot;
+  ],
+  &quot;extraction_warnings&quot;: []
+}" tabindex="0"><title>last_value · Algorithm</title><circle cx="395.0" cy="203.0" r="17" fill="#2563eb" /><text x="418.0" y="208.0" class="node-label">last_value</text></g><g class="node" data-node-id="profile:short_history" data-node-type="DemandProfile" data-search="profile:short_history demandprofile short_history" data-details="{
+  &quot;id&quot;: &quot;profile:short_history&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;short_history&quot;
+}" tabindex="0"><title>short_history · DemandProfile</title><circle cx="695.0" cy="359.0" r="17" fill="#16a34a" /><text x="718.0" y="364.0" class="node-label">short_history</text></g><g class="node" data-node-id="algorithm:moving_average" data-node-type="Algorithm" data-search="algorithm:moving_average algorithm moving_average" data-details="{
+  &quot;id&quot;: &quot;algorithm:moving_average&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;moving_average&quot;,
+  &quot;description&quot;: &quot;Forecast with the mean of the most recent demand window.&quot;,
+  &quot;min_history&quot;: 7,
+  &quot;dependencies&quot;: [
+    &quot;numpy&quot;,
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;,
+  &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;template_name&quot;: &quot;moving_average&quot;,
+  &quot;parameters&quot;: {
+    &quot;window&quot;: 14
+  },
+  &quot;source_type&quot;: &quot;python&quot;,
+  &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:23&quot;,
+  &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;extracted_by&quot;: &quot;python_ast&quot;,
+  &quot;source_title&quot;: &quot;models.py&quot;,
+  &quot;source_url&quot;: &quot;&quot;,
+  &quot;source_license&quot;: &quot;&quot;,
+  &quot;accessed_at&quot;: &quot;&quot;,
+  &quot;confidence&quot;: 0.95,
+  &quot;review_status&quot;: &quot;auto_extracted&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;inventory_agent\\forecasting\\models.py:23&quot;,
+    &quot;inventory_agent\\forecasting\\models.py:35&quot;
+  ],
+  &quot;extraction_warnings&quot;: []
+}" tabindex="0"><title>moving_average · Algorithm</title><circle cx="395.0" cy="281.0" r="17" fill="#2563eb" /><text x="418.0" y="286.0" class="node-label">moving_average</text></g><g class="node" data-node-id="algorithm:ridge_lag" data-node-type="Algorithm" data-search="algorithm:ridge_lag algorithm ridge_lag" data-details="{
+  &quot;id&quot;: &quot;algorithm:ridge_lag&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;ridge_lag&quot;,
+  &quot;description&quot;: &quot;Autoregressive ridge model using leakage-safe lag features.&quot;,
+  &quot;min_history&quot;: 30,
+  &quot;dependencies&quot;: [
+    &quot;numpy&quot;,
+    &quot;pandas&quot;,
+    &quot;sklearn&quot;
+  ],
+  &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;,
+  &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;template_name&quot;: &quot;ridge_lag&quot;,
+  &quot;parameters&quot;: {
+    &quot;lags&quot;: 14,
+    &quot;alpha&quot;: 1.0
+  },
+  &quot;source_type&quot;: &quot;python&quot;,
+  &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:88&quot;,
+  &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;extracted_by&quot;: &quot;python_ast&quot;,
+  &quot;source_title&quot;: &quot;models.py&quot;,
+  &quot;source_url&quot;: &quot;&quot;,
+  &quot;source_license&quot;: &quot;&quot;,
+  &quot;accessed_at&quot;: &quot;&quot;,
+  &quot;confidence&quot;: 0.95,
+  &quot;review_status&quot;: &quot;auto_extracted&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;inventory_agent\\forecasting\\models.py:88&quot;,
+    &quot;inventory_agent\\forecasting\\models.py:116&quot;
+  ],
+  &quot;extraction_warnings&quot;: []
+}" tabindex="0"><title>ridge_lag · Algorithm</title><circle cx="395.0" cy="359.0" r="17" fill="#2563eb" /><text x="418.0" y="364.0" class="node-label">ridge_lag</text></g><g class="node" data-node-id="profile:trend" data-node-type="DemandProfile" data-search="profile:trend demandprofile trend" data-details="{
+  &quot;id&quot;: &quot;profile:trend&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;trend&quot;
+}" tabindex="0"><title>trend · DemandProfile</title><circle cx="695.0" cy="515.0" r="17" fill="#16a34a" /><text x="718.0" y="520.0" class="node-label">trend</text></g><g class="node" data-node-id="algorithm:seasonal_naive" data-node-type="Algorithm" data-search="algorithm:seasonal_naive algorithm seasonal_naive" data-details="{
+  &quot;id&quot;: &quot;algorithm:seasonal_naive&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;seasonal_naive&quot;,
+  &quot;description&quot;: &quot;Repeat the latest seasonal pattern over the forecast horizon.&quot;,
+  &quot;min_history&quot;: 14,
+  &quot;dependencies&quot;: [
+    &quot;numpy&quot;,
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;non-negative daily demand history and positive horizon&quot;,
+  &quot;output_contract&quot;: &quot;non-negative daily forecast and horizon-total target inventory&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;template_name&quot;: &quot;seasonal_naive&quot;,
+  &quot;parameters&quot;: {
+    &quot;period&quot;: 7
+  },
+  &quot;source_type&quot;: &quot;python&quot;,
+  &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py:38&quot;,
+  &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;extracted_by&quot;: &quot;python_ast&quot;,
+  &quot;source_title&quot;: &quot;models.py&quot;,
+  &quot;source_url&quot;: &quot;&quot;,
+  &quot;source_license&quot;: &quot;&quot;,
+  &quot;accessed_at&quot;: &quot;&quot;,
+  &quot;confidence&quot;: 0.95,
+  &quot;review_status&quot;: &quot;auto_extracted&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;inventory_agent\\forecasting\\models.py:38&quot;,
+    &quot;inventory_agent\\forecasting\\models.py:52&quot;
+  ],
+  &quot;extraction_warnings&quot;: []
+}" tabindex="0"><title>seasonal_naive · Algorithm</title><circle cx="395.0" cy="437.0" r="17" fill="#2563eb" /><text x="418.0" y="442.0" class="node-label">seasonal_naive</text></g><g class="node" data-node-id="source:6ae88282402d0c9f" data-node-type="SourceArtifact" data-search="source:6ae88282402d0c9f sourceartifact models.py" data-details="{
+  &quot;id&quot;: &quot;source:6ae88282402d0c9f&quot;,
+  &quot;type&quot;: &quot;SourceArtifact&quot;,
+  &quot;name&quot;: &quot;models.py&quot;,
+  &quot;source_type&quot;: &quot;python&quot;,
+  &quot;source_ref&quot;: &quot;inventory_agent\\forecasting\\models.py&quot;,
+  &quot;source_hash&quot;: &quot;6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5&quot;,
+  &quot;extracted_by&quot;: &quot;python_ast&quot;,
+  &quot;source_url&quot;: &quot;&quot;,
+  &quot;source_license&quot;: &quot;&quot;,
+  &quot;accessed_at&quot;: &quot;&quot;,
+  &quot;review_status&quot;: &quot;auto_extracted&quot;
+}" tabindex="0"><title>models.py · SourceArtifact</title><circle cx="95.0" cy="125.0" r="17" fill="#0891b2" /><text x="118.0" y="130.0" class="node-label">models.py</text></g></g></svg></div>
+<aside class="details" id="details-panel"><h2>节点详情</h2>
+<p>点击任一节点查看完整属性；点击图例可筛选节点类型。</p>
+<pre id="details-content">尚未选择节点</pre></aside></div>
+<script>
+const svg=document.getElementById("graph"),viewport=document.getElementById("viewport");
+const nodes=[...document.querySelectorAll(".node")],edges=[...document.querySelectorAll(".edge-group")];
+const disabledTypes=new Set();let scale=1,tx=0,ty=0,dragging=false,lastX=0,lastY=0;
+function transform(){viewport.setAttribute("transform",`translate(${tx} ${ty}) scale(${scale})`)}
+function refreshVisibility(){
+  const query=document.getElementById("graph-search").value.trim().toLowerCase();
+  const visible=new Set();
+  nodes.forEach(node=>{
+    const typeOff=disabledTypes.has(node.dataset.nodeType);
+    const matched=!query||node.dataset.search.includes(query);
+    node.style.display=typeOff?"none":"";
+    node.classList.toggle("is-dimmed",!matched);
+    if(!typeOff)visible.add(node.dataset.nodeId);
+  });
+  edges.forEach(edge=>{
+    const shown=visible.has(edge.dataset.source)&&visible.has(edge.dataset.target);
+    edge.style.display=shown?"":"none";
+    const source=document.querySelector(`[data-node-id="${CSS.escape(edge.dataset.source)}"]`);
+    const target=document.querySelector(`[data-node-id="${CSS.escape(edge.dataset.target)}"]`);
+    edge.classList.toggle("is-dimmed",!!query&&source?.classList.contains("is-dimmed")
+      &&target?.classList.contains("is-dimmed"));
+  });
+}
+function selectNode(node){
+  nodes.forEach(item=>item.classList.toggle("is-selected",item===node));
+  edges.forEach(edge=>edge.classList.toggle("is-connected",
+    edge.dataset.source===node.dataset.nodeId||edge.dataset.target===node.dataset.nodeId));
+  document.getElementById("details-content").textContent=node.dataset.details;
+}
+nodes.forEach(node=>{node.addEventListener("click",()=>selectNode(node));
+node.addEventListener("keydown",event=>{if(event.key==="Enter")selectNode(node)})});
+document.querySelectorAll(".legend-item").forEach(button=>button.addEventListener("click",()=>{
+  const type=button.dataset.filterType;
+  disabledTypes.has(type)?disabledTypes.delete(type):disabledTypes.add(type);
+  button.classList.toggle("is-off");refreshVisibility();
+}));
+document.getElementById("graph-search").addEventListener("input",refreshVisibility);
+document.getElementById("toggle-relations").addEventListener("change",event=>
+  document.body.classList.toggle("show-relations",event.target.checked));
+document.getElementById("zoom-in").addEventListener("click",()=>{scale=Math.min(2.5,scale*1.2);transform()});
+document.getElementById("zoom-out").addEventListener("click",()=>{scale=Math.max(.55,scale/1.2);transform()});
+document.getElementById("reset-view").addEventListener("click",()=>{
+  scale=1;tx=0;ty=0;disabledTypes.clear();transform();
+  document.getElementById("graph-search").value="";
+  document.querySelectorAll(".legend-item").forEach(item=>item.classList.remove("is-off"));
+  nodes.forEach(item=>item.classList.remove("is-selected"));
+  edges.forEach(item=>item.classList.remove("is-connected"));refreshVisibility();
+});
+svg.addEventListener("wheel",event=>{event.preventDefault();
+  scale=Math.max(.55,Math.min(2.5,scale*(event.deltaY<0?1.1:.9)));transform()},{passive:false});
+svg.addEventListener("pointerdown",event=>{if(event.target.closest(".node"))return;
+  dragging=true;lastX=event.clientX;lastY=event.clientY;svg.classList.add("is-dragging");
+  svg.setPointerCapture(event.pointerId)});
+svg.addEventListener("pointermove",event=>{if(!dragging)return;
+  const ratio=1300/svg.getBoundingClientRect().width;
+  tx+=(event.clientX-lastX)*ratio;ty+=(event.clientY-lastY)*ratio;
+  lastX=event.clientX;lastY=event.clientY;transform()});
+svg.addEventListener("pointerup",()=>{dragging=false;svg.classList.remove("is-dragging")});
+</script></body></html>

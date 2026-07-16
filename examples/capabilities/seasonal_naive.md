@@ -7,7 +7,7 @@
 - input_contract: Non-negative daily demand history and a positive forecast horizon.
 - output_contract: Non-negative daily forecast and horizon-total target inventory.
 - suitable_for: weekly_seasonal, stable
-- metrics: inventory_cost, wape, rmse
+- metrics: inventory_cost, wape, rmse, smape, bias
 - dependencies: pandas
 - parameters: {"period": 7}
 - version: 1.1.0
@@ -18,4 +18,3 @@
 - confidence: 0.95
 - review_status: source_reviewed
 - evidence_refs: article seasonal-naive benchmark discussion, inventory_agent/forecasting/models.py:36
-

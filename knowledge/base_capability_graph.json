@@ -289,15 +289,6 @@
       "type": "SourceArtifact",
       "name": "models.py",
       "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:84",
-      "source_hash": "bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4",
-      "extracted_by": "python_ast",
-      "id": "source:bf92696f90fe0841"
-    },
-    {
-      "type": "SourceArtifact",
-      "name": "models.py",
-      "source_type": "python",
       "source_ref": "inventory_agent\\forecasting\\models.py",
       "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
       "extracted_by": "python_ast",
@@ -337,12 +328,17 @@
     {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:croston",
-      "target": "source:bf92696f90fe0841"
+      "target": "source:6ae88282402d0c9f"
     },
     {
-      "relation": "EXTRACTED_FROM",
+      "relation": "EVALUATED_BY",
       "source": "algorithm:croston",
-      "target": "source:6ae88282402d0c9f"
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:bias"
     },
     {
       "relation": "EVALUATED_BY",
@@ -367,12 +363,17 @@
     {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:last_value",
-      "target": "source:bf92696f90fe0841"
+      "target": "source:6ae88282402d0c9f"
     },
     {
-      "relation": "EXTRACTED_FROM",
+      "relation": "EVALUATED_BY",
       "source": "algorithm:last_value",
-      "target": "source:6ae88282402d0c9f"
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:bias"
     },
     {
       "relation": "EVALUATED_BY",
@@ -402,12 +403,17 @@
     {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:moving_average",
-      "target": "source:bf92696f90fe0841"
+      "target": "source:6ae88282402d0c9f"
     },
     {
-      "relation": "EXTRACTED_FROM",
+      "relation": "EVALUATED_BY",
       "source": "algorithm:moving_average",
-      "target": "source:6ae88282402d0c9f"
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:bias"
     },
     {
       "relation": "EVALUATED_BY",
@@ -442,12 +448,17 @@
     {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:ridge_lag",
-      "target": "source:bf92696f90fe0841"
+      "target": "source:6ae88282402d0c9f"
     },
     {
-      "relation": "EXTRACTED_FROM",
+      "relation": "EVALUATED_BY",
       "source": "algorithm:ridge_lag",
-      "target": "source:6ae88282402d0c9f"
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:bias"
     },
     {
       "relation": "EVALUATED_BY",
@@ -477,12 +488,17 @@
     {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:seasonal_naive",
-      "target": "source:bf92696f90fe0841"
+      "target": "source:6ae88282402d0c9f"
     },
     {
-      "relation": "EXTRACTED_FROM",
+      "relation": "EVALUATED_BY",
       "source": "algorithm:seasonal_naive",
-      "target": "source:6ae88282402d0c9f"
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:bias"
     }
   ]
 }

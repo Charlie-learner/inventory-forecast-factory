@@ -219,14 +219,6 @@
       <data key="d28">["inventory_agent\\forecasting\\models.py:38", "inventory_agent\\forecasting\\models.py:52"]</data>
       <data key="d29">[]</data>
     </node>
-    <node id="source:bf92696f90fe0841">
-      <data key="d1">SourceArtifact</data>
-      <data key="d2">models.py</data>
-      <data key="d17">python</data>
-      <data key="d18">inventory_agent\forecasting\models.py:84</data>
-      <data key="d19">bf92696f90fe08412159a5c37cc351fabf37f871f9505902d1ad8f66290f19d4</data>
-      <data key="d21">python_ast</data>
-    </node>
     <node id="source:6ae88282402d0c9f">
       <data key="d1">SourceArtifact</data>
       <data key="d2">models.py</data>
@@ -254,11 +246,14 @@
     <edge source="algorithm:croston" target="metric:rmse">
       <data key="d30">EVALUATED_BY</data>
     </edge>
-    <edge source="algorithm:croston" target="source:bf92696f90fe0841">
-      <data key="d30">EXTRACTED_FROM</data>
-    </edge>
     <edge source="algorithm:croston" target="source:6ae88282402d0c9f">
       <data key="d30">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:smape">
+      <data key="d30">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="metric:bias">
+      <data key="d30">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:inventory_cost">
       <data key="d30">EVALUATED_BY</data>
@@ -272,11 +267,14 @@
     <edge source="algorithm:last_value" target="metric:rmse">
       <data key="d30">EVALUATED_BY</data>
     </edge>
-    <edge source="algorithm:last_value" target="source:bf92696f90fe0841">
-      <data key="d30">EXTRACTED_FROM</data>
-    </edge>
     <edge source="algorithm:last_value" target="source:6ae88282402d0c9f">
       <data key="d30">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:smape">
+      <data key="d30">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="metric:bias">
+      <data key="d30">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:inventory_cost">
       <data key="d30">EVALUATED_BY</data>
@@ -293,11 +291,14 @@
     <edge source="algorithm:moving_average" target="metric:rmse">
       <data key="d30">EVALUATED_BY</data>
     </edge>
-    <edge source="algorithm:moving_average" target="source:bf92696f90fe0841">
-      <data key="d30">EXTRACTED_FROM</data>
-    </edge>
     <edge source="algorithm:moving_average" target="source:6ae88282402d0c9f">
       <data key="d30">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:smape">
+      <data key="d30">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="metric:bias">
+      <data key="d30">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:inventory_cost">
       <data key="d30">EVALUATED_BY</data>
@@ -317,11 +318,14 @@
     <edge source="algorithm:ridge_lag" target="metric:rmse">
       <data key="d30">EVALUATED_BY</data>
     </edge>
-    <edge source="algorithm:ridge_lag" target="source:bf92696f90fe0841">
-      <data key="d30">EXTRACTED_FROM</data>
-    </edge>
     <edge source="algorithm:ridge_lag" target="source:6ae88282402d0c9f">
       <data key="d30">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:smape">
+      <data key="d30">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="metric:bias">
+      <data key="d30">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:inventory_cost">
       <data key="d30">EVALUATED_BY</data>
@@ -338,11 +342,14 @@
     <edge source="algorithm:seasonal_naive" target="metric:rmse">
       <data key="d30">EVALUATED_BY</data>
     </edge>
-    <edge source="algorithm:seasonal_naive" target="source:bf92696f90fe0841">
-      <data key="d30">EXTRACTED_FROM</data>
-    </edge>
     <edge source="algorithm:seasonal_naive" target="source:6ae88282402d0c9f">
       <data key="d30">EXTRACTED_FROM</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:smape">
+      <data key="d30">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="metric:bias">
+      <data key="d30">EVALUATED_BY</data>
     </edge>
     <data key="d0">1.4</data>
   </graph>

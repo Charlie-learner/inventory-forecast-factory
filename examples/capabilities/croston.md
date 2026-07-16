@@ -7,7 +7,7 @@
 - input_contract: Non-negative daily demand history with possible zero-demand periods.
 - output_contract: Non-negative daily forecast and horizon-total target inventory.
 - suitable_for: intermittent, many_zeros
-- metrics: inventory_cost, wape, rmse
+- metrics: inventory_cost, wape, rmse, smape, bias
 - dependencies: pandas
 - parameters: {"alpha": 0.1}
 - version: 1.1.0
@@ -19,4 +19,3 @@
 - review_status: source_reviewed
 - evidence_refs: Croston 1972 method description, inventory_agent/forecasting/models.py:52
 - extraction_warnings: This implementation is classic Croston rather than the Syntetos-Boylan adjustment.
-

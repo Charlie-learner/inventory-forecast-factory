@@ -85,7 +85,7 @@
       },
       "source_type": "document",
       "source_ref": "examples\\capabilities\\croston.md",
-      "source_hash": "6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b",
+      "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
       "version": "1.1.0",
       "extracted_by": "deterministic",
       "source_title": "Forecasting and Stock Control for Intermittent Demands",
@@ -131,7 +131,7 @@
       "parameters": {},
       "source_type": "document",
       "source_ref": "examples\\capabilities\\last_value.md",
-      "source_hash": "838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081",
+      "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
       "version": "1.1.0",
       "extracted_by": "deterministic",
       "source_title": "M5 accuracy competition results, findings, and conclusions",
@@ -177,7 +177,7 @@
       },
       "source_type": "document",
       "source_ref": "examples\\capabilities\\moving_average.md",
-      "source_hash": "d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2",
+      "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
       "version": "1.1.0",
       "extracted_by": "deterministic",
       "source_title": "The accuracy of intermittent demand estimates",
@@ -221,7 +221,7 @@
       },
       "source_type": "document",
       "source_ref": "examples\\capabilities\\ridge_lag.md",
-      "source_hash": "62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65",
+      "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
       "version": "1.1.0",
       "extracted_by": "deterministic",
       "source_title": "scikit-learn Ridge regression API",
@@ -267,7 +267,7 @@
       },
       "source_type": "document",
       "source_ref": "examples\\capabilities\\seasonal_naive.md",
-      "source_hash": "4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1",
+      "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
       "version": "1.1.0",
       "extracted_by": "deterministic",
       "source_title": "M5 accuracy competition results, findings, and conclusions",
@@ -288,88 +288,89 @@
       "name": "Forecasting and Stock Control for Intermittent Demands",
       "source_type": "document",
       "source_ref": "examples\\capabilities\\croston.md",
-      "source_hash": "6ad85105ef03db150bc00094f17137a4f3dec60db53e2bd0a9f209d25b5cd35b",
+      "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
       "extracted_by": "deterministic",
       "source_url": "https://doi.org/10.1057/jors.1972.50",
       "source_license": "citation_only",
       "accessed_at": "2026-07-16",
       "review_status": "source_reviewed",
-      "id": "source:6ad85105ef03db15"
+      "id": "source:e7fbe6265bbd3cee"
     },
     {
       "type": "SourceArtifact",
       "name": "M5 accuracy competition results, findings, and conclusions",
       "source_type": "document",
       "source_ref": "examples\\capabilities\\last_value.md",
-      "source_hash": "838b2dcd738ae1258e54dbf165b2e83e8fd246f20c208be85aa0f8a4c80c2081",
+      "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
       "extracted_by": "deterministic",
       "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
       "source_license": "citation_only",
       "accessed_at": "2026-07-16",
       "review_status": "source_reviewed",
-      "id": "source:838b2dcd738ae125"
+      "id": "source:cc24b90807e0ed4e"
     },
     {
       "type": "SourceArtifact",
       "name": "The accuracy of intermittent demand estimates",
       "source_type": "document",
       "source_ref": "examples\\capabilities\\moving_average.md",
-      "source_hash": "d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2",
+      "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
       "extracted_by": "deterministic",
       "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
       "source_license": "citation_only",
       "accessed_at": "2026-07-16",
       "review_status": "source_reviewed",
-      "id": "source:d0a66653269bec07"
+      "id": "source:4191b6ea63dffed1"
     },
     {
       "type": "SourceArtifact",
       "name": "scikit-learn Ridge regression API",
       "source_type": "document",
       "source_ref": "examples\\capabilities\\ridge_lag.md",
-      "source_hash": "62f20d513a95bd60bb61e1f17e1f6c5c9001e6b3ab16104f37adcd87b2d9cd65",
+      "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
       "extracted_by": "deterministic",
       "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
       "source_license": "BSD-3-Clause documentation and citation metadata",
       "accessed_at": "2026-07-16",
       "review_status": "source_reviewed",
-      "id": "source:62f20d513a95bd60"
+      "id": "source:a6da8bbaf91c57db"
     },
     {
       "type": "SourceArtifact",
       "name": "M5 accuracy competition results, findings, and conclusions",
       "source_type": "document",
       "source_ref": "examples\\capabilities\\seasonal_naive.md",
-      "source_hash": "4304d58cabda939c1ac8dfacfaadbd2533c8fb2f9257014796ab76b0d46a3be1",
+      "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
       "extracted_by": "deterministic",
       "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
       "source_license": "citation_only",
       "accessed_at": "2026-07-16",
       "review_status": "source_reviewed",
-      "id": "source:4304d58cabda939c"
+      "id": "source:0d2b62ba65897f56"
     },
     {
       "type": "ValidationRun",
+      "name": "验证:seasonal_naive@1",
       "item_id": 1002,
       "store_code": "1",
       "status": "success",
       "metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
       "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
-      "timestamp": "2026-07-16T08:59:43.790343+00:00",
-      "id": "run:313314a77fe8"
+      "timestamp": "2026-07-16T09:43:16.495916+00:00",
+      "id": "run:be7389b40136"
     },
     {
       "type": "CapabilityVersion",
-      "name": "seasonal_naive@c8baa3ac039b",
-      "created_at": "2026-07-16T08:59:43.790343+00:00",
+      "name": "seasonal_naive@a100b5908799",
+      "created_at": "2026-07-16T09:43:16.495916+00:00",
       "lifecycle_status": "active",
       "capability_version": "1.1.0",
       "generation_mode": "spec_template",
-      "spec_hash": "4d4f5ff275bb71390e2381d2119c72b69fc97b028d9b10ea2713392c3107b67d",
-      "source_hash": "c8baa3ac039bcf62a7db3ae5d05509121ecb38e870dc055607c15aef1805b267",
+      "spec_hash": "e4c75af347c0866373e03ac2e7abc603e1e8c090940f54b929a070ec0e513db2",
+      "source_hash": "a100b590879924e5f86e9377661dd7790355f9623b35555479b3dab5609ef289",
       "source_ref": "examples\\capabilities\\seasonal_naive.md",
-      "generated_path": "examples\\repair_run\\20260716_165939_831375\\generated\\forecast_seasonal_naive.py",
-      "id": "version:seasonal_naive:c8baa3ac039b"
+      "generated_path": "examples\\repair_run\\20260716_174311_621870\\generated\\forecast_seasonal_naive.py",
+      "id": "version:seasonal_naive:a100b5908799"
     },
     {
       "type": "FailureCase",
@@ -379,13 +380,14 @@
       "normalized_error": "syntax: injected demonstration failure before safe repair",
       "retryable": true,
       "occurrence_count": 1,
-      "last_seen": "2026-07-16T08:59:43.790343+00:00",
+      "last_seen": "2026-07-16T09:43:16.495916+00:00",
       "id": "failure:4c06ea656e7e460b"
     },
     {
       "type": "RepairStrategy",
+      "name": "修复:seasonal_naive",
       "description": "第 1 轮修复（受约束安全模板回退，错误类型=syntax）: syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]",
-      "id": "repair:be050a6f8a"
+      "id": "repair:122b7d0db4"
     },
     {
       "type": "VersionEvent",
@@ -393,9 +395,9 @@
       "action": "promote",
       "model": "seasonal_naive",
       "previous_active": "",
-      "selected_version": "version:seasonal_naive:c8baa3ac039b",
-      "timestamp": "2026-07-16T08:59:43.811473+00:00",
-      "id": "version_event:71b8901ae23f"
+      "selected_version": "version:seasonal_naive:a100b5908799",
+      "timestamp": "2026-07-16T09:43:16.508980+00:00",
+      "id": "version_event:b7a348c7b3aa"
     }
   ],
   "edges": [
@@ -410,6 +412,21 @@
       "target": "metric:wape"
     },
     {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:bias"
+    },
+    {
       "relation": "SUITABLE_FOR",
       "source": "algorithm:croston",
       "target": "profile:intermittent"
@@ -420,14 +437,9 @@
       "target": "profile:many_zeros"
     },
     {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:croston",
-      "target": "metric:rmse"
-    },
-    {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:croston",
-      "target": "source:6ad85105ef03db15"
+      "target": "source:e7fbe6265bbd3cee"
     },
     {
       "relation": "EVALUATED_BY",
@@ -438,6 +450,21 @@
       "relation": "EVALUATED_BY",
       "source": "algorithm:last_value",
       "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:bias"
     },
     {
       "relation": "SUITABLE_FOR",
@@ -445,14 +472,9 @@
       "target": "profile:short_history"
     },
     {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:last_value",
-      "target": "metric:rmse"
-    },
-    {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:last_value",
-      "target": "source:838b2dcd738ae125"
+      "target": "source:cc24b90807e0ed4e"
     },
     {
       "relation": "EVALUATED_BY",
@@ -463,6 +485,21 @@
       "relation": "EVALUATED_BY",
       "source": "algorithm:moving_average",
       "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:bias"
     },
     {
       "relation": "SUITABLE_FOR",
@@ -475,14 +512,9 @@
       "target": "profile:short_history"
     },
     {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:moving_average",
-      "target": "metric:rmse"
-    },
-    {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:moving_average",
-      "target": "source:d0a66653269bec07"
+      "target": "source:4191b6ea63dffed1"
     },
     {
       "relation": "EVALUATED_BY",
@@ -493,6 +525,21 @@
       "relation": "EVALUATED_BY",
       "source": "algorithm:ridge_lag",
       "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:bias"
     },
     {
       "relation": "SUITABLE_FOR",
@@ -510,14 +557,9 @@
       "target": "profile:volatile"
     },
     {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:ridge_lag",
-      "target": "metric:rmse"
-    },
-    {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:ridge_lag",
-      "target": "source:62f20d513a95bd60"
+      "target": "source:a6da8bbaf91c57db"
     },
     {
       "relation": "EVALUATED_BY",
@@ -530,6 +572,21 @@
       "target": "metric:wape"
     },
     {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:bias"
+    },
+    {
       "relation": "SUITABLE_FOR",
       "source": "algorithm:seasonal_naive",
       "target": "profile:weekly_seasonal"
@@ -540,38 +597,33 @@
       "target": "profile:stable"
     },
     {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:seasonal_naive",
-      "target": "metric:rmse"
-    },
-    {
       "relation": "EXTRACTED_FROM",
       "source": "algorithm:seasonal_naive",
-      "target": "source:4304d58cabda939c"
+      "target": "source:0d2b62ba65897f56"
     },
     {
       "relation": "VALIDATED",
-      "source": "run:313314a77fe8",
+      "source": "run:be7389b40136",
       "target": "algorithm:seasonal_naive"
     },
     {
       "relation": "VALIDATED_VERSION",
-      "source": "run:313314a77fe8",
-      "target": "version:seasonal_naive:c8baa3ac039b"
+      "source": "run:be7389b40136",
+      "target": "version:seasonal_naive:a100b5908799"
     },
     {
       "relation": "OBSERVED_FAILURE",
-      "source": "run:313314a77fe8",
+      "source": "run:be7389b40136",
       "target": "failure:4c06ea656e7e460b"
     },
     {
       "relation": "REPAIRED_BY",
-      "source": "run:313314a77fe8",
-      "target": "repair:be050a6f8a"
+      "source": "run:be7389b40136",
+      "target": "repair:122b7d0db4"
     },
     {
       "relation": "VERSION_OF",
-      "source": "version:seasonal_naive:c8baa3ac039b",
+      "source": "version:seasonal_naive:a100b5908799",
       "target": "algorithm:seasonal_naive"
     },
     {
@@ -581,13 +633,13 @@
     },
     {
       "relation": "ADDRESSES",
-      "source": "repair:be050a6f8a",
+      "source": "repair:122b7d0db4",
       "target": "failure:4c06ea656e7e460b"
     },
     {
       "relation": "ACTIVATED_VERSION",
-      "source": "version_event:71b8901ae23f",
-      "target": "version:seasonal_naive:c8baa3ac039b"
+      "source": "version_event:b7a348c7b3aa",
+      "target": "version:seasonal_naive:a100b5908799"
     }
   ]
 }

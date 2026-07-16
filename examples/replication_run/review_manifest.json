@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "created_at": "2026-07-16T08:49:58.438730+00:00",
+  "created_at": "2026-07-16T09:44:43.766663+00:00",
   "capability": {
     "name": "moving_average",
     "task_type": "inventory_forecasting",
@@ -15,7 +15,9 @@
     "metrics": [
       "inventory_cost",
       "wape",
-      "rmse"
+      "rmse",
+      "smape",
+      "bias"
     ],
     "dependencies": [
       "pandas"
@@ -25,7 +27,7 @@
     },
     "source_type": "document",
     "source_ref": "examples\\capabilities\\moving_average.md",
-    "source_hash": "d0a66653269bec0725df3862cc246ca63ed106b231de5804b7d6889019f5c3d2",
+    "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
     "version": "1.1.0",
     "extracted_by": "deterministic",
     "source_title": "The accuracy of intermittent demand estimates",
@@ -44,8 +46,8 @@
     "model": "moving_average",
     "path": "examples\\replication_run\\generated\\forecast_moving_average.py",
     "mode": "spec_template",
-    "spec_hash": "989ac2d35c93e2f5078123972e4378946feba5acd63773fa6d7a01b43e3d79cc",
-    "source_hash": "0259edf2844eff3b9bed0d478fb0f612af173e1fca1e798237e0a21f04da3ec7"
+    "spec_hash": "8faf39d71356ee079452d6dfe8884c22a736d17fad19f5bbe53eda0707d83dd4",
+    "source_hash": "14e0942ab0cb6bb3751708b807839aae08f452e024759018c611be69c35d3cd0"
   },
   "validation": {
     "valid": true,
@@ -75,7 +77,7 @@
       4.0
     ],
     "sample_target_inventory": 56.0,
-    "runtime_seconds": 0.9487183000019286,
+    "runtime_seconds": 0.9560424999945099,
     "equivalence_max_error": 0.0,
     "equivalence_cases": 4
   },
