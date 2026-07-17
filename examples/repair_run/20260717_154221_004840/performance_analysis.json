@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "measurement_scope": "Isolated deterministic micro-benchmark; tracemalloc covers Python allocations and may not include all native-library memory.",
+  "selected_source": "examples\\repair_run\\20260717_154221_004840\\generated\\forecast_seasonal_naive.py",
+  "source_bytes": 2729,
+  "source_lines": 40,
+  "ast_loop_count": 0,
+  "ast_call_count": 20,
+  "measurements": {
+    "iterations": 20,
+    "mean_latency_ms": 0.7123300005332567,
+    "cpu_time_ms": 15.625,
+    "peak_memory_kb": 25.9501953125,
+    "throughput_calls_per_second": 1403.8437230657012
+  },
+  "policy": {
+    "latency_warning_ms": 5.0,
+    "peak_memory_warning_kb": 32768.0,
+    "minimum_throughput": 100.0
+  },
+  "recommendations": [
+    "当前基准未触发资源告警；继续保留回归基准，避免无证据的过早优化。"
+  ],
+  "candidate_profiles": [
+    {
+      "variant_id": "primary",
+      "selected": true,
+      "valid": true,
+      "mean_latency_ms": 0.7123300005332567,
+      "peak_memory_kb": 25.9501953125,
+      "throughput_calls_per_second": 1403.8437230657012
+    }
+  ]
+}

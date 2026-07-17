@@ -346,7 +346,7 @@ def _write_summary(session: Path, cases: list[dict[str, Any]]) -> None:
         )
 
     rows = [
-        "# 高级能力场景验收结果",
+        "# 高级功能组合用例结果",
         "",
         "## 一句话结论",
         "",
@@ -356,7 +356,7 @@ def _write_summary(session: Path, cases: list[dict[str, Any]]) -> None:
             "并把验证、失败、修复策略、版本和外部资料写回同一知识图谱。"
         ),
         "",
-        "## 老师建议先看什么",
+        "## 建议先看什么",
         "",
         "1. 先看下表，确认每个高级能力都有实际用例和数量结果。",
         "2. 打开每个用例的业务报告，看非技术用户能否理解预测与补货结论。",
@@ -443,7 +443,7 @@ def _write_summary(session: Path, cases: list[dict[str, Any]]) -> None:
         [
             "## 沉淀到知识图谱的结果",
             "",
-            "| 节点类型 | 数量 | 对评审者的含义 |",
+            "| 节点类型 | 数量 | 在项目中的作用 |",
             "|---|---:|---|",
         ]
     )
@@ -580,6 +580,57 @@ def run_showcase(
 
     cases = [cases_by_id[key] for key in sorted(cases_by_id)]
     _write_summary(session, cases)
+    relative_session = session.relative_to(output_root.resolve()).as_posix()
+    research_sessions = sorted(
+        (
+            path
+            for path in output_root.resolve().glob("20*")
+            if (path / "online_knowledge_extraction.json").is_file()
+        ),
+        reverse=True,
+    )
+    if (session / "online_knowledge_extraction.json").exists():
+        live_note = "本会话包含真实联网/外部 LLM 证据。"
+    elif research_sessions:
+        research_name = research_sessions[0].name
+        live_note = (
+            "本会话为离线可复现证据；最近一次真实联网证据："
+            f"[`{research_name}/online_knowledge_extraction.json`]"
+            f"({research_name}/online_knowledge_extraction.json)。"
+        )
+    else:
+        live_note = "本会话为离线可复现证据；尚未保存真实联网证据，也不会用模拟结果冒充。"
+    evidence_lines = [
+        f"- 最新刷新会话：[`{relative_session}/showcase_summary.md`]({relative_session}/showcase_summary.md)"
+    ]
+    if (session / "capability_graph.html").is_file():
+        evidence_lines.append(
+            f"- 知识图谱可视化：[`{relative_session}/capability_graph.html`]"
+            f"({relative_session}/capability_graph.html)"
+        )
+    if (session / "protocol_demo/review_manifest.json").is_file():
+        evidence_lines.append(
+            f"- 多智能体协议记录：[`{relative_session}/protocol_demo/review_manifest.json`]"
+            f"({relative_session}/protocol_demo/review_manifest.json)"
+        )
+    (output_root.resolve() / "README.md").write_text(
+        "\n".join(
+            [
+                "# 高级功能运行示例",
+                "",
+                "本页由 `scripts/run_advanced_showcase.py` 自动刷新，作为 README 的稳定入口。",
+                "",
+                *evidence_lines,
+                "",
+                live_note,
+                "",
+                "综合用例展示候选算法比较、独立代码生成、审查、统一验证、失败修复、经验复用、版本与知识图谱写回。",
+                "命令、预期结果和检查方法见 [`docs/advanced_showcase_cases.md`](../../docs/advanced_showcase_cases.md)。",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
     return session
 
 

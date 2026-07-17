@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
+  <title id="title">库存算法能力工厂模块设计图</title>
+  <desc id="desc">展示接口层、编排层、Agent 层、应用服务、领域能力和基础设施之间的依赖方向。</desc>
+  <defs>
+    <filter id="rough" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.009" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.15"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker>
+    <style>
+      .title{font:700 38px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#151515}.sub{font:17px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#555}
+      .h{font:700 23px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#171717}.t{font:18px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#222}.s{font:14px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#444}.xs{font:12px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#444}
+      .layer{fill:#fff;stroke:#222;stroke-width:2.2;rx:20;filter:url(#rough)}.box{fill:#fafafa;stroke:#333;stroke-width:1.8;rx:13;filter:url(#rough)}
+      .contract{fill:#fff;stroke:#222;stroke-width:2;stroke-dasharray:8 6;rx:18;filter:url(#rough)}.line{fill:none;stroke:#222;stroke-width:2;marker-end:url(#arrow)}.dash{fill:none;stroke:#444;stroke-width:1.7;stroke-dasharray:8 7;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="980" fill="#fff"/>
+  <text x="800" y="55" text-anchor="middle" class="title">库存算法能力工厂 · 模块设计</text>
+  <text x="800" y="84" text-anchor="middle" class="sub">依赖方向自上而下；Web / CLI 不重复实现业务逻辑</text>
+
+  <rect x="65" y="118" width="1160" height="118" class="layer"/>
+  <text x="95" y="150" class="h">① 接口适配层</text>
+  <rect x="310" y="143" width="240" height="62" class="box"/><text x="430" y="170" text-anchor="middle" class="t">web/</text><text x="430" y="193" text-anchor="middle" class="s">HTTP · 后台任务 · OpenAPI · UI</text>
+  <rect x="590" y="143" width="240" height="62" class="box"/><text x="710" y="170" text-anchor="middle" class="t">cli.py</text><text x="710" y="193" text-anchor="middle" class="s">命令解析 · JSON 输出 · 日志配置</text>
+  <rect x="870" y="143" width="240" height="62" class="box"/><text x="990" y="170" text-anchor="middle" class="t">config.py</text><text x="990" y="193" text-anchor="middle" class="s">环境变量 · 密钥安全 · 诊断</text>
+
+  <rect x="65" y="267" width="1160" height="112" class="layer"/>
+  <text x="95" y="299" class="h">② 工作流编排层</text>
+  <rect x="310" y="290" width="360" height="64" class="box"/><text x="490" y="318" text-anchor="middle" class="t">workflow/factory.py</text><text x="490" y="341" text-anchor="middle" class="s">LangGraph 节点 · 条件边 · 修复循环</text>
+  <rect x="710" y="290" width="220" height="64" class="box"/><text x="820" y="318" text-anchor="middle" class="t">execution.py</text><text x="820" y="341" text-anchor="middle" class="s">执行档位 · 运行限制</text>
+  <rect x="970" y="290" width="180" height="64" class="box"/><text x="1060" y="318" text-anchor="middle" class="t">domain.py</text><text x="1060" y="341" text-anchor="middle" class="s">领域数据契约</text>
+
+  <rect x="65" y="410" width="1160" height="152" class="layer"/>
+  <text x="95" y="443" class="h">③ Multi-Agent 协作层（专业角色分工）</text>
+  <rect x="270" y="448" width="175" height="82" class="box"/><text x="357" y="478" text-anchor="middle" class="t">需求 / 抽取</text><text x="357" y="504" text-anchor="middle" class="s">Requirement</text><text x="357" y="523" text-anchor="middle" class="s">Extraction</text>
+  <rect x="470" y="448" width="175" height="82" class="box"/><text x="557" y="478" text-anchor="middle" class="t">画像 / 规划</text><text x="557" y="504" text-anchor="middle" class="s">Research</text><text x="557" y="523" text-anchor="middle" class="s">Planning</text>
+  <rect x="670" y="448" width="215" height="82" class="box"/><text x="777" y="475" text-anchor="middle" class="t">Code Agent Team</text><text x="777" y="501" text-anchor="middle" class="s">Architecture · Implementation</text><text x="777" y="522" text-anchor="middle" class="s">Review · Validator · codegen/</text>
+  <rect x="910" y="448" width="175" height="82" class="box"/><text x="997" y="478" text-anchor="middle" class="t">修复 / 沉淀</text><text x="997" y="504" text-anchor="middle" class="s">Repair · Experience</text><text x="997" y="523" text-anchor="middle" class="s">Report</text>
+
+  <rect x="65" y="593" width="1160" height="140" class="layer"/>
+  <text x="95" y="626" class="h">④ 应用服务层</text>
+  <rect x="263" y="638" width="175" height="66" class="box"/><text x="350" y="667" text-anchor="middle" class="t">benchmark</text><text x="350" y="690" text-anchor="middle" class="s">候选滚动回测</text>
+  <rect x="458" y="638" width="175" height="66" class="box"/><text x="545" y="667" text-anchor="middle" class="t">replenishment</text><text x="545" y="690" text-anchor="middle" class="s">约束补货建议</text>
+  <rect x="653" y="638" width="175" height="66" class="box"/><text x="740" y="667" text-anchor="middle" class="t">performance</text><text x="740" y="690" text-anchor="middle" class="s">延迟与资源分析</text>
+  <rect x="848" y="638" width="175" height="66" class="box"/><text x="935" y="667" text-anchor="middle" class="t">versioning</text><text x="935" y="690" text-anchor="middle" class="s">能力版本生命周期</text>
+  <rect x="1038" y="638" width="150" height="66" class="box"/><text x="1113" y="661" text-anchor="middle" class="xs">audit / observability</text><text x="1113" y="688" text-anchor="middle" class="xs">Trace · 日志 · 评分证据</text>
+
+  <rect x="65" y="764" width="1160" height="154" class="layer"/>
+  <text x="95" y="797" class="h">⑤ 领域能力与基础设施</text>
+  <rect x="250" y="807" width="170" height="76" class="box"/><text x="335" y="832" text-anchor="middle" class="t">data/</text><text x="335" y="853" text-anchor="middle" class="s">extraction/</text><text x="335" y="874" text-anchor="middle" class="s">识别 · 映射 · 代码解析</text>
+  <rect x="442" y="807" width="170" height="76" class="box"/><text x="527" y="837" text-anchor="middle" class="t">forecasting/</text><text x="527" y="862" text-anchor="middle" class="s">模型接口与注册表</text>
+  <rect x="634" y="807" width="170" height="76" class="box"/><text x="719" y="837" text-anchor="middle" class="t">validation/</text><text x="719" y="862" text-anchor="middle" class="s">指标 · 回测 · 失败分类</text>
+  <rect x="826" y="807" width="170" height="76" class="box"/><text x="911" y="837" text-anchor="middle" class="t">knowledge/</text><text x="911" y="862" text-anchor="middle" class="s">图谱 · 检索 · 可视化</text>
+  <rect x="1018" y="807" width="170" height="76" class="box"/><text x="1103" y="837" text-anchor="middle" class="t">llm / research</text><text x="1103" y="862" text-anchor="middle" class="s">外部适配与降级</text>
+
+  <rect x="1270" y="118" width="270" height="800" class="contract"/>
+  <text x="1405" y="151" text-anchor="middle" class="h">共享领域契约</text>
+  <text x="1405" y="176" text-anchor="middle" class="s">各层共同依赖，而非逐层复制</text>
+  <rect x="1305" y="198" width="200" height="86" class="box"/><text x="1405" y="229" text-anchor="middle" class="t">CapabilitySpec</text><text x="1405" y="255" text-anchor="middle" class="s">输入输出 · 依赖 · 来源 · 版本</text>
+  <rect x="1305" y="319" width="200" height="86" class="box"/><text x="1405" y="350" text-anchor="middle" class="t">AlgorithmPlan</text><text x="1405" y="376" text-anchor="middle" class="s">候选 · 任务 · 修复预算</text>
+  <rect x="1305" y="440" width="200" height="86" class="box"/><text x="1405" y="471" text-anchor="middle" class="t">统一预测接口</text><text x="1405" y="497" text-anchor="middle" class="s">forecast(history, horizon)</text>
+  <rect x="1305" y="561" width="200" height="86" class="box"/><text x="1405" y="592" text-anchor="middle" class="t">验证配置</text><text x="1405" y="618" text-anchor="middle" class="s">Profile · Metric · Threshold</text>
+  <rect x="1305" y="682" width="200" height="86" class="box"/><text x="1405" y="713" text-anchor="middle" class="t">运行与进度</text><text x="1405" y="739" text-anchor="middle" class="s">RuntimeLimits · Callback</text>
+  <rect x="1305" y="803" width="200" height="78" class="box"/><text x="1405" y="834" text-anchor="middle" class="t">错误与证据</text><text x="1405" y="860" text-anchor="middle" class="s">Failure · Trace · Report</text>
+
+  <path d="M645 236 V267" class="line"/><path d="M645 379 V410" class="line"/><path d="M645 562 V593" class="line"/><path d="M645 733 V764" class="line"/>
+  <path d="M1225 322 H1270" class="dash"/><path d="M1225 489 H1270" class="dash"/><path d="M1225 671 H1270" class="dash"/><path d="M1225 845 H1270" class="dash"/>
+  <text x="645" y="955" text-anchor="middle" class="sub">原则：接口层只适配输入输出；工作流只编排；服务层承载业务规则；注册表负责扩展</text>
+</svg>

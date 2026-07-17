@@ -221,7 +221,7 @@ def write_report(result: dict[str, Any], output_dir: Path = OUTPUT) -> None:
         ],
     ]
     component_rows = [
-        "| 验收项 | 结果 | 证据摘要 |",
+        "| 检查项 | 结果 | 内容摘要 |",
         "|---|---|---|",
         *[
             f"| {name} | {'通过' if case['passed'] else '失败'} | "
@@ -231,7 +231,7 @@ def write_report(result: dict[str, Any], output_dir: Path = OUTPUT) -> None:
     ]
     markdown = "\n".join(
         [
-            "# 多场景自动验收报告",
+            "# 多场景自动测试报告",
             "",
             "- 模式：确定性 Mock，不依赖外部 API；",
             f"- 需求画像与库存案例：{len(result['benchmark_cases'])} 个；",
@@ -247,14 +247,14 @@ def write_report(result: dict[str, Any], output_dir: Path = OUTPUT) -> None:
             f"- 多商品：`{result['language_cases']['multiple_items']}`",
             f"- 所有仓库：`{result['language_cases']['all_warehouses']}`",
             "",
-            "## 核心闭环验收",
+            "## 核心流程检查",
             "",
             *component_rows,
             "",
             "## 使用说明",
             "",
             "重新运行：`uv run python scripts/run_acceptance_cases.py`。",
-            "该报告用于提交评审证据，不替代完整的 pytest、覆盖率和端到端验收。",
+            "该报告用于快速查看多场景结果，不替代完整的 pytest、覆盖率和端到端测试。",
         ]
     )
     (output_dir / "acceptance_report.md").write_text(

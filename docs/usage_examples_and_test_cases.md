@@ -1,10 +1,10 @@
-# 使用示例与验收测试用例
+# 使用示例与测试用例
 
 本文面向三类读者：
 
 - 业务用户：通过 Web 上传数据并用自然语言获得库存预测和补货建议；
 - 开发人员：通过 CLI 验证能力抽取、代码复刻、算法比较和自动修复；
-- 评审人员：按照验收用例检查“能力抽取—能力复刻—能力验证与沉淀”闭环。
+- 想了解完整流程的开发者：按照测试用例查看“能力抽取—能力复刻—能力验证与沉淀”闭环。
 
 建议首次演示使用：
 
@@ -261,13 +261,13 @@ uv run python -m inventory_agent visualize-graph `
 
 预期：生成可搜索、筛选和点击节点的独立 HTML 图谱。
 
-## 四、评审验收测试矩阵
+## 四、功能测试清单
 
-| 编号 | 验收目标 | 操作 | 通过标准 |
+| 编号 | 测试目标 | 操作 | 预期结果 |
 |---|---|---|---|
 | TC-01 | 环境可运行 | 执行 `doctor` | 不泄露密钥；依赖与配置状态明确 |
 | TC-02 | 自动化测试 | `uv run pytest -q` | 全部测试通过 |
-| TC-03 | 项目级验收 | `uv run python scripts/validate_project.py` | pytest、Ruff 和端到端工作流全部通过 |
+| TC-03 | 项目级自检 | `uv run python scripts/validate_project.py` | pytest、Ruff 和端到端工作流全部通过 |
 | TC-04 | 单目标闭环 | 运行示例 1 | 产生候选比较、代码、验证、报告和图谱写回 |
 | TC-05 | 多商品理解 | 运行示例 2 | 创建 2 个子任务，不遗漏第二个商品 |
 | TC-06 | 所有仓库展开 | 运行示例 3 | 创建仓库 1-5 共 5 个子任务 |
@@ -282,7 +282,7 @@ uv run python -m inventory_agent visualize-graph `
 | TC-15 | 版本管理 | Web“插件与配置”或 CLI `versions` | 能查看候选版本、发布/回滚事件和版本血缘 |
 | TC-16 | 插件扩展 | 加载 `examples/plugins/stockout_priority.py:register` | 新指标/验证配置进入注册表且不修改核心流程 |
 | TC-17 | 真实补货约束 | 运行示例 8 | 使用库存快照和策略表，输出约束后的具体建议补货量 |
-| TC-18 | 多场景自动验收 | `uv run python scripts/run_acceptance_cases.py` | 六类业务样本、批量语义、复刻、修复、图谱和 API 检查全部通过 |
+| TC-18 | 多场景自动测试 | `uv run python scripts/run_acceptance_cases.py` | 六类业务样本、批量语义、复刻、修复、图谱和 API 检查全部通过 |
 | TC-19 | 外部 LLM 实际调用 | `doctor --live-llm` | 返回预期标记、延迟和脱敏状态，不输出密钥 |
 | TC-20 | 联网研究与搜索优化 | 运行示例 9 | 生成 DOI 知识抽取文件，证据进入规划、报告和图谱，断网可降级 |
 | TC-21 | 后台进度与执行模式 | Web 分别选择 fast/balanced/thorough | 请求立即返回任务 ID，页面逐阶段更新，三种模式使用集中配置 |
@@ -324,10 +324,10 @@ uv run pytest tests/test_codegen.py -k multi_agent -q
 | `test_knowledge_graph.py` | 图谱 schema、验证写回和版本事件 |
 | `test_web.py` | 文件上传、字段映射、批量自然语言任务和 Web API |
 | `test_workflow.py` | 完整 Agent 闭环、报告、Trace 和知识沉淀 |
-| `test_acceptance_cases.py` | 六类需求样本、约束补货和跨组件提交证据 |
+| `test_acceptance_cases.py` | 六类需求样本、约束补货和跨组件运行结果 |
 | `test_research.py` | Crossref 解析、证据排序、候选优化、图谱写入和断网降级 |
 
-## 六、建议的评审演示顺序
+## 六、建议的查看顺序
 
 1. 打开 Web“系统总览”，说明能力、指标、图谱和历史运行；
 2. 上传三份菜鸟数据，展示自动识别和商品/仓库示例；
@@ -337,6 +337,6 @@ uv run pytest tests/test_codegen.py -k multi_agent -q
 6. 打开“运行证据”，查看 Agent/工具调用时间线；
 7. 打开 `examples/repair_run/`，展示验证失败后的自动修复；
 8. 打开“知识图谱”，展示验证结果、失败案例、修复策略和能力版本；
-9. 执行 `scripts/validate_project.py`，完成可复现验收。
+9. 执行 `scripts/validate_project.py`，完成一次可复现的项目自检。
 
-该顺序可以较完整地对应笔试评分中的功能完整性、工程质量、创新性和交付完整性。
+这个顺序可以比较完整地看到项目的主流程、工程结构、扩展功能和运行结果。

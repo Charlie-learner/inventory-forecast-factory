@@ -1,0 +1,2440 @@
+# AI Agent 能力工厂详细运行过程
+
+- 开始时间：2026-07-17T07:42:57.825845+00:00
+- 运行目录：`F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231`
+
+## 001. run - InventoryCapabilityWorkflow.run_started
+
+- 时间：2026-07-17T07:42:57.828579+00:00
+- 类型：`workflow`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "description": "再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。",
+  "data_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\business_data\\demand_history.csv",
+  "capability_sources": [
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md"
+  ],
+  "trace_level": "full",
+  "keep_runs": 2,
+  "task_type_override": null,
+  "online_research": false,
+  "execution_mode": "balanced",
+  "execution_profile": {
+    "name": "balanced",
+    "implementation_candidates": 2,
+    "generation_workers": 2,
+    "performance_iterations": 20,
+    "use_llm_explanation": true
+  },
+  "plugins": []
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "run_dir": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231",
+  "deleted_old_run_directories": []
+}
+```
+
+## 002. requirement_understanding - RequirementAgent.parse
+
+- 时间：2026-07-17T07:42:57.830299+00:00
+- 类型：`agent`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "description": "再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。"
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "description": "再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。",
+  "item_id": 1002,
+  "store_code": "1",
+  "horizon": 14,
+  "candidate_count": 3,
+  "task_type": "inventory_target",
+  "objective": "inventory_cost",
+  "constraints": []
+}
+```
+
+## 003. capability_extraction - CapabilityExtractionAgent.extract_sources
+
+- 时间：2026-07-17T07:42:57.833573+00:00
+- 类型：`agent`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "sources": [
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md"
+  ]
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "count": 5,
+  "capabilities": [
+    {
+      "name": "croston",
+      "task_type": "inventory_forecasting",
+      "description": "Estimate non-zero demand size and the interval between demands separately.",
+      "template_name": "croston",
+      "input_contract": "Non-negative daily demand history with possible zero-demand periods.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "intermittent",
+        "many_zeros"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {
+        "alpha": 0.1
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "Forecasting and Stock Control for Intermittent Demands",
+      "source_url": "https://doi.org/10.1057/jors.1972.50",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Croston 1972 method description",
+        "inventory_agent/forecasting/models.py:52"
+      ],
+      "extraction_warnings": [
+        "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+      ],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "last_value",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest observed demand as a transparent baseline.",
+      "template_name": "last_value",
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "short_history"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {},
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article benchmark discussion",
+        "inventory_agent/forecasting/models.py:12"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "moving_average",
+      "task_type": "inventory_forecasting",
+      "description": "Forecast stable demand with the mean of the most recent observations.",
+      "template_name": "moving_average",
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "stable",
+        "short_history"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {
+        "window": 14
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "The accuracy of intermittent demand estimates",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "SMA benchmark description",
+        "inventory_agent/forecasting/models.py:22"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "ridge_lag",
+      "task_type": "inventory_forecasting",
+      "description": "Fit regularized autoregression on recent demand lags and forecast recursively.",
+      "template_name": "ridge_lag",
+      "input_contract": "Dense non-negative daily history with enough observations for lag construction.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "trend",
+        "dense",
+        "volatile"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "scikit-learn"
+      ],
+      "parameters": {
+        "lags": 14,
+        "alpha": 1.0
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "scikit-learn Ridge regression API",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
+      "source_license": "BSD-3-Clause documentation and citation metadata",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Ridge L2 objective",
+        "inventory_agent/forecasting/models.py:84"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "seasonal_naive",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest weekly pattern over the forecast horizon.",
+      "template_name": "seasonal_naive",
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "weekly_seasonal",
+        "stable"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {
+        "period": 7
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article seasonal-naive benchmark discussion",
+        "inventory_agent/forecasting/models.py:36"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    }
+  ],
+  "scan_reports": [
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": []
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": []
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": []
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": []
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": []
+    }
+  ]
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\extracted_capabilities.json`
+
+## 004. data_profiling - data_loader_and_profiler.load_and_profile
+
+- 时间：2026-07-17T07:42:57.845665+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "data_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\business_data\\demand_history.csv",
+  "item_id": 1002,
+  "store_code": "1"
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "rows": 2880,
+  "history_points": 180,
+  "profile": {
+    "observations": 180,
+    "nonzero_observations": 180,
+    "zero_ratio": 0.0,
+    "mean": 13.35,
+    "coefficient_of_variation": 0.27502133139672497,
+    "trend_strength": -0.04378858145010292,
+    "lag_1_correlation": 0.4871720951191424,
+    "lag_7_correlation": 0.8200685801246108,
+    "demand_type": "weekly_seasonal",
+    "history_status": "observed"
+  },
+  "costs": {
+    "understock_cost": 3.5,
+    "overstock_cost": 1.5,
+    "source": "replenishment_policy.csv",
+    "critical_fractile": 0.7
+  },
+  "raw_data_source": false
+}
+```
+
+## 005. online_industry_research - IndustryResearchAgent.search_and_extract
+
+- 时间：2026-07-17T07:42:57.846718+00:00
+- 类型：`agent`
+- 状态：`skipped`
+
+### 输入/调用参数
+
+```json
+{
+  "enabled": false
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "status": "disabled"
+}
+```
+
+## 006. knowledge_retrieval - CapabilityKnowledgeGraph.retrieve_algorithms
+
+- 时间：2026-07-17T07:42:57.847914+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "demand_type": "weekly_seasonal"
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "retrieved": [
+    {
+      "id": "algorithm:seasonal_naive",
+      "type": "Algorithm",
+      "name": "seasonal_naive",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest weekly pattern over the forecast horizon.",
+      "template_name": "seasonal_naive",
+      "min_history": 14,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "period": 7
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article seasonal-naive benchmark discussion",
+        "inventory_agent/forecasting/models.py:36"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "validation_count": 1,
+      "success_rate": 1.0,
+      "mean_inventory_cost": 0.0
+    },
+    {
+      "id": "algorithm:croston",
+      "type": "Algorithm",
+      "name": "croston",
+      "task_type": "inventory_forecasting",
+      "description": "Estimate non-zero demand size and the interval between demands separately.",
+      "template_name": "croston",
+      "min_history": 14,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history with possible zero-demand periods.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "alpha": 0.1
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "Forecasting and Stock Control for Intermittent Demands",
+      "source_url": "https://doi.org/10.1057/jors.1972.50",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Croston 1972 method description",
+        "inventory_agent/forecasting/models.py:52"
+      ],
+      "extraction_warnings": [
+        "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+      ],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "validation_count": 0,
+      "success_rate": null,
+      "mean_inventory_cost": null
+    },
+    {
+      "id": "algorithm:last_value",
+      "type": "Algorithm",
+      "name": "last_value",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest observed demand as a transparent baseline.",
+      "template_name": "last_value",
+      "min_history": 1,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {},
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article benchmark discussion",
+        "inventory_agent/forecasting/models.py:12"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "validation_count": 0,
+      "success_rate": null,
+      "mean_inventory_cost": null
+    },
+    {
+      "id": "algorithm:moving_average",
+      "type": "Algorithm",
+      "name": "moving_average",
+      "task_type": "inventory_forecasting",
+      "description": "Forecast stable demand with the mean of the most recent observations.",
+      "template_name": "moving_average",
+      "min_history": 7,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "window": 14
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "The accuracy of intermittent demand estimates",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "SMA benchmark description",
+        "inventory_agent/forecasting/models.py:22"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "validation_count": 0,
+      "success_rate": null,
+      "mean_inventory_cost": null
+    },
+    {
+      "id": "algorithm:ridge_lag",
+      "type": "Algorithm",
+      "name": "ridge_lag",
+      "task_type": "inventory_forecasting",
+      "description": "Fit regularized autoregression on recent demand lags and forecast recursively.",
+      "template_name": "ridge_lag",
+      "min_history": 30,
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "scikit-learn"
+      ],
+      "input_contract": "Dense non-negative daily history with enough observations for lag construction.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "lags": 14,
+        "alpha": 1.0
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "scikit-learn Ridge regression API",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
+      "source_license": "BSD-3-Clause documentation and citation metadata",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Ridge L2 objective",
+        "inventory_agent/forecasting/models.py:84"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "validation_count": 0,
+      "success_rate": null,
+      "mean_inventory_cost": null
+    }
+  ]
+}
+```
+
+## 007. implementation_planning - PlanningAgent.plan
+
+- 时间：2026-07-17T07:42:57.848953+00:00
+- 类型：`agent`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "request": {
+    "description": "再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。",
+    "item_id": 1002,
+    "store_code": "1",
+    "horizon": 14,
+    "candidate_count": 3,
+    "task_type": "inventory_target",
+    "objective": "inventory_cost",
+    "constraints": []
+  },
+  "profile": {
+    "observations": 180,
+    "nonzero_observations": 180,
+    "zero_ratio": 0.0,
+    "mean": 13.35,
+    "coefficient_of_variation": 0.27502133139672497,
+    "trend_strength": -0.04378858145010292,
+    "lag_1_correlation": 0.4871720951191424,
+    "lag_7_correlation": 0.8200685801246108,
+    "demand_type": "weekly_seasonal",
+    "history_status": "observed"
+  }
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "candidates": [
+    "seasonal_naive",
+    "croston",
+    "last_value"
+  ],
+  "rationale": "该任务要求为商品 1002 在仓库 1 预测未来 14 天，并以 inventory_cost 为主要目标。历史序列被识别为 weekly_seasonal，共有 180 个观测，零需求比例为 0.00%。因此先从知识图谱检索与该需求画像匹配的能力，再保留可解释基线，形成 seasonal_naive, croston, last_value 三类候选。最终不由语言模型主观决定，而是使用 inventory_cost 及决胜指标执行无时间泄漏滚动回测；生成代码还必须通过安全、接口、稳定性和参考行为等价验证后才允许沉淀为新版本。",
+  "validation_metric": "inventory_cost",
+  "max_repairs": 2,
+  "design_basis": {
+    "business_goal": {
+      "item_id": 1002,
+      "store_code": "1",
+      "horizon": 14,
+      "task_type": "inventory_target",
+      "objective": "inventory_cost"
+    },
+    "demand_evidence": {
+      "demand_type": "weekly_seasonal",
+      "observations": 180,
+      "zero_ratio": 0.0,
+      "coefficient_of_variation": 0.27502133139672497,
+      "trend_strength": -0.04378858145010292,
+      "lag_7_correlation": 0.8200685801246108
+    },
+    "knowledge_evidence": [
+      {
+        "name": "seasonal_naive",
+        "description": "Repeat the latest weekly pattern over the forecast horizon.",
+        "history_evidence": "已有 1 次历史验证，成功率 100%，历史平均库存成本 0.00",
+        "matched_demand_type": "weekly_seasonal"
+      },
+      {
+        "name": "croston",
+        "description": "Estimate non-zero demand size and the interval between demands separately.",
+        "history_evidence": "暂无历史验证，作为待比较候选",
+        "matched_demand_type": "weekly_seasonal"
+      },
+      {
+        "name": "last_value",
+        "description": "Repeat the latest observed demand as a transparent baseline.",
+        "history_evidence": "暂无历史验证，作为待比较候选",
+        "matched_demand_type": "weekly_seasonal"
+      }
+    ],
+    "online_research": {
+      "status": "disabled",
+      "provider": "crossref",
+      "query": null,
+      "record_count": 0,
+      "recommended_models": [],
+      "result_path": null
+    },
+    "selection_rule": "按 inventory_cost 排序，使用验证配置中的 tie-breakers 决胜；模型名仅用于完全相同时的确定性排序。",
+    "release_gate": "语法、导入安全、统一接口、受限运行、确定性、边界输入和数值等价。"
+  },
+  "risks": [
+    "周周期较明显，节假日或促销变化可能破坏历史周期。"
+  ],
+  "execution_tasks": [
+    {
+      "task_id": "understand",
+      "title": "理解业务要求",
+      "description": "从自然语言提取商品、仓库、周期和目标。"
+    },
+    {
+      "task_id": "extract",
+      "title": "检索与抽取算法能力",
+      "description": "读取能力文档、代码和知识图谱。"
+    },
+    {
+      "task_id": "profile",
+      "title": "诊断需求数据",
+      "description": "加载数据并识别需求画像和数据风险。"
+    },
+    {
+      "task_id": "research",
+      "title": "确认本地知识证据",
+      "description": "形成可追溯的行业知识证据。"
+    },
+    {
+      "task_id": "plan",
+      "title": "设计执行方案",
+      "description": "Planner Agent 确定候选、验证指标和发布门禁。"
+    },
+    {
+      "task_id": "compare",
+      "title": "比较 3 个候选算法",
+      "description": "对 seasonal_naive, croston, last_value 执行滚动回测，并按 inventory_cost 选优。"
+    },
+    {
+      "task_id": "generate",
+      "title": "生成并审查独立代码实现",
+      "description": "根据胜出能力生成不同策略的源码候选，再由 CodeReviewAgent 审查。"
+    },
+    {
+      "task_id": "validate",
+      "title": "验证与必要时修复",
+      "description": "检查接口、安全、稳定性、等价性和资源消耗。"
+    },
+    {
+      "task_id": "deposit",
+      "title": "生成报告并沉淀知识",
+      "description": "输出报告，回写验证、失败、修复策略和版本。"
+    }
+  ]
+}
+```
+
+## 008. candidate_comparison - rolling_backtest.benchmark_candidates
+
+- 时间：2026-07-17T07:42:57.858550+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "candidates": [
+    "seasonal_naive",
+    "croston",
+    "last_value"
+  ],
+  "model_parameters": {
+    "seasonal_naive": {
+      "period": 7
+    },
+    "croston": {
+      "alpha": 0.1
+    },
+    "last_value": {}
+  },
+  "validation_profile": "inventory_target"
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "item_id": 1002,
+  "store_code": "1",
+  "profile": {
+    "observations": 180,
+    "nonzero_observations": 180,
+    "zero_ratio": 0.0,
+    "mean": 13.35,
+    "coefficient_of_variation": 0.27502133139672497,
+    "trend_strength": -0.04378858145010292,
+    "lag_1_correlation": 0.4871720951191424,
+    "lag_7_correlation": 0.8200685801246108,
+    "demand_type": "weekly_seasonal"
+  },
+  "horizon": 14,
+  "evaluation_unit": "horizon_total",
+  "validation_profile": {
+    "name": "inventory_target",
+    "primary_metric": "inventory_cost",
+    "tie_breakers": [
+      "wape",
+      "rmse"
+    ],
+    "folds": 3,
+    "min_history_days": 28,
+    "description": "Minimize asymmetric shortage and overstock cost."
+  },
+  "costs": {
+    "understock_cost": 3.5,
+    "overstock_cost": 1.5,
+    "source": "replenishment_policy.csv",
+    "critical_fractile": 0.7
+  },
+  "candidates": [
+    {
+      "model": "seasonal_naive",
+      "folds": 3,
+      "metrics": {
+        "mae": 0.0,
+        "rmse": 0.0,
+        "wape": 0.0,
+        "smape": 0.0,
+        "bias": 0.0,
+        "inventory_cost": 0.0,
+        "mean_actual_total": 184.0,
+        "mean_target_inventory": 184.0
+      },
+      "fold_metrics": [
+        {
+          "mae": 0.0,
+          "rmse": 0.0,
+          "wape": 0.0,
+          "smape": 0.0,
+          "bias": 0.0,
+          "inventory_cost": 0.0,
+          "actual_total": 184.0,
+          "target_inventory": 184.0
+        },
+        {
+          "mae": 0.0,
+          "rmse": 0.0,
+          "wape": 0.0,
+          "smape": 0.0,
+          "bias": 0.0,
+          "inventory_cost": 0.0,
+          "actual_total": 184.0,
+          "target_inventory": 184.0
+        },
+        {
+          "mae": 0.0,
+          "rmse": 0.0,
+          "wape": 0.0,
+          "smape": 0.0,
+          "bias": 0.0,
+          "inventory_cost": 0.0,
+          "actual_total": 184.0,
+          "target_inventory": 184.0
+        }
+      ]
+    },
+    {
+      "model": "croston",
+      "folds": 3,
+      "metrics": {
+        "mae": 2.718446056592144,
+        "rmse": 3.2281726839599334,
+        "wape": 0.2068382869146196,
+        "smape": 0.2130793315682189,
+        "bias": -0.11373474671213768,
+        "inventory_cost": 5.5730025888947,
+        "mean_actual_total": 184.0,
+        "mean_target_inventory": 182.40771354603007
+      },
+      "fold_metrics": [
+        {
+          "mae": 2.7184738854104893,
+          "rmse": 3.228165823561892,
+          "wape": 0.20684040432471115,
+          "smape": 0.21308139247048188,
+          "bias": -0.11353994498371962,
+          "inventory_cost": 5.563457304202473,
+          "actual_total": 184.0,
+          "target_inventory": 182.41044077022786
+        },
+        {
+          "mae": 2.718436426842409,
+          "rmse": 3.2281750565574545,
+          "wape": 0.20683755421627026,
+          "smape": 0.21307861842972836,
+          "bias": -0.1138021549602813,
+          "inventory_cost": 5.576305593053647,
+          "actual_total": 184.0,
+          "target_inventory": 182.4067698305561
+        },
+        {
+          "mae": 2.7184278575235328,
+          "rmse": 3.228177171760453,
+          "wape": 0.20683690220287748,
+          "smape": 0.21307798380444648,
+          "bias": -0.1138621401924121,
+          "inventory_cost": 5.579244869427981,
+          "actual_total": 184.0,
+          "target_inventory": 182.4059300373063
+        }
+      ]
+    },
+    {
+      "model": "last_value",
+      "folds": 3,
+      "metrics": {
+        "mae": 3.0,
+        "rmse": 3.722518348798681,
+        "wape": 0.22826086956521738,
+        "smape": 0.23144418972910255,
+        "bias": 1.857142857142857,
+        "inventory_cost": 39.0,
+        "mean_actual_total": 184.0,
+        "mean_target_inventory": 210.0
+      },
+      "fold_metrics": [
+        {
+          "mae": 3.0,
+          "rmse": 3.722518348798681,
+          "wape": 0.22826086956521738,
+          "smape": 0.23144418972910258,
+          "bias": 1.8571428571428572,
+          "inventory_cost": 39.0,
+          "actual_total": 184.0,
+          "target_inventory": 210.0
+        },
+        {
+          "mae": 3.0,
+          "rmse": 3.722518348798681,
+          "wape": 0.22826086956521738,
+          "smape": 0.23144418972910258,
+          "bias": 1.8571428571428572,
+          "inventory_cost": 39.0,
+          "actual_total": 184.0,
+          "target_inventory": 210.0
+        },
+        {
+          "mae": 3.0,
+          "rmse": 3.722518348798681,
+          "wape": 0.22826086956521738,
+          "smape": 0.23144418972910258,
+          "bias": 1.8571428571428572,
+          "inventory_cost": 39.0,
+          "actual_total": 184.0,
+          "target_inventory": 210.0
+        }
+      ]
+    }
+  ],
+  "selected_model": "seasonal_naive",
+  "forecast": [
+    18.0,
+    16.0,
+    8.0,
+    10.0,
+    12.0,
+    13.0,
+    15.0,
+    18.0,
+    16.0,
+    8.0,
+    10.0,
+    12.0,
+    13.0,
+    15.0
+  ],
+  "forecast_total": 184.0,
+  "target_inventory": 184.0
+}
+```
+
+## 009. candidate_code_generation - SafeCodeGenerator.generate_and_validate_candidate
+
+- 时间：2026-07-17T07:42:58.895813+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "model": "seasonal_naive",
+  "spec": {
+    "name": "seasonal_naive",
+    "task_type": "inventory_forecasting",
+    "description": "Repeat the latest weekly pattern over the forecast horizon.",
+    "template_name": "seasonal_naive",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "stable",
+      "weekly_seasonal"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "period": 7
+    },
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+    "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "M5 accuracy competition results, findings, and conclusions",
+    "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.95,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "article seasonal-naive benchmark discussion",
+      "inventory_agent/forecasting/models.py:36"
+    ],
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  }
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "model": "seasonal_naive",
+  "selected": true,
+  "benchmark": {
+    "model": "seasonal_naive",
+    "folds": 3,
+    "metrics": {
+      "mae": 0.0,
+      "rmse": 0.0,
+      "wape": 0.0,
+      "smape": 0.0,
+      "bias": 0.0,
+      "inventory_cost": 0.0,
+      "mean_actual_total": 184.0,
+      "mean_target_inventory": 184.0
+    },
+    "fold_metrics": [
+      {
+        "mae": 0.0,
+        "rmse": 0.0,
+        "wape": 0.0,
+        "smape": 0.0,
+        "bias": 0.0,
+        "inventory_cost": 0.0,
+        "actual_total": 184.0,
+        "target_inventory": 184.0
+      },
+      {
+        "mae": 0.0,
+        "rmse": 0.0,
+        "wape": 0.0,
+        "smape": 0.0,
+        "bias": 0.0,
+        "inventory_cost": 0.0,
+        "actual_total": 184.0,
+        "target_inventory": 184.0
+      },
+      {
+        "mae": 0.0,
+        "rmse": 0.0,
+        "wape": 0.0,
+        "smape": 0.0,
+        "bias": 0.0,
+        "inventory_cost": 0.0,
+        "actual_total": 184.0,
+        "target_inventory": 184.0
+      }
+    ]
+  },
+  "capability_spec": {
+    "name": "seasonal_naive",
+    "task_type": "inventory_forecasting",
+    "description": "Repeat the latest weekly pattern over the forecast horizon.",
+    "template_name": "seasonal_naive",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "stable",
+      "weekly_seasonal"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "period": 7
+    },
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+    "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "M5 accuracy competition results, findings, and conclusions",
+    "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.95,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "article seasonal-naive benchmark discussion",
+      "inventory_agent/forecasting/models.py:36"
+    ],
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  },
+  "generated": {
+    "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\candidate_solutions\\seasonal_naive\\forecast_seasonal_naive.py",
+    "generation_mode": "spec_template",
+    "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+    "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff"
+  },
+  "code_validation": {
+    "valid": true,
+    "checks": {
+      "syntax": true,
+      "imports": true,
+      "interface": true,
+      "runtime": true,
+      "stability": true,
+      "equivalence": true
+    },
+    "errors": [],
+    "sample_output": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0
+    ],
+    "sample_target_inventory": 56.0,
+    "runtime_seconds": 1.0310232999909203,
+    "equivalence_max_error": 0.0,
+    "equivalence_cases": 4,
+    "performance_iterations": 20,
+    "mean_latency_ms": 0.8292200000141747,
+    "cpu_time_ms": 15.625,
+    "peak_memory_kb": 25.9501953125,
+    "throughput_calls_per_second": 1205.9525819238634
+  }
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\candidate_solutions\seasonal_naive\forecast_seasonal_naive.py`
+
+## 010. candidate_code_generation - SafeCodeGenerator.generate_and_validate_candidate
+
+- 时间：2026-07-17T07:42:59.954847+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "model": "croston",
+  "spec": {
+    "name": "croston",
+    "task_type": "inventory_forecasting",
+    "description": "Estimate non-zero demand size and the interval between demands separately.",
+    "template_name": "croston",
+    "input_contract": "Non-negative daily demand history with possible zero-demand periods.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "intermittent",
+      "many_zeros"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "alpha": 0.1
+    },
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+    "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "Forecasting and Stock Control for Intermittent Demands",
+    "source_url": "https://doi.org/10.1057/jors.1972.50",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.9,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "Croston 1972 method description",
+      "inventory_agent/forecasting/models.py:52"
+    ],
+    "extraction_warnings": [
+      "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+    ],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  }
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "model": "croston",
+  "selected": false,
+  "benchmark": {
+    "model": "croston",
+    "folds": 3,
+    "metrics": {
+      "mae": 2.718446056592144,
+      "rmse": 3.2281726839599334,
+      "wape": 0.2068382869146196,
+      "smape": 0.2130793315682189,
+      "bias": -0.11373474671213768,
+      "inventory_cost": 5.5730025888947,
+      "mean_actual_total": 184.0,
+      "mean_target_inventory": 182.40771354603007
+    },
+    "fold_metrics": [
+      {
+        "mae": 2.7184738854104893,
+        "rmse": 3.228165823561892,
+        "wape": 0.20684040432471115,
+        "smape": 0.21308139247048188,
+        "bias": -0.11353994498371962,
+        "inventory_cost": 5.563457304202473,
+        "actual_total": 184.0,
+        "target_inventory": 182.41044077022786
+      },
+      {
+        "mae": 2.718436426842409,
+        "rmse": 3.2281750565574545,
+        "wape": 0.20683755421627026,
+        "smape": 0.21307861842972836,
+        "bias": -0.1138021549602813,
+        "inventory_cost": 5.576305593053647,
+        "actual_total": 184.0,
+        "target_inventory": 182.4067698305561
+      },
+      {
+        "mae": 2.7184278575235328,
+        "rmse": 3.228177171760453,
+        "wape": 0.20683690220287748,
+        "smape": 0.21307798380444648,
+        "bias": -0.1138621401924121,
+        "inventory_cost": 5.579244869427981,
+        "actual_total": 184.0,
+        "target_inventory": 182.4059300373063
+      }
+    ]
+  },
+  "capability_spec": {
+    "name": "croston",
+    "task_type": "inventory_forecasting",
+    "description": "Estimate non-zero demand size and the interval between demands separately.",
+    "template_name": "croston",
+    "input_contract": "Non-negative daily demand history with possible zero-demand periods.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "intermittent",
+      "many_zeros"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "alpha": 0.1
+    },
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+    "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "Forecasting and Stock Control for Intermittent Demands",
+    "source_url": "https://doi.org/10.1057/jors.1972.50",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.9,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "Croston 1972 method description",
+      "inventory_agent/forecasting/models.py:52"
+    ],
+    "extraction_warnings": [
+      "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+    ],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  },
+  "generated": {
+    "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\candidate_solutions\\croston\\forecast_croston.py",
+    "generation_mode": "spec_template",
+    "spec_hash": "64eb6e88a57c9fa18e39df0742f5cccd858622ebe5c70944547c004a31bf03f6",
+    "source_hash": "a0b823af5e4e453f42b7f772122e8c796cd7f997541341c58e3d59f303e34ef2"
+  },
+  "code_validation": {
+    "valid": true,
+    "checks": {
+      "syntax": true,
+      "imports": true,
+      "interface": true,
+      "runtime": true,
+      "stability": true,
+      "equivalence": true
+    },
+    "errors": [],
+    "sample_output": [
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316,
+      4.40823272329316
+    ],
+    "sample_target_inventory": 61.715258126104246,
+    "runtime_seconds": 1.0542334000056144,
+    "equivalence_max_error": 0.0,
+    "equivalence_cases": 4,
+    "performance_iterations": 20,
+    "mean_latency_ms": 0.9196699989843182,
+    "cpu_time_ms": 15.625,
+    "peak_memory_kb": 27.7880859375,
+    "throughput_calls_per_second": 1087.346549419246
+  }
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\candidate_solutions\croston\forecast_croston.py`
+
+## 011. candidate_code_generation - SafeCodeGenerator.generate_and_validate_candidate
+
+- 时间：2026-07-17T07:43:01.020012+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "model": "last_value",
+  "spec": {
+    "name": "last_value",
+    "task_type": "inventory_forecasting",
+    "description": "Repeat the latest observed demand as a transparent baseline.",
+    "template_name": "last_value",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "short_history"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {},
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+    "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "M5 accuracy competition results, findings, and conclusions",
+    "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.95,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "article benchmark discussion",
+      "inventory_agent/forecasting/models.py:12"
+    ],
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  }
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "model": "last_value",
+  "selected": false,
+  "benchmark": {
+    "model": "last_value",
+    "folds": 3,
+    "metrics": {
+      "mae": 3.0,
+      "rmse": 3.722518348798681,
+      "wape": 0.22826086956521738,
+      "smape": 0.23144418972910255,
+      "bias": 1.857142857142857,
+      "inventory_cost": 39.0,
+      "mean_actual_total": 184.0,
+      "mean_target_inventory": 210.0
+    },
+    "fold_metrics": [
+      {
+        "mae": 3.0,
+        "rmse": 3.722518348798681,
+        "wape": 0.22826086956521738,
+        "smape": 0.23144418972910258,
+        "bias": 1.8571428571428572,
+        "inventory_cost": 39.0,
+        "actual_total": 184.0,
+        "target_inventory": 210.0
+      },
+      {
+        "mae": 3.0,
+        "rmse": 3.722518348798681,
+        "wape": 0.22826086956521738,
+        "smape": 0.23144418972910258,
+        "bias": 1.8571428571428572,
+        "inventory_cost": 39.0,
+        "actual_total": 184.0,
+        "target_inventory": 210.0
+      },
+      {
+        "mae": 3.0,
+        "rmse": 3.722518348798681,
+        "wape": 0.22826086956521738,
+        "smape": 0.23144418972910258,
+        "bias": 1.8571428571428572,
+        "inventory_cost": 39.0,
+        "actual_total": 184.0,
+        "target_inventory": 210.0
+      }
+    ]
+  },
+  "capability_spec": {
+    "name": "last_value",
+    "task_type": "inventory_forecasting",
+    "description": "Repeat the latest observed demand as a transparent baseline.",
+    "template_name": "last_value",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "short_history"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {},
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+    "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "M5 accuracy competition results, findings, and conclusions",
+    "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.95,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "article benchmark discussion",
+      "inventory_agent/forecasting/models.py:12"
+    ],
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  },
+  "generated": {
+    "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\candidate_solutions\\last_value\\forecast_last_value.py",
+    "generation_mode": "spec_template",
+    "spec_hash": "3e35611dab10e7e0da3cb443ebb8b5012974dc8459794f174958d4d4a5aa27e5",
+    "source_hash": "6a804d45b25e0cfbf4ce9963014f3d86de2f63bf54603cd6214735d4a145f885"
+  },
+  "code_validation": {
+    "valid": true,
+    "checks": {
+      "syntax": true,
+      "imports": true,
+      "interface": true,
+      "runtime": true,
+      "stability": true,
+      "equivalence": true
+    },
+    "errors": [],
+    "sample_output": [
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0
+    ],
+    "sample_target_inventory": 98.0,
+    "runtime_seconds": 1.05938189997687,
+    "equivalence_max_error": 0.0,
+    "equivalence_cases": 4,
+    "performance_iterations": 20,
+    "mean_latency_ms": 0.7232250005472451,
+    "cpu_time_ms": 15.625,
+    "peak_memory_kb": 25.7509765625,
+    "throughput_calls_per_second": 1382.6955639577263
+  }
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\candidate_solutions\last_value\forecast_last_value.py`
+
+## 012. multi_agent_code_collaboration - CodeArchitectureAgent+CodeImplementationAgent+CodeReviewAgent.design_implement_and_review
+
+- 时间：2026-07-17T07:43:02.068630+00:00
+- 类型：`agent_team`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "capability_spec": {
+    "name": "seasonal_naive",
+    "task_type": "inventory_forecasting",
+    "description": "Repeat the latest weekly pattern over the forecast horizon.",
+    "template_name": "seasonal_naive",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "stable",
+      "weekly_seasonal"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "period": 7
+    },
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+    "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "M5 accuracy competition results, findings, and conclusions",
+    "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.95,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "article seasonal-naive benchmark discussion",
+      "inventory_agent/forecasting/models.py:36"
+    ],
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  }
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "selected_collaboration": {
+    "architecture": {
+      "agent": "CodeArchitectureAgent",
+      "mode": "deterministic",
+      "algorithm": "seasonal_naive",
+      "algorithm_steps": [
+        "normalize history to finite non-negative numeric observations",
+        "apply seasonal_naive semantics using declared parameters",
+        "produce exactly horizon non-negative float values",
+        "sum the daily forecast into target_inventory"
+      ],
+      "required_contracts": [
+        "forecast(history, horizon) -> list[float]",
+        "build_inventory_target(history, horizon) -> dict",
+        "target_inventory == sum(daily_forecast)"
+      ],
+      "edge_cases": [
+        "empty history",
+        "non-positive horizon",
+        "all-zero history"
+      ],
+      "allowed_dependencies": [
+        "pandas"
+      ],
+      "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+      "risks": []
+    },
+    "implementation": {
+      "agent": "CodeImplementationAgent",
+      "strategy": "specification_fidelity",
+      "variant_id": "primary"
+    },
+    "review": {
+      "agent": "CodeReviewAgent",
+      "variant_id": "primary",
+      "mode": "deterministic",
+      "approved": true,
+      "findings": [],
+      "revision_applied": false
+    }
+  },
+  "collaboration_paths": {
+    "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\implementation_blueprint.json",
+    "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\multi_agent_collaboration.json"
+  }
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\implementation_blueprint.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\multi_agent_collaboration.json`
+
+## 013. selected_code_generation - SafeCodeGenerator.validate_rank_and_select_implementations
+
+- 时间：2026-07-17T07:43:02.069587+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "capability_spec": {
+    "name": "seasonal_naive",
+    "task_type": "inventory_forecasting",
+    "description": "Repeat the latest weekly pattern over the forecast horizon.",
+    "template_name": "seasonal_naive",
+    "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+    "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+    "suitable_for": [
+      "stable",
+      "weekly_seasonal"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [
+      "pandas"
+    ],
+    "parameters": {
+      "period": 7
+    },
+    "source_type": "document",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+    "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+    "version": "1.1.0",
+    "extracted_by": "deterministic",
+    "source_title": "M5 accuracy competition results, findings, and conclusions",
+    "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+    "source_license": "citation_only",
+    "accessed_at": "2026-07-16",
+    "confidence": 0.95,
+    "review_status": "source_reviewed",
+    "evidence_refs": [
+      "article seasonal-naive benchmark discussion",
+      "inventory_agent/forecasting/models.py:36"
+    ],
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  },
+  "candidate_count_requested": 2,
+  "parallel_workers": 2,
+  "generation_context": {
+    "request": {
+      "description": "再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。",
+      "item_id": 1002,
+      "store_code": "1",
+      "horizon": 14,
+      "candidate_count": 3,
+      "task_type": "inventory_target",
+      "objective": "inventory_cost",
+      "constraints": []
+    },
+    "profile": {
+      "observations": 180,
+      "nonzero_observations": 180,
+      "zero_ratio": 0.0,
+      "mean": 13.35,
+      "coefficient_of_variation": 0.27502133139672497,
+      "trend_strength": -0.04378858145010292,
+      "lag_1_correlation": 0.4871720951191424,
+      "lag_7_correlation": 0.8200685801246108,
+      "demand_type": "weekly_seasonal",
+      "history_status": "observed"
+    },
+    "validation_metric": "inventory_cost"
+  }
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "model": "seasonal_naive",
+  "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\forecast_seasonal_naive.py",
+  "generation_mode": "spec_template",
+  "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+  "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+  "variant_id": "primary",
+  "strategy": "specification_fidelity",
+  "collaboration": {
+    "architecture": {
+      "agent": "CodeArchitectureAgent",
+      "mode": "deterministic",
+      "algorithm": "seasonal_naive",
+      "algorithm_steps": [
+        "normalize history to finite non-negative numeric observations",
+        "apply seasonal_naive semantics using declared parameters",
+        "produce exactly horizon non-negative float values",
+        "sum the daily forecast into target_inventory"
+      ],
+      "required_contracts": [
+        "forecast(history, horizon) -> list[float]",
+        "build_inventory_target(history, horizon) -> dict",
+        "target_inventory == sum(daily_forecast)"
+      ],
+      "edge_cases": [
+        "empty history",
+        "non-positive horizon",
+        "all-zero history"
+      ],
+      "allowed_dependencies": [
+        "pandas"
+      ],
+      "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+      "risks": []
+    },
+    "implementation": {
+      "agent": "CodeImplementationAgent",
+      "strategy": "specification_fidelity",
+      "variant_id": "primary"
+    },
+    "review": {
+      "agent": "CodeReviewAgent",
+      "variant_id": "primary",
+      "mode": "deterministic",
+      "approved": true,
+      "findings": [],
+      "revision_applied": false
+    }
+  },
+  "collaboration_paths": {
+    "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\implementation_blueprint.json",
+    "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\multi_agent_collaboration.json"
+  },
+  "implementation_candidates": [
+    {
+      "variant_id": "primary",
+      "strategy": "specification_fidelity",
+      "generation_mode": "spec_template",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\forecast_seasonal_naive.py",
+      "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+      "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+      "prompt_hash": "510ac1d3b5170090bd127b164387fb292818a6cd36a18fcfa176ffed9783496b",
+      "source_lines": 40,
+      "collaboration": {
+        "architecture": {
+          "agent": "CodeArchitectureAgent",
+          "mode": "deterministic",
+          "algorithm": "seasonal_naive",
+          "algorithm_steps": [
+            "normalize history to finite non-negative numeric observations",
+            "apply seasonal_naive semantics using declared parameters",
+            "produce exactly horizon non-negative float values",
+            "sum the daily forecast into target_inventory"
+          ],
+          "required_contracts": [
+            "forecast(history, horizon) -> list[float]",
+            "build_inventory_target(history, horizon) -> dict",
+            "target_inventory == sum(daily_forecast)"
+          ],
+          "edge_cases": [
+            "empty history",
+            "non-positive horizon",
+            "all-zero history"
+          ],
+          "allowed_dependencies": [
+            "pandas"
+          ],
+          "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+          "risks": []
+        },
+        "implementation": {
+          "agent": "CodeImplementationAgent",
+          "strategy": "specification_fidelity",
+          "variant_id": "primary"
+        },
+        "review": {
+          "agent": "CodeReviewAgent",
+          "variant_id": "primary",
+          "mode": "deterministic",
+          "approved": true,
+          "findings": [],
+          "revision_applied": false
+        }
+      },
+      "validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          1.0,
+          2.0,
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          7.0,
+          1.0,
+          2.0,
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          7.0
+        ],
+        "sample_target_inventory": 56.0,
+        "runtime_seconds": 1.0397134999802802,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.7436650004819967,
+        "cpu_time_ms": 15.625,
+        "peak_memory_kb": 25.0888671875,
+        "throughput_calls_per_second": 1344.6914932824097
+      },
+      "selected": true
+    }
+  ]
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\forecast_seasonal_naive.py`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\implementation_blueprint.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\multi_agent_collaboration.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated_versions\01_initial_seasonal_naive.py`
+
+## 014. code_validation - GeneratedCodeValidator.validate
+
+- 时间：2026-07-17T07:43:02.070980+00:00
+- 类型：`tool`
+- 状态：`failed`
+
+### 输入/调用参数
+
+```json
+{
+  "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\forecast_seasonal_naive.py",
+  "reference_model": "seasonal_naive",
+  "reference_parameters": {
+    "period": 7
+  },
+  "attempt": 0
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "valid": false,
+  "checks": {
+    "syntax": true,
+    "imports": true,
+    "interface": false,
+    "runtime": false,
+    "stability": false,
+    "equivalence": false
+  },
+  "errors": [
+    "interface: forecast returned ndarray instead of required list[float]"
+  ],
+  "sample_output": [],
+  "sample_target_inventory": null,
+  "runtime_seconds": null,
+  "equivalence_max_error": null,
+  "equivalence_cases": 0,
+  "performance_iterations": 0,
+  "mean_latency_ms": null,
+  "cpu_time_ms": null,
+  "peak_memory_kb": null,
+  "throughput_calls_per_second": null
+}
+```
+
+## 015. code_repair - RepairAgent.repair
+
+- 时间：2026-07-17T07:43:02.073385+00:00
+- 类型：`agent`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "errors": [
+    "interface: forecast returned ndarray instead of required list[float]"
+  ],
+  "failure": {
+    "category": "interface",
+    "fingerprint": "0b494e8f4d0bcb6f",
+    "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
+    "retryable": true,
+    "severity": "high",
+    "likely_stage": "contract_validation",
+    "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+    "recommended_actions": [
+      "按接口签名重新生成",
+      "补齐返回字段",
+      "运行契约测试"
+    ]
+  },
+  "prior_experience": [
+    {
+      "category": "interface",
+      "fingerprint": "0b494e8f4d0bcb6f",
+      "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+      "recommended_actions": [
+        "按接口签名重新生成",
+        "补齐返回字段",
+        "运行契约测试"
+      ],
+      "strategy": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]",
+      "strategy_fingerprint": "4ded2f418bfd5b94",
+      "attempt_count": 1,
+      "success_count": 1,
+      "success_rate": 1.0,
+      "run_id": "run:c4e594e423da",
+      "timestamp": "2026-07-17T07:42:57.788556+00:00"
+    }
+  ],
+  "attempt": 1
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "reason": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=1;best_success_rate=100.00%]",
+  "generation_mode": "spec_template",
+  "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff"
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\forecast_seasonal_naive.py`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated_versions\02_repair_1_seasonal_naive.py`
+
+## 016. code_validation - GeneratedCodeValidator.validate
+
+- 时间：2026-07-17T07:43:03.121459+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\forecast_seasonal_naive.py",
+  "reference_model": "seasonal_naive",
+  "reference_parameters": {
+    "period": 7
+  },
+  "attempt": 1
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "valid": true,
+  "checks": {
+    "syntax": true,
+    "imports": true,
+    "interface": true,
+    "runtime": true,
+    "stability": true,
+    "equivalence": true
+  },
+  "errors": [],
+  "sample_output": [
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    6.0,
+    7.0,
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    6.0,
+    7.0
+  ],
+  "sample_target_inventory": 56.0,
+  "runtime_seconds": 1.0430790999962483,
+  "equivalence_max_error": 0.0,
+  "equivalence_cases": 4,
+  "performance_iterations": 20,
+  "mean_latency_ms": 0.7288199994945899,
+  "cpu_time_ms": 15.625,
+  "peak_memory_kb": 25.9462890625,
+  "throughput_calls_per_second": 1372.0808988412277
+}
+```
+
+## 017. experience_deposition - ExperienceAgent.write_success
+
+- 时间：2026-07-17T07:43:03.122614+00:00
+- 类型：`agent`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "model": "seasonal_naive",
+  "metrics": {
+    "mae": 0.0,
+    "rmse": 0.0,
+    "wape": 0.0,
+    "smape": 0.0,
+    "bias": 0.0,
+    "inventory_cost": 0.0,
+    "mean_actual_total": 184.0,
+    "mean_target_inventory": 184.0
+  },
+  "repairs": [
+    "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=1;best_success_rate=100.00%]"
+  ],
+  "failure_history": [
+    {
+      "category": "interface",
+      "fingerprint": "0b494e8f4d0bcb6f",
+      "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
+      "retryable": true,
+      "severity": "high",
+      "likely_stage": "contract_validation",
+      "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+      "recommended_actions": [
+        "按接口签名重新生成",
+        "补齐返回字段",
+        "运行契约测试"
+      ]
+    }
+  ]
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "run_id": "run:fbabfce1b1ee"
+}
+```
+
+## 018. knowledge_persistence - CapabilityKnowledgeGraph.save
+
+- 时间：2026-07-17T07:43:03.129216+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "schema_version": "1.5"
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\capability_graph.json",
+  "graphml": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\capability_graph.graphml",
+  "html": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\capability_graph.html"
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\capability_graph.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\capability_graph.graphml`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\capability_graph.html`
+
+## 019. llm - MockLLMClient.complete
+
+- 时间：2026-07-17T07:43:03.133193+00:00
+- 类型：`tool`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "system_prompt": "你是库存预测方案解释 Agent。面向非计算机专业用户，用简洁中文说明：为什么选中该方法、其他候选为何未选、性能与资源消耗、主要不确定性、目标库存如何使用。区分数据事实、系统推断和业务建议，不使用未提供证据。只返回 JSON：{\"summary\": \"...\"}。",
+  "user_prompt": "{\"request\": {\"description\": \"再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。\", \"item_id\": 1002, \"store_code\": \"1\", \"horizon\": 14, \"candidate_count\": 3, \"task_type\": \"inventory_target\", \"objective\": \"inventory_cost\", \"constraints\": []}, \"demand_profile\": {\"observations\": 180, \"nonzero_observations\": 180, \"zero_ratio\": 0.0, \"mean\": 13.35, \"coefficient_of_variation\": 0.27502133139672497, \"trend_strength\": -0.04378858145010292, \"lag_1_correlation\": 0.4871720951191424, \"lag_7_correlation\": 0.8200685801246108, \"demand_type\": \"weekly_seasonal\", \"history_status\": \"observed\"}, \"selected_model\": \"seasonal_naive\", \"target_inventory\": 184.0, \"candidate_metrics\": [{\"model\": \"seasonal_naive\", \"metrics\": {\"mae\": 0.0, \"rmse\": 0.0, \"wape\": 0.0, \"smape\": 0.0, \"bias\": 0.0, \"inventory_cost\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0}}, {\"model\": \"croston\", \"metrics\": {\"mae\": 2.718446056592144, \"rmse\": 3.2281726839599334, \"wape\": 0.2068382869146196, \"smape\": 0.2130793315682189, \"bias\": -0.11373474671213768, \"inventory_cost\": 5.5730025888947, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 182.40771354603007}}, {\"model\": \"last_value\", \"metrics\": {\"mae\": 3.0, \"rmse\": 3.722518348798681, \"wape\": 0.22826086956521738, \"smape\": 0.23144418972910255, \"bias\": 1.857142857142857, \"inventory_cost\": 39.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 210.0}}], \"plan\": {\"candidates\": [\"seasonal_naive\", \"croston\", \"last_value\"], \"rationale\": \"该任务要求为商品 1002 在仓库 1 预测未来 14 天，并以 inventory_cost 为主要目标。历史序列被识别为 weekly_seasonal，共有 180 个观测，零需求比例为 0.00%。因此先从知识图谱检索与该需求画像匹配的能力，再保留可解释基线，形成 seasonal_naive, croston, last_value 三类候选。最终不由语言模型主观决定，而是使用 inventory_cost 及决胜指标执行无时间泄漏滚动回测；生成代码还必须通过安全、接口、稳定性和参考行为等价验证后才允许沉淀为新版本。\", \"validation_metric\": \"inventory_cost\", \"max_repairs\": 2, \"design_basis\": {\"business_goal\": {\"item_id\": 1002, \"store_code\": \"1\", \"horizon\": 14, \"task_type\": \"inventory_target\", \"objective\": \"inventory_cost\"}, \"demand_evidence\": {\"demand_type\": \"weekly_seasonal\", \"observations\": 180, \"zero_ratio\": 0.0, \"coefficient_of_variation\": 0.27502133139672497, \"trend_strength\": -0.04378858145010292, \"lag_7_correlation\": 0.8200685801246108}, \"knowledge_evidence\": [{\"name\": \"seasonal_naive\", \"description\": \"Repeat the latest weekly pattern over the forecast horizon.\", \"history_evidence\": \"已有 1 次历史验证，成功率 100%，历史平均库存成本 0.00\", \"matched_demand_type\": \"weekly_seasonal\"}, {\"name\": \"croston\", \"description\": \"Estimate non-zero demand size and the interval between demands separately.\", \"history_evidence\": \"暂无历史验证，作为待比较候选\", \"matched_demand_type\": \"weekly_seasonal\"}, {\"name\": \"last_value\", \"description\": \"Repeat the latest observed demand as a transparent baseline.\", \"history_evidence\": \"暂无历史验证，作为待比较候选\", \"matched_demand_type\": \"weekly_seasonal\"}], \"online_research\": {\"status\": \"disabled\", \"provider\": \"crossref\", \"query\": null, \"record_count\": 0, \"recommended_models\": [], \"result_path\": null}, \"selection_rule\": \"按 inventory_cost 排序，使用验证配置中的 tie-breakers 决胜；模型名仅用于完全相同时的确定性排序。\", \"release_gate\": \"语法、导入安全、统一接口、受限运行、确定性、边界输入和数值等价。\"}, \"risks\": [\"周周期较明显，节假日或促销变化可能破坏历史周期。\"], \"execution_tasks\": [{\"task_id\": \"understand\", \"title\": \"理解业务要求\", \"description\": \"从自然语言提取商品、仓库、周期和目标。\"}, {\"task_id\": \"extract\", \"title\": \"检索与抽取算法能力\", \"description\": \"读取能力文档、代码和知识图谱。\"}, {\"task_id\": \"profile\", \"title\": \"诊断需求数据\", \"description\": \"加载数据并识别需求画像和数据风险。\"}, {\"task_id\": \"research\", \"title\": \"确认本地知识证据\", \"description\": \"形成可追溯的行业知识证据。\"}, {\"task_id\": \"plan\", \"title\": \"设计执行方案\", \"description\": \"Planner Agent 确定候选、验证指标和发布门禁。\"}, {\"task_id\": \"compare\", \"title\": \"比较 3 个候选算法\", \"description\": \"对 seasonal_naive, croston, last_value 执行滚动回测，并按 inventory_cost 选优。\"}, {\"task_id\": \"generate\", \"title\": \"生成并审查独立代码实现\", \"description\": \"根据胜出能力生成不同策略的源码候选，再由 CodeReviewAgent 审查。\"}, {\"task_id\": \"validate\", \"title\": \"验证与必要时修复\", \"description\": \"检查接口、安全、稳定性、等价性和资源消耗。\"}, {\"task_id\": \"deposit\", \"title\": \"生成报告并沉淀知识\", \"description\": \"输出报告，回写验证、失败、修复策略和版本。\"}]}, \"selection_explanation\": {\"data_facts\": {\"selected_model\": \"seasonal_naive\", \"primary_metric\": \"inventory_cost\", \"selected_value\": 0.0, \"alternatives\": [{\"model\": \"croston\", \"primary_metric\": \"inventory_cost\", \"value\": 5.5730025888947, \"difference_from_selected\": 5.5730025888947, \"reason_not_selected\": \"主指标比选中方案高 5.5730（越低越好）\"}, {\"model\": \"last_value\", \"primary_metric\": \"inventory_cost\", \"value\": 39.0, \"difference_from_selected\": 39.0, \"reason_not_selected\": \"主指标比选中方案高 39.0000（越低越好）\"}]}, \"system_inference\": \"选中方案在相同历史窗口、相同成本和相同预测周期下综合表现最佳。\", \"business_boundary\": \"该结论是历史数据上的相对比较；促销、断货和供应变化仍需人工复核。\"}, \"performance\": {\"iterations\": 20, \"mean_latency_ms\": 0.7288199994945899, \"cpu_time_ms\": 15.625, \"peak_memory_kb\": 25.9462890625, \"throughput_calls_per_second\": 1372.0808988412277}, \"repair_count\": 1}"
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "response": "{\"mode\": \"mock\", \"summary\": \"使用可复现规则完成需求理解、模型检索与验证。\", \"input_excerpt\": \"{\\\"request\\\": {\\\"description\\\": \\\"再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。\\\", \\\"item_id\\\": 1002, \\\"store_code\\\": \\\"1\\\",\"}",
+  "error": null
+}
+```
+
+## 020. report_generation - ReportAgent.create
+
+- 时间：2026-07-17T07:43:03.135946+00:00
+- 类型：`agent`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+{
+  "run_id": "run:fbabfce1b1ee",
+  "report_sections": [
+    "run_id",
+    "created_at",
+    "request",
+    "profile",
+    "plan",
+    "capability_extraction",
+    "online_research",
+    "capability_spec",
+    "benchmark",
+    "selection_explanation",
+    "replenishment",
+    "candidate_code_solutions",
+    "implementation_candidates",
+    "business_definition",
+    "validation_profile",
+    "plugins",
+    "generated",
+    "multi_agent_collaboration",
+    "capability_version",
+    "code_validation",
+    "performance_analysis",
+    "repairs",
+    "failure_history",
+    "repair_experience_used",
+    "failure_experience",
+    "execution_trace",
+    "knowledge_graph",
+    "design_explanation"
+  ]
+}
+```
+
+### 输出/返回结果
+
+```json
+{
+  "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\validation_report.json",
+  "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\validation_report.md",
+  "business_markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\business_report.md",
+  "performance": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\performance_analysis.json",
+  "failure_experience": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\failure_experience.json",
+  "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\implementation_blueprint.json",
+  "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\multi_agent_collaboration.json"
+}
+```
+
+### 产物
+
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\validation_report.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\validation_report.md`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\business_report.md`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\performance_analysis.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\failure_experience.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\implementation_blueprint.json`
+- `F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\generated\multi_agent_collaboration.json`
+
+## 021. run - InventoryCapabilityWorkflow.run_finished
+
+- 时间：2026-07-17T07:43:03.137111+00:00
+- 类型：`workflow`
+- 状态：`success`
+
+### 输入/调用参数
+
+```json
+null
+```
+
+### 输出/返回结果
+
+```json
+{
+  "selected_model": "seasonal_naive",
+  "target_inventory": 184.0,
+  "report_paths": {
+    "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\validation_report.json",
+    "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\validation_report.md",
+    "business_markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\business_report.md",
+    "performance": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\performance_analysis.json",
+    "failure_experience": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\failure_experience.json",
+    "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\implementation_blueprint.json",
+    "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\multi_agent_collaboration.json"
+  },
+  "candidate_code_solutions": 3
+}
+```
+
+
+## 运行清单
+
+- 最终状态：`success`
+- 事件数量：21
+- 结束时间：2026-07-17T07:43:03.137756+00:00
+- 清单文件：`F:\AgentProjects\TimeSeriesScientist\examples\advanced_showcase\20260717_final_refresh\runs\case_02_experience_reuse\20260717_154257_824231\run_manifest.json`

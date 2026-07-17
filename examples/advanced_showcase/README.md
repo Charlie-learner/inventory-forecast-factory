@@ -1,16 +1,12 @@
-# 高级场景运行证据
+# 高级功能运行示例
 
-最新已验证会话：[`20260717_120418/showcase_summary.md`](20260717_120418/showcase_summary.md)。
+本页由 `scripts/run_advanced_showcase.py` 自动刷新，作为 README 的稳定入口。
 
-该会话包含：
+- 最新刷新会话：[`20260717_final_refresh/showcase_summary.md`](20260717_final_refresh/showcase_summary.md)
+- 知识图谱可视化：[`20260717_final_refresh/capability_graph.html`](20260717_final_refresh/capability_graph.html)
+- 多智能体协议记录：[`20260717_final_refresh/protocol_demo/review_manifest.json`](20260717_final_refresh/protocol_demo/review_manifest.json)
 
-- 3 个候选算法的滚动回测与库存成本比较；
-- 最终代码接口故障注入、根因分析、自动修复和重新验证；
-- 第二次运行对历史成功修复经验的实际复用；
-- 3 份独立代码候选的架构—实现—审查协议测试，其中 1 份由审查 Agent 修订；
-- Crossref 实际联网返回的 5 条间歇需求资料及知识抽取结果；
-- 公开研究来源、验证运行、失败、修复和能力版本组成的完整知识图谱；
-- 业务报告、技术报告、JSON、详细 Trace、源码、性能和多智能体协作记录。
+本会话为离线可复现证据；最近一次真实联网证据：[`20260717_120418/online_knowledge_extraction.json`](20260717_120418/online_knowledge_extraction.json)。
 
-外部 LLM 完整工作流需要使用者自己的 `.env` 在本机执行，命令与验收标准见
-[`docs/advanced_showcase_cases.md`](../../docs/advanced_showcase_cases.md)。提交样例不会包含密钥。
+综合用例展示候选算法比较、独立代码生成、审查、统一验证、失败修复、经验复用、版本与知识图谱写回。
+命令、预期结果和检查方法见 [`docs/advanced_showcase_cases.md`](../../docs/advanced_showcase_cases.md)。

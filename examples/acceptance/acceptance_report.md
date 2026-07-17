@@ -1,4 +1,4 @@
-# 多场景自动验收报告
+# 多场景自动测试报告
 
 - 模式：确定性 Mock，不依赖外部 API；
 - 需求画像与库存案例：6 个；
@@ -21,9 +21,9 @@
 - 多商品：`[[1001, '1'], [1003, '1']]`
 - 所有仓库：`[[1003, '1'], [1003, '2'], [1003, '3']]`
 
-## 核心闭环验收
+## 核心流程检查
 
-| 验收项 | 结果 | 证据摘要 |
+| 检查项 | 结果 | 内容摘要 |
 |---|---|---|
 | repair_loop | 通过 | `{"status": "success_after_repair", "repair_count": 1, "passed": true}` |
 | knowledge_lifecycle | 通过 | `{"required_types": ["CapabilityVersion", "FailureCase", "RepairStrategy", "ValidationRun", "VersionEvent"], "passed": true}` |
@@ -33,4 +33,4 @@
 ## 使用说明
 
 重新运行：`uv run python scripts/run_acceptance_cases.py`。
-该报告用于提交评审证据，不替代完整的 pytest、覆盖率和端到端验收。
+该报告用于快速查看多场景结果，不替代完整的 pytest、覆盖率和端到端测试。

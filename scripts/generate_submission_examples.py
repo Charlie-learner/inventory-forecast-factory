@@ -126,6 +126,27 @@ def _generate_repair_and_graph_example(capability_sources: list[Path]) -> dict:
         json.dumps(index, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+    relative_run = run_dir.relative_to(REPAIR_OUTPUT).as_posix()
+    (REPAIR_OUTPUT / "README.md").write_text(
+        "\n".join(
+            [
+                "# 自动修复闭环示例",
+                "",
+                "本页由 `scripts/generate_submission_examples.py` 自动刷新，避免 README 固定到失效的时间戳目录。",
+                "",
+                f"- 当前运行：[`{relative_run}/validation_report.md`]({relative_run}/validation_report.md)",
+                f"- 面向业务用户：[`{relative_run}/business_report.md`]({relative_run}/business_report.md)",
+                f"- 完整 Trace：[`{relative_run}/detailed_trace.md`]({relative_run}/detailed_trace.md)",
+                f"- 多智能体协作记录：[`{relative_run}/generated/multi_agent_collaboration.json`]({relative_run}/generated/multi_agent_collaboration.json)",
+                f"- 代码版本快照：[`{relative_run}/generated_versions/`]({relative_run}/generated_versions/)",
+                "- 机器可读索引：[`index.json`](index.json)",
+                "",
+                f"当前结果：`{index['status']}`；选中算法 `{index['selected_model']}`；自动修复 {index['repair_count']} 次。",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
     return index
 
 

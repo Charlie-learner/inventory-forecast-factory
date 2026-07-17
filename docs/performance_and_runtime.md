@@ -20,7 +20,7 @@
 |---|---:|---:|---:|---|
 | `fast` | 1 | 1 | 10 | 日常试用、快速确认数据和需求 |
 | `balanced` | 2 | 2 | 20 | Web 默认，兼顾等待时间与候选比较 |
-| `thorough` | 3 | 2 | 40 | 教师验收、完整证据和代码方案比较 |
+| `thorough` | 3 | 2 | 40 | 深入分析、完整过程记录和代码方案比较 |
 
 配置集中在 `inventory_agent/execution.py`，资源告警阈值集中在
 `inventory_agent/services/performance.py`，不会散落在页面或具体算法中。

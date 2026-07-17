@@ -126,7 +126,7 @@
       <button data-view="benchmark"><i>≋</i>算法回测比较</button>
       <button data-view="runs"><i>◎</i>运行证据</button>
       <button data-view="graph"><i>⬡</i>知识图谱</button>
-      <button data-view="audit"><i>✓</i>评分验收</button>
+      <button data-view="audit"><i>✓</i>项目自检</button>
       <button data-view="extensions"><i>＋</i>插件与配置</button>
     </nav>
     <div class="sidebar-foot"><div class="online"><span class="dot"></span>本地服务在线</div><small id="sideMode">正在读取配置……</small></div>
@@ -171,17 +171,17 @@
           <button type="button" class="example-card prompt-example" data-prompt="预测商品 1013 在仓库 4 未来 14 天的每日需求，重点比较 WAPE 预测误差，并解释误差意味着什么。"><b>预测精度任务</b><small>切换到需求预测验证配置</small></button>
         </div>
         <div class="chat-shell">
-          <div class="chat-message agent"><b>你好，我是库存算法能力 Agent。</b><br>请告诉我你想预测什么，并上传 CSV 或菜鸟原始 ZIP。CSV 可以使用常见字段名，如 date/ds、sku_id/item_id、warehouse_id/store_code、sales/demand/qty/y。</div>
+          <div class="chat-message agent"><b>你好，这里是库存算法能力 Agent。</b><br>请描述需要预测的内容，并上传 CSV 或菜鸟原始 ZIP。CSV 可以使用常见字段名，如 date/ds、sku_id/item_id、warehouse_id/store_code、sales/demand/qty/y。</div>
           <form id="runForm" class="chat-composer">
             <textarea name="description" id="runDescription" aria-label="自然语言任务描述" placeholder="例如：请根据上传的数据预测未来14天需求，并给出合适的目标库存和算法选择依据。">请根据上传的数据预测未来14天需求，比较多个算法后给出目标库存，并解释设计依据</textarea>
             <input type="hidden" name="data_path" id="runDataPath" value="">
             <div class="dataset-card" id="datasetCard"><div id="datasetSummary"></div><div id="mappingArea"></div><div class="actions"><button type="button" class="btn alt" id="removeDataset">清空本次数据集</button></div></div>
             <details class="advanced">
               <summary>高级设置（一般无需修改）</summary>
-              <div class="row three" style="margin-top:14px"><label><span>执行模式</span><select name="execution_mode"><option value="balanced">均衡模式（推荐）</option><option value="fast">快速模式</option><option value="thorough">深度验收模式</option></select></label><label><span>验证任务类型</span><select name="task_type" id="runTaskType"></select></label><label><span>追踪级别</span><select name="trace_level"><option value="basic">核心流程</option><option value="full">完整证据链</option><option value="off">关闭详细追踪</option></select></label></div>
+              <div class="row three" style="margin-top:14px"><label><span>执行模式</span><select name="execution_mode"><option value="balanced">均衡模式（推荐）</option><option value="fast">快速模式</option><option value="thorough">深度分析模式</option></select></label><label><span>验证任务类型</span><select name="task_type" id="runTaskType"></select></label><label><span>追踪级别</span><select name="trace_level"><option value="basic">核心流程</option><option value="full">完整过程</option><option value="off">关闭详细追踪</option></select></label></div>
               <div class="row"><label><span>能力来源（每行一个，可选）</span><textarea name="capability_sources" placeholder="examples/capabilities/moving_average.md"></textarea></label><label><span>插件（每行一个，可选）</span><textarea name="plugins" placeholder="examples/plugins/stockout_priority.py:register"></textarea></label></div>
               <div class="row"><label><span>保留最近运行数</span><input type="number" name="keep_runs" value="10" min="1"></label><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="online_research"><span>联网检索 DOI 行业资料并形成知识抽取文件</span></label></div>
-              <div class="notice">均衡模式会并行生成和验证两个实现；快速模式只生成一个实现且使用确定性解释；深度验收模式生成三个实现并增加资源基准次数。联网资料不能绕过滚动回测和代码门禁。</div>
+              <div class="notice">均衡模式会并行生成和验证两个实现；快速模式只生成一个实现且使用确定性解释；深度分析模式生成三个实现并增加资源基准次数。联网资料不能绕过滚动回测和代码检查。</div>
             </details>
             <div class="chat-tools">
               <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -202,7 +202,7 @@
 
       <section class="view" id="view-capability">
         <div class="section-title"><h2>能力抽取与代码复刻</h2><p>从文档、Python 文件或真实本地代码仓库递归抽取函数、依赖、调用关系和能力描述，再生成可运行代码并自动验证。</p></div>
-        <div class="guide"><b>这个页面适合开发或评审人员。</b>“能力抽取”用于理解外部算法资料或代码仓库；“能力复刻”会生成可运行算法代码，并检查接口、安全性、稳定性和结果一致性。普通预测用户通常无需操作这里。</div>
+        <div class="guide"><b>这个页面更适合想查看技术过程的用户。</b>“能力抽取”用于理解外部算法资料或代码仓库；“能力复刻”会生成可运行算法代码，并检查接口、安全性、稳定性和结果一致性。只想做库存预测时通常无需操作这里。</div>
         <div class="grid equal">
           <article class="card"><div class="card-head"><div><h3>能力抽取</h3><p>记录函数入口、外部依赖、内部调用、复杂度、源码哈希和证据</p></div></div><form id="extractForm"><label><span>文档、Python 文件或仓库目录（每行一个）</span><textarea name="sources">inventory_agent/forecasting</textarea></label><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="update_knowledge" checked>抽取后更新知识图谱</label><div class="actions"><button class="btn" type="submit">开始抽取</button></div></form><div id="extractResult"></div></article>
           <article class="card"><div class="card-head"><div><h3>能力复刻</h3><p>API 模式生成多个独立实现，逐份执行接口、安全、稳定性和等价验证后自动选优</p></div></div><form id="replicateForm"><label><span>能力来源</span><input name="sources" value="examples/capabilities/moving_average.md"></label><div class="row three"><label><span>能力名称（多能力来源时填写）</span><input name="capability" placeholder="moving_average"></label><label><span>参考模型（新算法可留空）</span><input name="reference_model" value="moving_average"></label><label><span>代码实现候选数</span><input type="number" name="candidate_count" value="3" min="1" max="5"></label></div><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="approved">记录人工审核通过</label><div class="notice">API 模式会按不同策略自主生成 1-5 份源码并验证选优；Mock 模式为保证可复现，仅生成一份安全模板。未提供参考模型的新算法即使自动检查通过，也需要人工审核算法语义。</div><div class="actions"><button class="btn" type="submit">生成多个实现并验证选优</button></div></form><div id="replicateResult"></div></article>
@@ -224,7 +224,7 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
 
       <section class="view" id="view-runs">
         <div class="section-title"><h2>运行结果与审计证据</h2><p>每次运行都保留候选方案、代码验证、修复记录、报告和工具调用时间线。</p></div>
-        <div class="guide"><b>每个商品—仓库组合对应一条独立运行记录。</b>业务人员优先查看“业务报告”；技术验证报告、JSON、Trace 和产物清单用于复核算法过程与评分验收。</div>
+        <div class="guide"><b>每个商品—仓库组合对应一条独立运行记录。</b>业务人员可以先看“业务报告”；技术报告、JSON、Trace 和产物清单用于查看算法选择、代码检查和修复过程。</div>
         <div class="grid">
           <article class="card"><div class="card-head"><div><h3>历史运行</h3><p>最近 20 次任务</p></div><button class="btn alt" id="refreshRuns">刷新</button></div><div class="runs" id="allRuns"></div></article>
           <article class="card"><div class="card-head"><div><h3>运行详情</h3><p id="detailHint">请选择一条运行记录</p></div></div><div id="runDetail" class="empty">候选算法比较和验证证据将在这里呈现。</div></article>
@@ -238,9 +238,9 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
       </section>
 
       <section class="view" id="view-audit">
-        <div class="section-title"><h2>笔试要求评分验收中心</h2><p>把“实现了什么”变成可检查、可运行、可追溯的证据，而不是只给出结论。</p></div>
-        <div class="guide"><b>建议老师先看这里。</b>页面逐条对应笔试中的核心任务、开发要求、基础交付、进阶要求和加分能力。每一项都说明普通人能看到什么、证据文件在哪里、如何用 CLI 复核；未纳入范围或依赖外部环境的能力会明确标注边界。</div>
-        <div id="auditContent"><div class="empty"><div><div class="spinner" style="margin:auto"></div><br>正在根据当前仓库证据生成验收结果……</div></div></div>
+        <div class="section-title"><h2>项目功能自检</h2><p>集中查看当前实现了哪些功能、对应文件在哪里，以及还有哪些边界。</p></div>
+        <div class="guide"><b>这里适合快速了解项目完成情况。</b>每一项都会给出实现说明、相关文件和 CLI 检查命令；没有实现或依赖外部环境的部分会单独标注，不会混在已完成功能中。</div>
+        <div id="auditContent"><div class="empty"><div><div class="spinner" style="margin:auto"></div><br>正在根据当前仓库文件生成检查结果……</div></div></div>
       </section>
 
       <section class="view" id="view-extensions">
@@ -329,7 +329,7 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
   function navigate(name) {
     document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===`view-${name}`));
     document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===name));
-    const labels={overview:"系统总览",factory:"完整能力工厂",capability:"能力抽取与复刻",benchmark:"算法回测比较",runs:"运行证据",graph:"知识图谱",audit:"评分验收",extensions:"插件与配置"};
+    const labels={overview:"系统总览",factory:"完整能力工厂",capability:"能力抽取与复刻",benchmark:"算法回测比较",runs:"运行记录",graph:"知识图谱",audit:"项目自检",extensions:"插件与配置"};
     $("pageTitle").textContent=labels[name]; $("sidebar").classList.remove("open");
     if(name==="graph"&&!state.graphLoaded){ $("graphFrame").src="/graph"; state.graphLoaded=true; }
     if(name==="audit"&&!state.auditLoaded)loadAudit();

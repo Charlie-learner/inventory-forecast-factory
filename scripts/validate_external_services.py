@@ -84,7 +84,7 @@ def main() -> int:
     )
     markdown = "\n".join(
         [
-            "# 外部服务联网验收",
+            "# 外部服务联网测试",
             "",
             f"- 时间：{summary['created_at']}",
             f"- LLM：{llm_result['status']}，模型 `{llm_result['model']}`，"

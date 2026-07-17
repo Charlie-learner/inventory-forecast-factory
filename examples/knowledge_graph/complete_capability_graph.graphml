@@ -346,7 +346,7 @@
       <data key="d25">2026-07-16</data>
       <data key="d27">source_reviewed</data>
     </node>
-    <node id="run:1eb1447350d7">
+    <node id="run:bbba020f8eb0">
       <data key="d1">ValidationRun</data>
       <data key="d2">验证:seasonal_naive@1</data>
       <data key="d34">1002</data>
@@ -354,12 +354,12 @@
       <data key="d36">success</data>
       <data key="d37">{"bias": 0.0, "inventory_cost": 0.0, "mae": 0.0, "mean_actual_total": 184.0, "mean_target_inventory": 184.0, "rmse": 0.0, "smape": 0.0, "wape": 0.0}</data>
       <data key="d38">{"equivalence": true, "imports": true, "interface": true, "runtime": true, "stability": true, "syntax": true}</data>
-      <data key="d39">2026-07-17T02:24:04.433760+00:00</data>
+      <data key="d39">2026-07-17T07:42:26.797985+00:00</data>
     </node>
     <node id="version:seasonal_naive:64ea28fef849">
       <data key="d1">CapabilityVersion</data>
       <data key="d2">seasonal_naive@64ea28fef849</data>
-      <data key="d40">2026-07-17T02:24:04.433760+00:00</data>
+      <data key="d40">2026-07-17T07:42:26.797985+00:00</data>
       <data key="d41">active</data>
       <data key="d42">1.1.0</data>
       <data key="d43">spec_template</data>
@@ -369,15 +369,15 @@
       <data key="d47">328a905e3be55180984fbf0a2525c3a1a05aeaadd45d45a315af36d624f93349</data>
       <data key="d19">64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b</data>
       <data key="d18">examples\capabilities\seasonal_naive.md</data>
-      <data key="d48">examples\repair_run\20260717_102359_522951\generated\forecast_seasonal_naive.py</data>
+      <data key="d48">examples\repair_run\20260717_154221_004840\generated\forecast_seasonal_naive.py</data>
       <data key="d49">{"protocol": "architecture-implementation-review-validation", "architecture_mode": "", "review_mode": "", "revision_applied": false}</data>
       <data key="d50" />
       <data key="d51">1</data>
       <data key="d52">inventory_target</data>
-      <data key="d53">{"mean_latency_ms": 0.7285550003871322, "peak_memory_kb": 25.32421875, "throughput_calls_per_second": 1372.5799692111511}</data>
+      <data key="d53">{"mean_latency_ms": 0.7123300005332567, "peak_memory_kb": 25.9501953125, "throughput_calls_per_second": 1403.8437230657012}</data>
       <data key="d54">success</data>
       <data key="d55">1</data>
-      <data key="d56">2026-07-17T02:24:04.433760+00:00</data>
+      <data key="d56">2026-07-17T07:42:26.797985+00:00</data>
       <data key="d57">{"bias": 0.0, "inventory_cost": 0.0, "mae": 0.0, "mean_actual_total": 184.0, "mean_target_inventory": 184.0, "rmse": 0.0, "smape": 0.0, "wape": 0.0}</data>
       <data key="d58">{"equivalence": true, "imports": true, "interface": true, "runtime": true, "stability": true, "syntax": true}</data>
     </node>
@@ -393,7 +393,7 @@
       <data key="d65">生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。</data>
       <data key="d66">["\u91cd\u65b0\u89e3\u6790\u6e90\u7801\u8bed\u6cd5\u6811", "\u4f7f\u7528\u5b8c\u6574\u5b89\u5168\u6a21\u677f\u91cd\u65b0\u751f\u6210", "\u4fdd\u7559\u5931\u8d25\u6e90\u7801\u5feb\u7167"]</data>
       <data key="d67">1</data>
-      <data key="d68">2026-07-17T02:24:04.433760+00:00</data>
+      <data key="d68">2026-07-17T07:42:26.797985+00:00</data>
     </node>
     <node id="repair:3f402f107f1a2e1c">
       <data key="d1">RepairStrategy</data>
@@ -402,16 +402,16 @@
       <data key="d69">3f402f107f1a2e1c</data>
       <data key="d70">1</data>
       <data key="d71">1</data>
-      <data key="d72">2026-07-17T02:24:04.433760+00:00</data>
+      <data key="d72">2026-07-17T07:42:26.797985+00:00</data>
     </node>
-    <node id="version_event:9f5eb3c650db">
+    <node id="version_event:cf750861384c">
       <data key="d1">VersionEvent</data>
       <data key="d2">promote:seasonal_naive</data>
       <data key="d73">promote</data>
       <data key="d74">seasonal_naive</data>
       <data key="d75" />
       <data key="d76">version:seasonal_naive:64ea28fef849</data>
-      <data key="d39">2026-07-17T02:24:04.446439+00:00</data>
+      <data key="d39">2026-07-17T07:42:26.817459+00:00</data>
     </node>
     <edge source="algorithm:croston" target="metric:inventory_cost">
       <data key="d77">EVALUATED_BY</data>
@@ -533,16 +533,16 @@
     <edge source="algorithm:seasonal_naive" target="source:0d2b62ba65897f56">
       <data key="d77">EXTRACTED_FROM</data>
     </edge>
-    <edge source="run:1eb1447350d7" target="algorithm:seasonal_naive">
+    <edge source="run:bbba020f8eb0" target="algorithm:seasonal_naive">
       <data key="d77">VALIDATED</data>
     </edge>
-    <edge source="run:1eb1447350d7" target="version:seasonal_naive:64ea28fef849">
+    <edge source="run:bbba020f8eb0" target="version:seasonal_naive:64ea28fef849">
       <data key="d77">VALIDATED_VERSION</data>
     </edge>
-    <edge source="run:1eb1447350d7" target="failure:4c06ea656e7e460b">
+    <edge source="run:bbba020f8eb0" target="failure:4c06ea656e7e460b">
       <data key="d77">OBSERVED_FAILURE</data>
     </edge>
-    <edge source="run:1eb1447350d7" target="repair:3f402f107f1a2e1c">
+    <edge source="run:bbba020f8eb0" target="repair:3f402f107f1a2e1c">
       <data key="d77">REPAIRED_BY</data>
     </edge>
     <edge source="version:seasonal_naive:64ea28fef849" target="algorithm:seasonal_naive">
@@ -554,7 +554,7 @@
     <edge source="repair:3f402f107f1a2e1c" target="failure:4c06ea656e7e460b">
       <data key="d77">ADDRESSES</data>
     </edge>
-    <edge source="version_event:9f5eb3c650db" target="version:seasonal_naive:64ea28fef849">
+    <edge source="version_event:cf750861384c" target="version:seasonal_naive:64ea28fef849">
       <data key="d77">ACTIVATED_VERSION</data>
     </edge>
     <data key="d0">1.5</data>

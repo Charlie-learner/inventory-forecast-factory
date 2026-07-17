@@ -1,0 +1,467 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-07-17T07:43:30.701619+00:00",
+  "capability": {
+    "name": "moving_average",
+    "task_type": "inventory_forecasting",
+    "description": "Uses the recent 14-day demand average.",
+    "template_name": "moving_average",
+    "input_contract": "non-negative daily qty_alipay_njhs history",
+    "output_contract": "daily forecast plus horizon-total target inventory",
+    "suitable_for": [
+      "short_history",
+      "stable"
+    ],
+    "metrics": [
+      "bias",
+      "inventory_cost",
+      "rmse",
+      "smape",
+      "wape"
+    ],
+    "dependencies": [],
+    "parameters": {},
+    "source_type": "registry",
+    "source_ref": "inventory_agent.forecasting.registry:default_registry",
+    "source_hash": "b0ecce8b54b2cc88074e1a67fd99a0b8314f57e9426c51d8f169c0d05794243a",
+    "version": "1.0.0",
+    "extracted_by": "registry_bootstrap",
+    "source_title": "",
+    "source_url": "",
+    "source_license": "",
+    "accessed_at": "",
+    "confidence": 1.0,
+    "review_status": "auto_extracted",
+    "evidence_refs": [],
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
+  },
+  "generation": {
+    "model": "moving_average",
+    "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\protocol_demo\\generated\\forecast_moving_average_candidate_3.py",
+    "mode": "llm_multi_agent_generation",
+    "spec_hash": "e1cc0befedf6d00148d8c952ffa6230ec6a8605301c2649729272be42bfe75aa",
+    "source_hash": "1e518b2b343cbacd36db3ef55a78f292f48c2693ea7844017a98d05d4af89d8d",
+    "variant_id": "candidate_3",
+    "strategy": "minimal_dependency: 在保持算法语义的前提下，尽量减少依赖和状态，生成结构清晰的独立实现。",
+    "prompt_hash": "61ced50ad6d4fef3439611c2076c16462d3c1f168b15965e1d068c1b41d09a84",
+    "collaboration": {
+      "architecture": {
+        "agent": "CodeArchitectureAgent",
+        "mode": "llm_architecture",
+        "algorithm": "moving_average",
+        "algorithm_steps": [
+          "clean non-negative numeric history",
+          "average the latest 14 observations",
+          "repeat the estimate for the requested horizon"
+        ],
+        "required_contracts": [
+          "forecast returns built-in list[float]",
+          "target_inventory equals sum(daily_forecast)"
+        ],
+        "edge_cases": [
+          "empty history",
+          "non-positive horizon"
+        ],
+        "allowed_dependencies": [
+          "numpy",
+          "pandas"
+        ],
+        "performance_goal": "linear history cleaning and constant forecast cost",
+        "risks": [
+          "constant-rate forecast does not express daily seasonality"
+        ]
+      },
+      "implementation": {
+        "agent": "CodeImplementationAgent",
+        "strategy": "minimal_dependency: 在保持算法语义的前提下，尽量减少依赖和状态，生成结构清晰的独立实现。",
+        "variant_id": "candidate_3"
+      },
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "candidate_3",
+        "mode": "llm_review",
+        "approved": true,
+        "findings": [],
+        "revision_applied": false,
+        "post_review_static_findings": []
+      }
+    }
+  },
+  "multi_agent_collaboration": {
+    "protocol": "architecture -> parallel implementation -> independent review -> validation",
+    "roles": [
+      "CodeArchitectureAgent",
+      "CodeImplementationAgent",
+      "CodeReviewAgent",
+      "GeneratedCodeValidator"
+    ],
+    "blueprint_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\protocol_demo\\generated\\implementation_blueprint.json",
+    "manifest_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\protocol_demo\\generated\\multi_agent_collaboration.json"
+  },
+  "implementation_candidates": [
+    {
+      "variant_id": "candidate_1",
+      "strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\protocol_demo\\generated\\forecast_moving_average_candidate_1.py",
+      "mode": "llm_multi_agent_generation",
+      "source_hash": "214ce1aa3bdaa5d29777294d8006e39f6c7c1c9bc2f0c337a2599f187b4510a1",
+      "prompt_hash": "6ca29b2554fa9425a021fe598700c99adea12dda43c74044173c6d7515408118",
+      "collaboration": {
+        "architecture": {
+          "agent": "CodeArchitectureAgent",
+          "mode": "llm_architecture",
+          "algorithm": "moving_average",
+          "algorithm_steps": [
+            "clean non-negative numeric history",
+            "average the latest 14 observations",
+            "repeat the estimate for the requested horizon"
+          ],
+          "required_contracts": [
+            "forecast returns built-in list[float]",
+            "target_inventory equals sum(daily_forecast)"
+          ],
+          "edge_cases": [
+            "empty history",
+            "non-positive horizon"
+          ],
+          "allowed_dependencies": [
+            "numpy",
+            "pandas"
+          ],
+          "performance_goal": "linear history cleaning and constant forecast cost",
+          "risks": [
+            "constant-rate forecast does not express daily seasonality"
+          ]
+        },
+        "implementation": {
+          "agent": "CodeImplementationAgent",
+          "strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+          "variant_id": "candidate_1"
+        },
+        "review": {
+          "agent": "CodeReviewAgent",
+          "variant_id": "candidate_1",
+          "mode": "llm_review",
+          "approved": true,
+          "findings": [],
+          "revision_applied": false,
+          "post_review_static_findings": []
+        }
+      },
+      "validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        "sample_target_inventory": 56.0,
+        "runtime_seconds": 0.9967948000121396,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.6912150012794882,
+        "cpu_time_ms": 15.625,
+        "peak_memory_kb": 25.69921875,
+        "throughput_calls_per_second": 1446.727860577286
+      },
+      "selected": false
+    },
+    {
+      "variant_id": "candidate_2",
+      "strategy": "robust_edge_cases: 在保持算法语义的前提下，重点增强空值、短历史、全零历史和极端数值处理。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\protocol_demo\\generated\\forecast_moving_average_candidate_2.py",
+      "mode": "llm_multi_agent_revised",
+      "source_hash": "90ab379b299f8f871471cb2b3000d03743caec9506addbdc242464bd32c9ce4f",
+      "prompt_hash": "a2f58648769a930360033e21ab2707981c9ee477424a8ea66830f48797fe75fd",
+      "collaboration": {
+        "architecture": {
+          "agent": "CodeArchitectureAgent",
+          "mode": "llm_architecture",
+          "algorithm": "moving_average",
+          "algorithm_steps": [
+            "clean non-negative numeric history",
+            "average the latest 14 observations",
+            "repeat the estimate for the requested horizon"
+          ],
+          "required_contracts": [
+            "forecast returns built-in list[float]",
+            "target_inventory equals sum(daily_forecast)"
+          ],
+          "edge_cases": [
+            "empty history",
+            "non-positive horizon"
+          ],
+          "allowed_dependencies": [
+            "numpy",
+            "pandas"
+          ],
+          "performance_goal": "linear history cleaning and constant forecast cost",
+          "risks": [
+            "constant-rate forecast does not express daily seasonality"
+          ]
+        },
+        "implementation": {
+          "agent": "CodeImplementationAgent",
+          "strategy": "robust_edge_cases: 在保持算法语义的前提下，重点增强空值、短历史、全零历史和极端数值处理。",
+          "variant_id": "candidate_2"
+        },
+        "review": {
+          "agent": "CodeReviewAgent",
+          "variant_id": "candidate_2",
+          "mode": "llm_review",
+          "approved": true,
+          "findings": [
+            "ndarray output violates list[float] contract"
+          ],
+          "revision_applied": true,
+          "post_review_static_findings": []
+        }
+      },
+      "validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        "sample_target_inventory": 56.0,
+        "runtime_seconds": 0.9695835000020452,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.045760000648442656,
+        "cpu_time_ms": 0.0,
+        "peak_memory_kb": 9.8671875,
+        "throughput_calls_per_second": 21853.146543476567
+      },
+      "selected": false
+    },
+    {
+      "variant_id": "candidate_3",
+      "strategy": "minimal_dependency: 在保持算法语义的前提下，尽量减少依赖和状态，生成结构清晰的独立实现。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\protocol_demo\\generated\\forecast_moving_average_candidate_3.py",
+      "mode": "llm_multi_agent_generation",
+      "source_hash": "1e518b2b343cbacd36db3ef55a78f292f48c2693ea7844017a98d05d4af89d8d",
+      "prompt_hash": "61ced50ad6d4fef3439611c2076c16462d3c1f168b15965e1d068c1b41d09a84",
+      "collaboration": {
+        "architecture": {
+          "agent": "CodeArchitectureAgent",
+          "mode": "llm_architecture",
+          "algorithm": "moving_average",
+          "algorithm_steps": [
+            "clean non-negative numeric history",
+            "average the latest 14 observations",
+            "repeat the estimate for the requested horizon"
+          ],
+          "required_contracts": [
+            "forecast returns built-in list[float]",
+            "target_inventory equals sum(daily_forecast)"
+          ],
+          "edge_cases": [
+            "empty history",
+            "non-positive horizon"
+          ],
+          "allowed_dependencies": [
+            "numpy",
+            "pandas"
+          ],
+          "performance_goal": "linear history cleaning and constant forecast cost",
+          "risks": [
+            "constant-rate forecast does not express daily seasonality"
+          ]
+        },
+        "implementation": {
+          "agent": "CodeImplementationAgent",
+          "strategy": "minimal_dependency: 在保持算法语义的前提下，尽量减少依赖和状态，生成结构清晰的独立实现。",
+          "variant_id": "candidate_3"
+        },
+        "review": {
+          "agent": "CodeReviewAgent",
+          "variant_id": "candidate_3",
+          "mode": "llm_review",
+          "approved": true,
+          "findings": [],
+          "revision_applied": false,
+          "post_review_static_findings": []
+        }
+      },
+      "validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        "sample_target_inventory": 56.0,
+        "runtime_seconds": 0.9605785000021569,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.019845001224894077,
+        "cpu_time_ms": 15.625,
+        "peak_memory_kb": 3.5859375,
+        "throughput_calls_per_second": 50390.52347074559
+      },
+      "selected": true
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "checks": {
+      "syntax": true,
+      "imports": true,
+      "interface": true,
+      "runtime": true,
+      "stability": true,
+      "equivalence": true
+    },
+    "errors": [],
+    "sample_output": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0
+    ],
+    "sample_target_inventory": 56.0,
+    "runtime_seconds": 0.9605785000021569,
+    "equivalence_max_error": 0.0,
+    "equivalence_cases": 4,
+    "performance_iterations": 20,
+    "mean_latency_ms": 0.019845001224894077,
+    "cpu_time_ms": 15.625,
+    "peak_memory_kb": 3.5859375,
+    "throughput_calls_per_second": 50390.52347074559
+  },
+  "performance_analysis": {
+    "schema_version": "1.0",
+    "measurement_scope": "Isolated deterministic micro-benchmark; tracemalloc covers Python allocations and may not include all native-library memory.",
+    "selected_source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\protocol_demo\\generated\\forecast_moving_average_candidate_3.py",
+    "source_bytes": 455,
+    "source_lines": 11,
+    "ast_loop_count": 0,
+    "ast_call_count": 11,
+    "measurements": {
+      "iterations": 20,
+      "mean_latency_ms": 0.019845001224894077,
+      "cpu_time_ms": 15.625,
+      "peak_memory_kb": 3.5859375,
+      "throughput_calls_per_second": 50390.52347074559
+    },
+    "policy": {
+      "latency_warning_ms": 5.0,
+      "peak_memory_warning_kb": 32768.0,
+      "minimum_throughput": 100.0
+    },
+    "recommendations": [
+      "当前基准未触发资源告警；继续保留回归基准，避免无证据的过早优化。"
+    ],
+    "candidate_profiles": [
+      {
+        "variant_id": "candidate_1",
+        "selected": false,
+        "valid": true,
+        "mean_latency_ms": 0.6912150012794882,
+        "peak_memory_kb": 25.69921875,
+        "throughput_calls_per_second": 1446.727860577286
+      },
+      {
+        "variant_id": "candidate_2",
+        "selected": false,
+        "valid": true,
+        "mean_latency_ms": 0.045760000648442656,
+        "peak_memory_kb": 9.8671875,
+        "throughput_calls_per_second": 21853.146543476567
+      },
+      {
+        "variant_id": "candidate_3",
+        "selected": true,
+        "valid": true,
+        "mean_latency_ms": 0.019845001224894077,
+        "peak_memory_kb": 3.5859375,
+        "throughput_calls_per_second": 50390.52347074559
+      }
+    ]
+  },
+  "reference_model": "moving_average",
+  "review": {
+    "status": "auto_validated",
+    "approved_by_user": false,
+    "registration_ready": true,
+    "reason": "Behavior matches registered reference capability moving_average."
+  }
+}

@@ -1,8 +1,8 @@
 {
-  "run_id": "run:1eb1447350d7",
-  "created_at": "2026-07-17T02:24:04.440212+00:00",
+  "run_id": "run:c4e594e423da",
+  "created_at": "2026-07-17T07:42:57.797698+00:00",
   "request": {
-    "description": "为商品 1002 在仓库 1 预测未来14天目标库存，比较候选算法并展示失败修复",
+    "description": "为商品1002在仓库1预测未来14天目标库存，比较至少三种算法，结合现货、在途、欠单和补货约束给出建议，并保存完整验证证据。",
     "item_id": 1002,
     "store_code": "1",
     "horizon": 14,
@@ -81,49 +81,96 @@
     },
     "risks": [
       "周周期较明显，节假日或促销变化可能破坏历史周期。"
+    ],
+    "execution_tasks": [
+      {
+        "task_id": "understand",
+        "title": "理解业务要求",
+        "description": "从自然语言提取商品、仓库、周期和目标。"
+      },
+      {
+        "task_id": "extract",
+        "title": "检索与抽取算法能力",
+        "description": "读取能力文档、代码和知识图谱。"
+      },
+      {
+        "task_id": "profile",
+        "title": "诊断需求数据",
+        "description": "加载数据并识别需求画像和数据风险。"
+      },
+      {
+        "task_id": "research",
+        "title": "确认本地知识证据",
+        "description": "形成可追溯的行业知识证据。"
+      },
+      {
+        "task_id": "plan",
+        "title": "设计执行方案",
+        "description": "Planner Agent 确定候选、验证指标和发布门禁。"
+      },
+      {
+        "task_id": "compare",
+        "title": "比较 3 个候选算法",
+        "description": "对 seasonal_naive, croston, last_value 执行滚动回测，并按 inventory_cost 选优。"
+      },
+      {
+        "task_id": "generate",
+        "title": "生成并审查独立代码实现",
+        "description": "根据胜出能力生成不同策略的源码候选，再由 CodeReviewAgent 审查。"
+      },
+      {
+        "task_id": "validate",
+        "title": "验证与必要时修复",
+        "description": "检查接口、安全、稳定性、等价性和资源消耗。"
+      },
+      {
+        "task_id": "deposit",
+        "title": "生成报告并沉淀知识",
+        "description": "输出报告，回写验证、失败、修复策略和版本。"
+      }
     ]
   },
   "capability_extraction": {
     "sources": [
-      "examples\\capabilities\\croston.md",
-      "examples\\capabilities\\last_value.md",
-      "examples\\capabilities\\moving_average.md",
-      "examples\\capabilities\\ridge_lag.md",
-      "examples\\capabilities\\seasonal_naive.md"
+      "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md"
     ],
-    "result_path": "examples\\repair_run\\20260717_102359_522951\\extracted_capabilities.json",
+    "result_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\extracted_capabilities.json",
     "count": 5,
     "scan_reports": [
       {
-        "source": "examples\\capabilities\\croston.md",
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
         "source_kind": "file",
         "files_scanned": 1,
         "files_matched": 1,
         "errors": []
       },
       {
-        "source": "examples\\capabilities\\last_value.md",
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
         "source_kind": "file",
         "files_scanned": 1,
         "files_matched": 1,
         "errors": []
       },
       {
-        "source": "examples\\capabilities\\moving_average.md",
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
         "source_kind": "file",
         "files_scanned": 1,
         "files_matched": 1,
         "errors": []
       },
       {
-        "source": "examples\\capabilities\\ridge_lag.md",
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
         "source_kind": "file",
         "files_scanned": 1,
         "files_matched": 1,
         "errors": []
       },
       {
-        "source": "examples\\capabilities\\seasonal_naive.md",
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
         "source_kind": "file",
         "files_scanned": 1,
         "files_matched": 1,
@@ -156,7 +203,7 @@
           "alpha": 0.1
         },
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\croston.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
         "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -200,7 +247,7 @@
         ],
         "parameters": {},
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\last_value.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
         "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -245,7 +292,7 @@
           "window": 14
         },
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\moving_average.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
         "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -294,7 +341,7 @@
           "alpha": 1.0
         },
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\ridge_lag.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
         "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -339,7 +386,7 @@
           "period": 7
         },
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\seasonal_naive.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
         "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -396,7 +443,7 @@
       "period": 7
     },
     "source_type": "document",
-    "source_ref": "examples\\capabilities\\seasonal_naive.md",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
     "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
     "version": "1.1.0",
     "extracted_by": "deterministic",
@@ -636,7 +683,7 @@
   },
   "replenishment": {
     "available": true,
-    "source": "examples\\business_data\\inventory_snapshot.csv",
+    "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\business_data\\inventory_snapshot.csv",
     "scope": "warehouse",
     "formula": "max(目标库存 + 安全库存 + 欠单 - 现货 - 在途库存, 0)",
     "target_inventory": 184.0,
@@ -732,7 +779,7 @@
           "period": 7
         },
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\seasonal_naive.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
         "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -753,10 +800,10 @@
         "complexity": {}
       },
       "generated": {
-        "path": "examples\\repair_run\\20260717_102359_522951\\candidate_solutions\\seasonal_naive\\forecast_seasonal_naive.py",
+        "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\candidate_solutions\\seasonal_naive\\forecast_seasonal_naive.py",
         "generation_mode": "spec_template",
-        "spec_hash": "328a905e3be55180984fbf0a2525c3a1a05aeaadd45d45a315af36d624f93349",
-        "source_hash": "64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b"
+        "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+        "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff"
       },
       "code_validation": {
         "valid": true,
@@ -786,14 +833,14 @@
           7.0
         ],
         "sample_target_inventory": 56.0,
-        "runtime_seconds": 0.9625651999958791,
+        "runtime_seconds": 0.9914919000002556,
         "equivalence_max_error": 0.0,
         "equivalence_cases": 4,
         "performance_iterations": 20,
-        "mean_latency_ms": 0.7378800000878982,
+        "mean_latency_ms": 0.7842750012059696,
         "cpu_time_ms": 15.625,
-        "peak_memory_kb": 25.9462890625,
-        "throughput_calls_per_second": 1355.2339132120092
+        "peak_memory_kb": 25.806640625,
+        "throughput_calls_per_second": 1275.0629542728161
       }
     },
     {
@@ -870,7 +917,7 @@
           "alpha": 0.1
         },
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\croston.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
         "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -893,10 +940,10 @@
         "complexity": {}
       },
       "generated": {
-        "path": "examples\\repair_run\\20260717_102359_522951\\candidate_solutions\\croston\\forecast_croston.py",
+        "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\candidate_solutions\\croston\\forecast_croston.py",
         "generation_mode": "spec_template",
-        "spec_hash": "dbaa27d3eb66944e73c38644295e61819baa4115adca197f5ed41aa06f67b8fe",
-        "source_hash": "3954935d4febe3dd8427fdf49ed723c828128364d41bc563e2b3837696fe3cf5"
+        "spec_hash": "64eb6e88a57c9fa18e39df0742f5cccd858622ebe5c70944547c004a31bf03f6",
+        "source_hash": "a0b823af5e4e453f42b7f772122e8c796cd7f997541341c58e3d59f303e34ef2"
       },
       "code_validation": {
         "valid": true,
@@ -926,14 +973,14 @@
           4.40823272329316
         ],
         "sample_target_inventory": 61.715258126104246,
-        "runtime_seconds": 0.976133199990727,
+        "runtime_seconds": 1.0337935000134166,
         "equivalence_max_error": 0.0,
         "equivalence_cases": 4,
         "performance_iterations": 20,
-        "mean_latency_ms": 0.8272699997178279,
+        "mean_latency_ms": 0.8813699998427182,
         "cpu_time_ms": 15.625,
-        "peak_memory_kb": 27.83203125,
-        "throughput_calls_per_second": 1208.7951942426153
+        "peak_memory_kb": 28.1669921875,
+        "throughput_calls_per_second": 1134.5972748998167
       }
     },
     {
@@ -1007,7 +1054,7 @@
         ],
         "parameters": {},
         "source_type": "document",
-        "source_ref": "examples\\capabilities\\last_value.md",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
         "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
         "version": "1.1.0",
         "extracted_by": "deterministic",
@@ -1028,10 +1075,10 @@
         "complexity": {}
       },
       "generated": {
-        "path": "examples\\repair_run\\20260717_102359_522951\\candidate_solutions\\last_value\\forecast_last_value.py",
+        "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\candidate_solutions\\last_value\\forecast_last_value.py",
         "generation_mode": "spec_template",
-        "spec_hash": "756df59dab22b00ff342454e05a469d6f522052bd68cedc907bbc38d2633810b",
-        "source_hash": "5f0b6ad0e8e2b5d227e767dd607086258df3650ad3af70c13bcdf60ad33f3bd9"
+        "spec_hash": "3e35611dab10e7e0da3cb443ebb8b5012974dc8459794f174958d4d4a5aa27e5",
+        "source_hash": "6a804d45b25e0cfbf4ce9963014f3d86de2f63bf54603cd6214735d4a145f885"
       },
       "code_validation": {
         "valid": true,
@@ -1061,14 +1108,14 @@
           7.0
         ],
         "sample_target_inventory": 98.0,
-        "runtime_seconds": 0.965464199980488,
+        "runtime_seconds": 1.0522353999840561,
         "equivalence_max_error": 0.0,
         "equivalence_cases": 4,
         "performance_iterations": 20,
-        "mean_latency_ms": 0.7034249996650033,
+        "mean_latency_ms": 0.7826400003978051,
         "cpu_time_ms": 15.625,
-        "peak_memory_kb": 25.798828125,
-        "throughput_calls_per_second": 1421.615666881667
+        "peak_memory_kb": 25.8466796875,
+        "throughput_calls_per_second": 1277.7266680615785
       }
     }
   ],
@@ -1077,10 +1124,10 @@
       "variant_id": "primary",
       "strategy": "specification_fidelity",
       "generation_mode": "spec_template",
-      "path": "examples\\repair_run\\20260717_102359_522951\\generated\\forecast_seasonal_naive.py",
-      "spec_hash": "328a905e3be55180984fbf0a2525c3a1a05aeaadd45d45a315af36d624f93349",
-      "source_hash": "64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b",
-      "prompt_hash": "c6042af0754f3426241436440fbf9e159a0ad3294173c123374f097f2ccb3e26",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\generated\\forecast_seasonal_naive.py",
+      "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+      "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+      "prompt_hash": "df000ff29d164f1e9ec2413b941d9ddfcee00a21c4a8772b1499029ca687531a",
       "source_lines": 40,
       "collaboration": {
         "architecture": {
@@ -1151,14 +1198,14 @@
           7.0
         ],
         "sample_target_inventory": 56.0,
-        "runtime_seconds": 0.9707051999866962,
+        "runtime_seconds": 1.0291041000164114,
         "equivalence_max_error": 0.0,
         "equivalence_cases": 4,
         "performance_iterations": 20,
-        "mean_latency_ms": 0.7285550003871322,
+        "mean_latency_ms": 0.7063299999572337,
         "cpu_time_ms": 15.625,
-        "peak_memory_kb": 25.32421875,
-        "throughput_calls_per_second": 1372.5799692111511
+        "peak_memory_kb": 26.0419921875,
+        "throughput_calls_per_second": 1415.7688333506253
       },
       "selected": true
     }
@@ -1200,13 +1247,13 @@
   },
   "generated": {
     "model": "seasonal_naive",
-    "path": "examples\\repair_run\\20260717_102359_522951\\generated\\forecast_seasonal_naive.py",
+    "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\generated\\forecast_seasonal_naive.py",
     "generation_mode": "spec_template",
     "variant_id": "primary",
     "strategy": "specification_fidelity",
-    "prompt_hash": "c777c5904a44de6636893a621940e1db63480f00e7163b7dbe22ba24e92300f0",
-    "spec_hash": "328a905e3be55180984fbf0a2525c3a1a05aeaadd45d45a315af36d624f93349",
-    "source_hash": "64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b",
+    "prompt_hash": "89cca1155d66972b3d3d77f0cfac06272c9a733c66918f9dda9a11bf30de743d",
+    "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+    "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
     "collaboration": {}
   },
   "multi_agent_collaboration": {
@@ -1219,8 +1266,8 @@
     ],
     "selected_candidate": {},
     "artifacts": {
-      "blueprint": "examples\\repair_run\\20260717_102359_522951\\generated\\implementation_blueprint.json",
-      "manifest": "examples\\repair_run\\20260717_102359_522951\\generated\\multi_agent_collaboration.json"
+      "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\generated\\implementation_blueprint.json",
+      "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\generated\\multi_agent_collaboration.json"
     }
   },
   "capability_version": {
@@ -1228,11 +1275,11 @@
     "generation_mode": "spec_template",
     "variant_id": "primary",
     "generation_strategy": "specification_fidelity",
-    "prompt_hash": "c777c5904a44de6636893a621940e1db63480f00e7163b7dbe22ba24e92300f0",
-    "spec_hash": "328a905e3be55180984fbf0a2525c3a1a05aeaadd45d45a315af36d624f93349",
-    "source_hash": "64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b",
-    "source_ref": "examples\\capabilities\\seasonal_naive.md",
-    "generated_path": "examples\\repair_run\\20260717_102359_522951\\generated\\forecast_seasonal_naive.py",
+    "prompt_hash": "89cca1155d66972b3d3d77f0cfac06272c9a733c66918f9dda9a11bf30de743d",
+    "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+    "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+    "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+    "generated_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\generated\\forecast_seasonal_naive.py",
     "collaboration": {
       "protocol": "architecture-implementation-review-validation",
       "architecture_mode": "",
@@ -1243,9 +1290,9 @@
     "repair_count": 1,
     "validation_profile": "inventory_target",
     "performance": {
-      "mean_latency_ms": 0.7285550003871322,
-      "peak_memory_kb": 25.32421875,
-      "throughput_calls_per_second": 1372.5799692111511
+      "mean_latency_ms": 0.7063299999572337,
+      "peak_memory_kb": 26.0419921875,
+      "throughput_calls_per_second": 1415.7688333506253
     }
   },
   "code_validation": {
@@ -1276,29 +1323,29 @@
       7.0
     ],
     "sample_target_inventory": 56.0,
-    "runtime_seconds": 0.9707051999866962,
+    "runtime_seconds": 1.0291041000164114,
     "equivalence_max_error": 0.0,
     "equivalence_cases": 4,
     "performance_iterations": 20,
-    "mean_latency_ms": 0.7285550003871322,
+    "mean_latency_ms": 0.7063299999572337,
     "cpu_time_ms": 15.625,
-    "peak_memory_kb": 25.32421875,
-    "throughput_calls_per_second": 1372.5799692111511
+    "peak_memory_kb": 26.0419921875,
+    "throughput_calls_per_second": 1415.7688333506253
   },
   "performance_analysis": {
     "schema_version": "1.0",
     "measurement_scope": "Isolated deterministic micro-benchmark; tracemalloc covers Python allocations and may not include all native-library memory.",
-    "selected_source": "examples\\repair_run\\20260717_102359_522951\\generated\\forecast_seasonal_naive.py",
-    "source_bytes": 2729,
+    "selected_source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\generated\\forecast_seasonal_naive.py",
+    "source_bytes": 2769,
     "source_lines": 40,
     "ast_loop_count": 0,
     "ast_call_count": 20,
     "measurements": {
       "iterations": 20,
-      "mean_latency_ms": 0.7285550003871322,
+      "mean_latency_ms": 0.7063299999572337,
       "cpu_time_ms": 15.625,
-      "peak_memory_kb": 25.32421875,
-      "throughput_calls_per_second": 1372.5799692111511
+      "peak_memory_kb": 26.0419921875,
+      "throughput_calls_per_second": 1415.7688333506253
     },
     "policy": {
       "latency_warning_ms": 5.0,
@@ -1313,73 +1360,73 @@
         "variant_id": "primary",
         "selected": true,
         "valid": true,
-        "mean_latency_ms": 0.7285550003871322,
-        "peak_memory_kb": 25.32421875,
-        "throughput_calls_per_second": 1372.5799692111511
+        "mean_latency_ms": 0.7063299999572337,
+        "peak_memory_kb": 26.0419921875,
+        "throughput_calls_per_second": 1415.7688333506253
       }
     ],
-    "result_path": "examples\\repair_run\\20260717_102359_522951\\performance_analysis.json"
+    "result_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\performance_analysis.json"
   },
   "repairs": [
-    "第 1 轮修复（受约束安全模板回退；错误类型=syntax；根因=生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。；建议动作=重新解析源码语法树 / 使用完整安全模板重新生成 / 保留失败源码快照）：syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]"
+    "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]"
   ],
   "failure_history": [
     {
-      "category": "syntax",
-      "fingerprint": "4c06ea656e7e460b",
-      "normalized_error": "syntax: injected demonstration failure before safe repair",
+      "category": "interface",
+      "fingerprint": "0b494e8f4d0bcb6f",
+      "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
       "retryable": true,
       "severity": "high",
-      "likely_stage": "code_generation",
-      "root_cause": "生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。",
+      "likely_stage": "contract_validation",
+      "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
       "recommended_actions": [
-        "重新解析源码语法树",
-        "使用完整安全模板重新生成",
-        "保留失败源码快照"
+        "按接口签名重新生成",
+        "补齐返回字段",
+        "运行契约测试"
       ]
     }
   ],
   "repair_experience_used": [],
   "failure_experience": {
     "schema_version": "1.0",
-    "run_id": "run:1eb1447350d7",
+    "run_id": "run:c4e594e423da",
     "model": "seasonal_naive",
     "failures": [
       {
-        "category": "syntax",
-        "fingerprint": "4c06ea656e7e460b",
-        "normalized_error": "syntax: injected demonstration failure before safe repair",
+        "category": "interface",
+        "fingerprint": "0b494e8f4d0bcb6f",
+        "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
         "retryable": true,
         "severity": "high",
-        "likely_stage": "code_generation",
-        "root_cause": "生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。",
+        "likely_stage": "contract_validation",
+        "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
         "recommended_actions": [
-          "重新解析源码语法树",
-          "使用完整安全模板重新生成",
-          "保留失败源码快照"
+          "按接口签名重新生成",
+          "补齐返回字段",
+          "运行契约测试"
         ]
       }
     ],
     "repairs_applied": [
-      "第 1 轮修复（受约束安全模板回退；错误类型=syntax；根因=生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。；建议动作=重新解析源码语法树 / 使用完整安全模板重新生成 / 保留失败源码快照）：syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]"
+      "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]"
     ],
     "prior_experience_reused": [],
     "indexed_in_knowledge_graph": true,
-    "result_path": "examples\\repair_run\\20260717_102359_522951\\failure_experience.json"
+    "result_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\failure_experience.json"
   },
   "execution_trace": {
     "level": "full",
     "paths": {
-      "jsonl": "examples\\repair_run\\20260717_102359_522951\\detailed_trace.jsonl",
-      "markdown": "examples\\repair_run\\20260717_102359_522951\\detailed_trace.md",
-      "manifest": "examples\\repair_run\\20260717_102359_522951\\run_manifest.json"
+      "jsonl": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\detailed_trace.jsonl",
+      "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\detailed_trace.md",
+      "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_01_repair_deposition\\20260717_154252_572920\\run_manifest.json"
     },
     "events_recorded_before_report": 18
   },
   "knowledge_graph": {
-    "json": "examples\\knowledge_graph\\complete_capability_graph.json",
-    "graphml": "examples\\knowledge_graph\\complete_capability_graph.graphml",
-    "html": "examples\\knowledge_graph\\complete_capability_graph.html"
+    "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\capability_graph.json",
+    "graphml": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\capability_graph.graphml",
+    "html": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\capability_graph.html"
   },
   "design_explanation": {
     "mode": "mock",

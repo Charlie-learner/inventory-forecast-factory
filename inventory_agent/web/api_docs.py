@@ -28,8 +28,8 @@ API_ROUTES = (
     ApiRoute(
         "GET",
         "/api/audit",
-        "笔试要求评分验收",
-        "逐项返回完成状态、通俗说明、证据路径、CLI 验证命令和实现边界。",
+        "项目功能自检",
+        "逐项返回完成状态、功能说明、相关文件、CLI 检查命令和实现边界。",
     ),
     ApiRoute("GET", "/api/runs", "运行列表", "返回最近的完整工作流运行记录。"),
     ApiRoute(
@@ -295,7 +295,7 @@ code{{font-size:14px;}}pre{{overflow:auto;padding:14px;border-radius:10px;color:
 </head>
 <body><main>
 <header><h1>库存算法能力工厂 API</h1>
-<p>由服务端路由目录自动生成。适合本地集成、评审演示和接口联调。</p></header>
+<p>由服务端路由目录自动生成，主要用于本地集成和接口联调。</p></header>
 <div class="links"><a href="/api/openapi.json">查看 OpenAPI JSON</a><a href="/">返回 Web 工作台</a></div>
 {''.join(cards)}
 </main></body></html>"""

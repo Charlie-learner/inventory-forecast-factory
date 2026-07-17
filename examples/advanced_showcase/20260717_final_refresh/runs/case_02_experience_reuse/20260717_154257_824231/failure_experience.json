@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run:fbabfce1b1ee",
+  "model": "seasonal_naive",
+  "failures": [
+    {
+      "category": "interface",
+      "fingerprint": "0b494e8f4d0bcb6f",
+      "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
+      "retryable": true,
+      "severity": "high",
+      "likely_stage": "contract_validation",
+      "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+      "recommended_actions": [
+        "按接口签名重新生成",
+        "补齐返回字段",
+        "运行契约测试"
+      ]
+    }
+  ],
+  "repairs_applied": [
+    "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=1;best_success_rate=100.00%]"
+  ],
+  "prior_experience_reused": [
+    {
+      "category": "interface",
+      "fingerprint": "0b494e8f4d0bcb6f",
+      "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+      "recommended_actions": [
+        "按接口签名重新生成",
+        "补齐返回字段",
+        "运行契约测试"
+      ],
+      "strategy": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]",
+      "strategy_fingerprint": "4ded2f418bfd5b94",
+      "attempt_count": 1,
+      "success_count": 1,
+      "success_rate": 1.0,
+      "run_id": "run:c4e594e423da",
+      "timestamp": "2026-07-17T07:42:57.788556+00:00"
+    }
+  ],
+  "indexed_in_knowledge_graph": true
+}

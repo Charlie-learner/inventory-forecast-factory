@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1000" viewBox="0 0 1800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">LangGraph Multi-Agent 完整协作工作流图</title>
+  <desc id="desc">展示专业 Agent 的角色分工、共享状态、LangGraph 固定主链、共享工具总线、代码生成多智能体协作与反馈、验证条件分支及多轮修复回环。</desc>
+  <defs>
+    <filter id="rough" x="-4%" y="-4%" width="108%" height="108%"><feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" seed="19" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.15"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker>
+    <style>
+      .title{font:700 39px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#151515}.sub{font:17px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#555}
+      .h{font:700 24px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#171717}.t{font:17px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#222}.s{font:14px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#444}.xs{font:12px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#555}
+      .frame{fill:#fff;stroke:#222;stroke-width:2.3;rx:20;filter:url(#rough)}.panel{fill:#fafafa;stroke:#333;stroke-width:1.7;rx:13;filter:url(#rough)}.multi{fill:#f4f4f4;stroke:#111;stroke-width:3;rx:13;filter:url(#rough)}.node{fill:#fff;stroke:#222;stroke-width:2.2;filter:url(#rough)}.small{fill:#fff;stroke:#333;stroke-width:1.7;rx:10;filter:url(#rough)}.stackBack{fill:#e8e8e8;stroke:#555;stroke-width:1.4;rx:9}.badge,.agentTag{fill:#222;stroke:#222;rx:8}.badgeText{font:700 13px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#fff;letter-spacing:1px}.agentTagText{font:700 10px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#fff;letter-spacing:.8px}.serviceTag{fill:#fff;stroke:#666;stroke-width:1.2;rx:7}.serviceTagText{font:700 9px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#555;letter-spacing:.5px}
+      .line{fill:none;stroke:#222;stroke-width:2.1;marker-end:url(#arrow)}.dash{fill:none;stroke:#333;stroke-width:1.8;stroke-dasharray:8 7;marker-end:url(#arrow)}.bus{fill:none;stroke:#777;stroke-width:1.35;stroke-dasharray:5 6}.loop{fill:none;stroke:#222;stroke-width:2.4;stroke-dasharray:10 6;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1800" height="1000" fill="#fff"/>
+  <text x="900" y="52" text-anchor="middle" class="title">Multi-Agent 完整协作工作流 · LangGraph 编排</text>
+  <text x="900" y="82" text-anchor="middle" class="sub">LangGraph 管理共享状态与路由；专业 Agent 分工协作；Service / Tool 提供确定性验证</text>
+
+  <!-- Shared state -->
+  <rect x="30" y="120" width="285" height="765" class="frame"/>
+  <text x="172" y="162" text-anchor="middle" class="h">Shared State</text>
+  <text x="70" y="207" class="t">description / request</text>
+  <text x="70" y="242" class="t">execution_tasks[]</text>
+  <text x="70" y="277" class="t">capabilities[]</text>
+  <text x="70" y="312" class="t">profile / research</text>
+  <text x="70" y="347" class="t">plan / benchmark</text>
+  <text x="70" y="382" class="t">generated source</text>
+  <text x="70" y="417" class="t">validation result</text>
+  <text x="70" y="452" class="t">repairs[]</text>
+  <text x="70" y="487" class="t">failure_history[]</text>
+  <text x="70" y="522" class="t">report / graph</text>
+  <text x="70" y="557" class="t">trace recorder</text>
+  <path d="M65 585 C120 607 222 607 278 585" fill="none" stroke="#333" stroke-width="1.8"/>
+  <text x="172" y="642" text-anchor="middle" class="s">共享契约连接各专业 Agent</text>
+  <text x="172" y="674" text-anchor="middle" class="s">Planner 拆解任务并协调角色</text>
+  <text x="172" y="706" text-anchor="middle" class="s">Trace 记录 Agent / Tool / LLM</text>
+  <text x="172" y="755" text-anchor="middle" class="s">LangGraph StateGraph(dict)</text>
+  <text x="303" y="475" text-anchor="end" class="xs">读取 state</text><path d="M315 486 H350" class="dash"/>
+  <text x="303" y="533" text-anchor="end" class="xs">返回 state patch</text><path d="M350 520 H315" class="dash"/>
+
+  <!-- Main graph -->
+  <rect x="350" y="120" width="1415" height="765" class="frame"/>
+  <text x="1057" y="160" text-anchor="middle" class="h">InventoryCapabilityWorkflow._build_graph()</text>
+  <text x="390" y="202" class="s">① Multi-Agent 任务链：需求理解 → 能力抽取 → 研究规划 → 代码复刻 → 验证沉淀</text>
+
+  <circle cx="405" cy="270" r="35" class="node"/><text x="405" y="276" text-anchor="middle" class="t">START</text>
+  <circle cx="520" cy="270" r="45" class="node"/><text x="520" y="264" text-anchor="middle" class="t">parse</text><text x="520" y="286" text-anchor="middle" class="s">需求理解</text><rect x="491" y="306" width="58" height="19" class="agentTag"/><text x="520" y="320" text-anchor="middle" class="agentTagText">AGENT</text>
+  <circle cx="645" cy="270" r="45" class="node"/><text x="645" y="264" text-anchor="middle" class="t">extract</text><text x="645" y="286" text-anchor="middle" class="s">能力抽取</text><rect x="616" y="306" width="58" height="19" class="agentTag"/><text x="645" y="320" text-anchor="middle" class="agentTagText">AGENT</text>
+  <circle cx="770" cy="270" r="45" class="node"/><text x="770" y="264" text-anchor="middle" class="t">profile</text><text x="770" y="286" text-anchor="middle" class="s">数据画像</text><rect x="737" y="306" width="66" height="19" class="serviceTag"/><text x="770" y="320" text-anchor="middle" class="serviceTagText">SERVICE</text>
+  <circle cx="895" cy="270" r="45" class="node"/><text x="895" y="264" text-anchor="middle" class="t">research</text><text x="895" y="286" text-anchor="middle" class="s">联网研究</text><rect x="866" y="306" width="58" height="19" class="agentTag"/><text x="895" y="320" text-anchor="middle" class="agentTagText">AGENT</text>
+  <circle cx="1020" cy="270" r="45" class="node"/><text x="1020" y="264" text-anchor="middle" class="t">plan</text><text x="1020" y="286" text-anchor="middle" class="s">方案规划</text><rect x="991" y="306" width="58" height="19" class="agentTag"/><text x="1020" y="320" text-anchor="middle" class="agentTagText">AGENT</text>
+  <circle cx="1150" cy="270" r="48" class="node"/><text x="1150" y="264" text-anchor="middle" class="t">benchmark</text><text x="1150" y="286" text-anchor="middle" class="s">候选回测</text><rect x="1117" y="306" width="66" height="19" class="serviceTag"/><text x="1150" y="320" text-anchor="middle" class="serviceTagText">SERVICE</text>
+  <circle cx="1290" cy="270" r="45" class="node"/><text x="1290" y="264" text-anchor="middle" class="t">generate</text><text x="1290" y="286" text-anchor="middle" class="s">代码团队</text><rect x="1261" y="306" width="58" height="19" class="agentTag"/><text x="1290" y="320" text-anchor="middle" class="agentTagText">AGENT</text>
+  <circle cx="1430" cy="270" r="45" class="node"/><text x="1430" y="264" text-anchor="middle" class="t">validate</text><text x="1430" y="286" text-anchor="middle" class="s">统一验证</text><rect x="1397" y="306" width="66" height="19" class="serviceTag"/><text x="1430" y="320" text-anchor="middle" class="serviceTagText">SERVICE</text>
+  <path d="M440 270 H475" class="line"/><path d="M565 270 H600" class="line"/><path d="M690 270 H725" class="line"/><path d="M815 270 H850" class="line"/><path d="M940 270 H975" class="line"/><path d="M1065 270 H1102" class="line"/><path d="M1198 270 H1245" class="line"/><path d="M1335 270 H1385" class="line"/>
+
+  <!-- Shared call bus: short drops replace crossing diagonals -->
+  <path d="M520 325 V355 M645 325 V355 M895 325 V355 M1020 325 V355 M1430 325 V355 M520 355 H1430" class="bus"/>
+  <path d="M682 355 V405" class="dash"/>
+  <path d="M718 405 V355" class="dash"/>
+  <text x="635" y="383" text-anchor="end" class="xs">调用参数 / 上下文</text>
+  <text x="733" y="383" class="xs">ToolResult → Agent state patch</text>
+
+  <!-- Tool/store panel -->
+  <rect x="390" y="405" width="620" height="205" class="panel"/>
+  <text x="700" y="439" text-anchor="middle" class="h">② 共享 Tool / Store</text>
+  <rect x="420" y="475" width="125" height="72" class="small"/><text x="482" y="505" text-anchor="middle" class="t">LLM Client</text><text x="482" y="530" text-anchor="middle" class="s">API / Mock</text>
+  <rect x="565" y="475" width="125" height="72" class="small"/><text x="627" y="505" text-anchor="middle" class="t">Registries</text><text x="627" y="530" text-anchor="middle" class="s">模型 · 指标 · 配置</text>
+  <rect x="710" y="475" width="125" height="72" class="small"/><text x="772" y="505" text-anchor="middle" class="t">Validator</text><text x="772" y="530" text-anchor="middle" class="s">受限子进程</text>
+  <rect x="855" y="475" width="125" height="72" class="small"/><text x="917" y="505" text-anchor="middle" class="t">Knowledge</text><text x="917" y="530" text-anchor="middle" class="s">图谱 · 经验 · 版本</text>
+  <text x="700" y="584" text-anchor="middle" class="s">注册表避免硬编码；验证器、知识库和 LLM 均通过统一接口被节点调用</text>
+
+  <!-- Generate internal protocol -->
+  <rect x="1040" y="405" width="530" height="220" class="multi"/>
+  <rect x="1058" y="418" width="145" height="29" class="badge"/><text x="1130" y="438" text-anchor="middle" class="badgeText">MULTI-AGENT</text>
+  <text x="1390" y="439" text-anchor="middle" class="h">③ 代码生成协作团队</text>
+  <rect x="1055" y="484" width="85" height="68" class="small"/><text x="1097" y="511" text-anchor="middle" class="s">Architect</text><text x="1097" y="535" text-anchor="middle" class="s">Agent</text>
+  <circle cx="1150" cy="518" r="5" fill="#222"/>
+
+  <!-- Overlapping cards represent bounded parallel sub-agents without squeezing N rows. -->
+  <rect x="1179" y="468" width="100" height="68" class="stackBack"/>
+  <rect x="1171" y="476" width="100" height="68" class="stackBack"/>
+  <rect x="1163" y="484" width="100" height="68" class="small"/>
+  <text x="1213" y="505" text-anchor="middle" class="s">Implementer</text><text x="1213" y="525" text-anchor="middle" class="s">Agent × N</text><text x="1213" y="544" text-anchor="middle" class="xs">并行独立候选</text>
+
+  <rect x="1294" y="468" width="90" height="68" class="stackBack"/>
+  <rect x="1286" y="476" width="90" height="68" class="stackBack"/>
+  <rect x="1278" y="484" width="90" height="68" class="small"/>
+  <text x="1323" y="505" text-anchor="middle" class="s">Reviewer</text><text x="1323" y="525" text-anchor="middle" class="s">Agent × N</text><text x="1323" y="544" text-anchor="middle" class="xs">并行独立审查</text>
+
+  <circle cx="1385" cy="518" r="5" fill="#222"/>
+  <rect x="1400" y="480" width="150" height="76" class="small"/><text x="1475" y="506" text-anchor="middle" class="s">Code Validator</text><text x="1475" y="529" text-anchor="middle" class="s">并行门禁 · 汇聚排名</text><text x="1475" y="549" text-anchor="middle" class="xs">正确性 / 性能 / 资源选优</text>
+  <path d="M1140 518 H1145" class="line"/><path d="M1155 518 H1163" class="line"/>
+  <path d="M1263 518 H1278" class="line"/>
+  <path d="M1368 518 H1380" class="line"/><path d="M1390 518 H1400" class="line"/>
+  <path d="M1475 556 V578 H1213 V552" class="loop"/>
+  <text x="1360" y="593" text-anchor="middle" class="xs">审查 / 验证反馈 → 指定候选定向再生成</text>
+  <text x="1305" y="614" text-anchor="middle" class="s">共享制品：架构规格 → 候选代码[] → 审查意见 → 验证证据</text>
+  <path d="M1280 325 V405" class="dash"/><path d="M1302 405 V325" class="dash"/>
+  <text x="1320" y="383" class="xs">任务规格 ⇄ generated state</text>
+
+  <!-- Validation router: kept in a separate right corridor -->
+  <path d="M1475 270 H1695 V655" class="dash"/>
+  <polygon points="1695,655 1722,682 1695,709 1668,682" class="node"/>
+  <text x="1695" y="678" text-anchor="middle" class="xs">条件</text><text x="1695" y="694" text-anchor="middle" class="xs">路由</text>
+  <text x="1590" y="638" class="s">④ validate 的可执行结果</text>
+
+  <rect x="1050" y="755" width="170" height="76" class="small"/><text x="1135" y="783" text-anchor="middle" class="t">repair</text><text x="1135" y="805" text-anchor="middle" class="xs">可修复</text><text x="1135" y="821" text-anchor="middle" class="xs">RepairAgent 根因修复</text>
+  <rect x="1300" y="755" width="170" height="76" class="small"/><text x="1385" y="783" text-anchor="middle" class="t">failed</text><text x="1385" y="805" text-anchor="middle" class="xs">预算耗尽</text><text x="1385" y="821" text-anchor="middle" class="xs">证据写回后终止</text>
+  <rect x="1510" y="755" width="170" height="76" class="small"/><text x="1595" y="779" text-anchor="middle" class="t">report</text><text x="1595" y="798" text-anchor="middle" class="xs">验证通过</text><text x="1595" y="814" text-anchor="middle" class="xs">ExperienceAgent +</text><text x="1595" y="828" text-anchor="middle" class="xs">ReportAgent</text>
+  <circle cx="1725" cy="793" r="38" class="node"/><text x="1725" y="799" text-anchor="middle" class="t">END</text>
+
+  <path d="M1683 698 V714 H1135 V755" class="dash"/>
+  <path d="M1695 709 V729 H1385 V755" class="dash"/>
+  <path d="M1707 698 V742 H1595 V755" class="dash"/>
+  <path d="M1680 793 H1687" class="line"/>
+
+  <!-- Repair loop is routed around the panels and branches -->
+  <path d="M1135 831 V865 H1025 V650 H1600 V360 C1545 360 1490 330 1462 302" class="loop"/>
+  <text x="1320" y="856" text-anchor="middle" class="s">修复后重新 validate；达到预算上限时转 failed</text>
+
+  <text x="1057" y="936" text-anchor="middle" class="sub">代码对应：inventory_agent/workflow/factory.py · StateGraph(dict) · add_conditional_edges(validate, ...)</text>
+</svg>

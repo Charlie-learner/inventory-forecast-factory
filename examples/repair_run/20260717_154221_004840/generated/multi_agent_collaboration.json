@@ -37,7 +37,7 @@
     {
       "variant_id": "primary",
       "strategy": "specification_fidelity",
-      "path": "examples\\repair_run\\20260717_102359_522951\\generated\\forecast_seasonal_naive.py",
+      "path": "examples\\repair_run\\20260717_154221_004840\\generated\\forecast_seasonal_naive.py",
       "source_hash": "64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b",
       "generation_mode": "spec_template",
       "review": {

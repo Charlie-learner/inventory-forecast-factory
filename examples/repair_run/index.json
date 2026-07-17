@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "run_dir": "examples\\repair_run\\20260717_102359_522951",
+  "run_dir": "examples\\repair_run\\20260717_154221_004840",
   "status": "success_after_repair",
   "selected_model": "seasonal_naive",
   "repair_count": 1,
@@ -21,9 +21,9 @@
     }
   ],
   "trace_paths": {
-    "jsonl": "examples\\repair_run\\20260717_102359_522951\\detailed_trace.jsonl",
-    "markdown": "examples\\repair_run\\20260717_102359_522951\\detailed_trace.md",
-    "manifest": "examples\\repair_run\\20260717_102359_522951\\run_manifest.json"
+    "jsonl": "examples\\repair_run\\20260717_154221_004840\\detailed_trace.jsonl",
+    "markdown": "examples\\repair_run\\20260717_154221_004840\\detailed_trace.md",
+    "manifest": "examples\\repair_run\\20260717_154221_004840\\run_manifest.json"
   },
   "knowledge_graph": {
     "json": "examples/knowledge_graph/complete_capability_graph.json",

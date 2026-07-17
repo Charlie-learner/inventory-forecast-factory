@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="940" viewBox="0 0 1600 940" role="img" aria-labelledby="title desc">
+  <title id="title">库存算法能力工厂系统架构图</title>
+  <desc id="desc">展示用户入口、能力工厂核心、库存场景服务、外部依赖和交付产物。</desc>
+  <defs>
+    <filter id="rough" x="-3%" y="-3%" width="106%" height="106%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#222"/>
+    </marker>
+    <style>
+      .title{font:700 38px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#151515}
+      .subtitle{font:18px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#555}
+      .h{font:700 24px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#171717}
+      .t{font:18px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#222}
+      .s{font:15px 'Segoe Print','Comic Sans MS','Microsoft YaHei',sans-serif;fill:#444}
+      .box{fill:#fff;stroke:#222;stroke-width:2.2;rx:18;filter:url(#rough)}
+      .soft{fill:#fafafa;stroke:#555;stroke-width:1.8;rx:14;filter:url(#rough)}
+      .node{fill:#fff;stroke:#222;stroke-width:2;rx:12;filter:url(#rough)}
+      .line{fill:none;stroke:#222;stroke-width:2.1;marker-end:url(#arrow)}
+      .dash{fill:none;stroke:#333;stroke-width:1.8;stroke-dasharray:8 7;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="940" fill="#fff"/>
+  <text x="800" y="54" text-anchor="middle" class="title">库存算法能力工厂 · 系统架构</text>
+  <text x="800" y="84" text-anchor="middle" class="subtitle">AI Agent + 规格驱动代码生成 + 统一验证 + 知识沉淀</text>
+
+  <rect x="34" y="126" width="255" height="610" class="box"/>
+  <text x="161" y="165" text-anchor="middle" class="h">用户与输入</text>
+  <rect x="69" y="194" width="185" height="58" class="node"/><text x="161" y="229" text-anchor="middle" class="t">Web 自然语言对话</text>
+  <rect x="69" y="273" width="185" height="58" class="node"/><text x="161" y="308" text-anchor="middle" class="t">CLI / JSON API</text>
+  <rect x="69" y="371" width="185" height="78" class="soft"/><text x="161" y="401" text-anchor="middle" class="t">业务任务描述</text><text x="161" y="429" text-anchor="middle" class="s">商品 · 仓库 · 周期 · 目标</text>
+  <rect x="69" y="471" width="185" height="78" class="soft"/><text x="161" y="501" text-anchor="middle" class="t">CSV / 多文件 / ZIP</text><text x="161" y="529" text-anchor="middle" class="s">需求 · 成本 · 库存快照</text>
+  <rect x="69" y="571" width="185" height="102" class="soft"/><text x="161" y="602" text-anchor="middle" class="t">能力来源</text><text x="161" y="631" text-anchor="middle" class="s">Markdown · JSON</text><text x="161" y="657" text-anchor="middle" class="s">真实 Python 代码仓库</text>
+
+  <rect x="333" y="126" width="905" height="610" class="box"/>
+  <text x="785" y="165" text-anchor="middle" class="h">Multi-Agent Inventory Capability Factory</text>
+  <text x="785" y="190" text-anchor="middle" class="s">LangGraph 协调专业 Agent，共享状态、领域契约与确定性服务</text>
+
+  <rect x="375" y="224" width="145" height="68" class="node"/><text x="447" y="252" text-anchor="middle" class="t">需求理解</text><text x="447" y="276" text-anchor="middle" class="s">RequirementAgent</text>
+  <rect x="551" y="224" width="145" height="68" class="node"/><text x="623" y="252" text-anchor="middle" class="t">能力抽取</text><text x="623" y="276" text-anchor="middle" class="s">ExtractionAgent</text>
+  <rect x="727" y="224" width="145" height="68" class="node"/><text x="799" y="252" text-anchor="middle" class="t">画像与研究</text><text x="799" y="276" text-anchor="middle" class="s">Profile / Research</text>
+  <rect x="903" y="224" width="145" height="68" class="node"/><text x="975" y="252" text-anchor="middle" class="t">方案规划</text><text x="975" y="276" text-anchor="middle" class="s">PlanningAgent</text>
+  <path d="M520 258 H551" class="line"/><path d="M696 258 H727" class="line"/><path d="M872 258 H903" class="line"/>
+
+  <rect x="410" y="349" width="164" height="76" class="node"/><text x="492" y="379" text-anchor="middle" class="t">候选回测比较</text><text x="492" y="405" text-anchor="middle" class="s">Benchmark + Metrics</text>
+  <rect x="622" y="349" width="164" height="76" class="node"/><text x="704" y="379" text-anchor="middle" class="t">Code Agent Team</text><text x="704" y="405" text-anchor="middle" class="s">架构 · 多候选实现 · 审查</text>
+  <rect x="834" y="349" width="164" height="76" class="node"/><text x="916" y="379" text-anchor="middle" class="t">统一代码验证</text><text x="916" y="405" text-anchor="middle" class="s">安全 · 接口 · 等价</text>
+  <rect x="1046" y="349" width="150" height="76" class="node"/><text x="1121" y="379" text-anchor="middle" class="t">自动修复</text><text x="1121" y="405" text-anchor="middle" class="s">RepairAgent</text>
+  <path d="M975 292 C975 320 492 315 492 349" class="line"/><path d="M574 387 H622" class="line"/><path d="M786 387 H834" class="line"/><path d="M998 387 H1046" class="dash"/><path d="M1121 349 C1121 317 916 316 916 349" class="dash"/>
+
+  <rect x="410" y="494" width="210" height="82" class="node"/><text x="515" y="526" text-anchor="middle" class="t">知识图谱检索 / 回写</text><text x="515" y="552" text-anchor="middle" class="s">算法 · 来源 · 失败 · 版本</text>
+  <rect x="679" y="494" width="210" height="82" class="node"/><text x="784" y="526" text-anchor="middle" class="t">经验与版本沉淀</text><text x="784" y="552" text-anchor="middle" class="s">ExperienceAgent</text>
+  <rect x="948" y="494" width="210" height="82" class="node"/><text x="1053" y="526" text-anchor="middle" class="t">双层报告与 Trace</text><text x="1053" y="552" text-anchor="middle" class="s">ReportAgent / Recorder</text>
+  <path d="M916 425 C916 463 784 458 784 494" class="line"/><path d="M679 535 H620" class="line"/><path d="M889 535 H948" class="line"/>
+
+  <rect x="410" y="627" width="748" height="72" class="soft"/>
+  <text x="784" y="656" text-anchor="middle" class="t">可插拔注册层</text>
+  <text x="784" y="682" text-anchor="middle" class="s">ModelRegistry · MetricRegistry · ValidationProfileRegistry · Plugins</text>
+
+  <rect x="1282" y="126" width="284" height="610" class="box"/>
+  <text x="1424" y="159" text-anchor="middle" class="h">外部依赖与交付物</text>
+  <text x="1424" y="193" text-anchor="middle" class="s">外部依赖（可降级）</text>
+  <rect x="1322" y="210" width="204" height="66" class="soft"/><text x="1424" y="237" text-anchor="middle" class="t">LLM 兼容接口</text><text x="1424" y="261" text-anchor="middle" class="s">API / Mock 可复现降级</text>
+  <rect x="1322" y="300" width="204" height="66" class="soft"/><text x="1424" y="327" text-anchor="middle" class="t">Crossref 联网研究</text><text x="1424" y="351" text-anchor="middle" class="s">DOI 来源证据</text>
+  <path d="M1308 394 H1540" fill="none" stroke="#777" stroke-width="1.4" stroke-dasharray="6 6"/>
+  <text x="1424" y="422" text-anchor="middle" class="s">交付产物（可审计）</text>
+  <rect x="1322" y="440" width="204" height="66" class="node"/><text x="1424" y="467" text-anchor="middle" class="t">独立可运行代码</text><text x="1424" y="491" text-anchor="middle" class="s">候选 / 修复 / 版本</text>
+  <rect x="1322" y="530" width="204" height="66" class="node"/><text x="1424" y="557" text-anchor="middle" class="t">业务 / 技术报告</text><text x="1424" y="581" text-anchor="middle" class="s">JSON · Markdown · Trace</text>
+  <rect x="1322" y="620" width="204" height="66" class="node"/><text x="1424" y="647" text-anchor="middle" class="t">知识图谱</text><text x="1424" y="671" text-anchor="middle" class="s">JSON · GraphML · HTML</text>
+  <path d="M1322 243 H1198" class="dash"/><path d="M1322 333 H1198" class="dash"/>
+  <path d="M1238 473 H1322" class="line"/><path d="M1238 563 H1322" class="line"/><path d="M1238 653 H1322" class="line"/>
+  <path d="M289 302 H333" class="line"/><path d="M289 510 H333" class="line"/><path d="M289 622 H333" class="line"/>
+
+  <rect x="333" y="772" width="905" height="126" class="box"/>
+  <text x="785" y="807" text-anchor="middle" class="h">库存预测行业适配层</text>
+  <text x="785" y="839" text-anchor="middle" class="t">数据标准化 → 需求画像 → 滚动预测 → 非对称库存成本 → 约束补货建议</text>
+  <text x="785" y="872" text-anchor="middle" class="s">现货 · 在途 · 欠单 · 安全库存 · 提前期 · MOQ · 包装倍数 · 仓容</text>
+  <path d="M785 736 V772" class="line"/>
+</svg>

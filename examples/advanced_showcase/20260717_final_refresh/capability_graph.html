@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inventory Capability Knowledge Graph</title>
+<style>
+*{box-sizing:border-box} body{font-family:Inter,ui-sans-serif,system-ui,sans-serif;margin:0;
+background:#f1f5f9;color:#0f172a} header{padding:18px 28px;background:#0f172a;color:white}
+h1{margin:0 0 6px;font-size:23px}.meta{color:#cbd5e1}.toolbar,.legend{display:flex;
+align-items:center;gap:10px;flex-wrap:wrap;padding:10px 20px;background:white;
+border-bottom:1px solid #e2e8f0}.toolbar input[type="search"]{min-width:280px;padding:8px 10px;
+border:1px solid #cbd5e1;border-radius:8px}.toolbar button,.legend-item{border:1px solid #cbd5e1;
+background:white;border-radius:8px;padding:7px 10px;cursor:pointer}.toolbar button:hover,
+.legend-item:hover{background:#f8fafc}.legend-item{display:flex;align-items:center;gap:6px}
+.toolbar label{display:flex;align-items:center;gap:6px}
+.legend-item i{width:11px;height:11px;border-radius:50%}.legend-item.is-off{opacity:.38;
+text-decoration:line-through}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 330px;
+min-height:680px}.graph-shell{overflow:auto;background:white}.details{border-left:1px solid #e2e8f0;
+background:#f8fafc;padding:18px;overflow:auto}.details h2{margin:0 0 8px;font-size:17px}
+.details p{color:#64748b;font-size:13px}.details pre{white-space:pre-wrap;word-break:break-word;
+font-size:12px;line-height:1.45;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:9px}
+svg{display:block;min-width:1100px;width:100%;height:auto;background:white;cursor:grab}
+svg.is-dragging{cursor:grabbing}.lane-bg{fill:#f8fafc;stroke:#e2e8f0}.lane-1{fill:#f1f5f9}
+.lane-title{font-size:13px;font-weight:700;fill:#475569}.edge{fill:none;stroke-width:1.45;
+opacity:.42}.edge-group.is-connected .edge{stroke-width:2.8;opacity:1}.edge-label{display:none;
+font-size:8px;fill:#475569;paint-order:stroke;stroke:white;stroke-width:3px}
+body.show-relations .edge-label{display:block}.node{cursor:pointer}.node circle{stroke:white;
+stroke-width:2.5;filter:drop-shadow(0 2px 2px rgb(15 23 42 / .15))}
+.node:hover circle,.node.is-selected circle{stroke:#0f172a;stroke-width:4}
+.node:focus{outline:none}.node:focus-visible circle{stroke:#0f172a;stroke-width:4}
+.node-label{font-size:11px;fill:#0f172a;paint-order:stroke;stroke:white;stroke-width:3px;
+stroke-linejoin:round}.node.is-dimmed,.edge-group.is-dimmed{opacity:.1}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.details{border-left:0;
+border-top:1px solid #e2e8f0}.toolbar input[type="search"]{min-width:180px;flex:1}}
+</style></head><body>
+<header><h1>库存算法能力知识图谱</h1>
+<div class="meta">schema 1.5 · 29 nodes · 52 edges · 分层可交互视图</div>
+</header>
+<div class="toolbar">
+<input id="graph-search" type="search" placeholder="搜索节点名称、类型或ID">
+<button type="button" id="zoom-in">放大</button><button type="button" id="zoom-out">缩小</button>
+<button type="button" id="reset-view">重置</button>
+<label><input id="toggle-relations" type="checkbox"> 显示关系名称</label>
+</div>
+<div class="legend"><button type="button" class="legend-item" data-filter-type="SourceArtifact"><i style="background:#0891b2"></i>SourceArtifact</button><button type="button" class="legend-item" data-filter-type="Algorithm"><i style="background:#2563eb"></i>Algorithm</button><button type="button" class="legend-item" data-filter-type="DemandProfile"><i style="background:#16a34a"></i>DemandProfile</button><button type="button" class="legend-item" data-filter-type="Metric"><i style="background:#f59e0b"></i>Metric</button><button type="button" class="legend-item" data-filter-type="ValidationRun"><i style="background:#7c3aed"></i>ValidationRun</button><button type="button" class="legend-item" data-filter-type="FailureCase"><i style="background:#ea580c"></i>FailureCase</button><button type="button" class="legend-item" data-filter-type="RepairStrategy"><i style="background:#dc2626"></i>RepairStrategy</button><button type="button" class="legend-item" data-filter-type="CapabilityVersion"><i style="background:#db2777"></i>CapabilityVersion</button></div>
+<div class="workspace"><div class="graph-shell">
+<svg id="graph" viewBox="0 0 1600 751" role="img"
+aria-label="Capability knowledge graph">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="19" refY="3"
+orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#64748b"/></marker></defs>
+<g id="viewport"><rect x="12" y="62" width="282" height="669" rx="14" class="lane-bg lane-0" /><rect x="312" y="62" width="282" height="669" rx="14" class="lane-bg lane-1" /><rect x="612" y="62" width="282" height="669" rx="14" class="lane-bg lane-0" /><rect x="912" y="62" width="282" height="669" rx="14" class="lane-bg lane-1" /><rect x="1212" y="62" width="282" height="669" rx="14" class="lane-bg lane-0" /><text x="28" y="92" class="lane-title">知识来源</text><text x="328" y="92" class="lane-title">算法能力</text><text x="628" y="92" class="lane-title">需求画像</text><text x="928" y="92" class="lane-title">评价指标</text><text x="1228" y="92" class="lane-title">运行与版本</text><g class="edge-group" data-source="algorithm:croston" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 138.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="151.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 307.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 177.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="190.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 268.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="255.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 125.0 Q 695.0 99.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="112.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:croston" data-target="profile:intermittent" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 125.0 Q 545.0 190.0 695.0 203.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="177.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:croston" data-target="profile:many_zeros" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 125.0 Q 545.0 177.0 695.0 281.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="190.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:croston" data-target="source:e7fbe6265bbd3cee" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 125.0 Q 245.0 151.0 95.0 125.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="138.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 177.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="190.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 346.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="333.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 216.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="229.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 307.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 203.0 Q 695.0 138.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="151.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="profile:short_history" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 203.0 Q 545.0 307.0 695.0 359.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="294.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:last_value" data-target="source:cc24b90807e0ed4e" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 203.0 Q 245.0 177.0 95.0 203.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="190.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 268.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="255.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 333.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="346.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 307.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 294.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="307.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 281.0 Q 695.0 229.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="216.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="profile:stable" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 281.0 Q 545.0 333.0 695.0 437.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="346.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="profile:short_history" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 281.0 Q 545.0 346.0 695.0 359.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="333.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:moving_average" data-target="source:4191b6ea63dffed1" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 281.0 Q 245.0 333.0 95.0 437.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="346.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 307.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="294.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 372.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="385.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 346.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="333.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 333.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="346.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 359.0 Q 695.0 268.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="255.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="profile:trend" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 359.0 Q 545.0 411.0 695.0 515.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="424.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="profile:dense" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 359.0 Q 545.0 268.0 695.0 125.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="255.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="profile:volatile" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 359.0 Q 545.0 450.0 695.0 593.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="463.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:ridge_lag" data-target="source:a6da8bbaf91c57db" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 359.0 Q 245.0 385.0 95.0 359.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="372.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:inventory_cost" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 294.0 995.0 203.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="307.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:wape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 463.0 995.0 437.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="450.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:rmse" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 333.0 995.0 281.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="346.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:smape" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 424.0 995.0 359.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="411.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="metric:bias" data-relation="EVALUATED_BY"><title>EVALUATED_BY</title><path d="M 395.0 437.0 Q 695.0 255.0 995.0 125.0" class="edge" stroke="#d97706" marker-end="url(#arrow)" /><text x="695.0" y="268.0" class="edge-label">EVALUATED_BY</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="profile:weekly_seasonal" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 437.0 Q 545.0 580.0 695.0 671.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="567.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="profile:stable" data-relation="SUITABLE_FOR"><title>SUITABLE_FOR</title><path d="M 395.0 437.0 Q 545.0 411.0 695.0 437.0" class="edge" stroke="#16a34a" marker-end="url(#arrow)" /><text x="545.0" y="424.0" class="edge-label">SUITABLE_FOR</text></g><g class="edge-group" data-source="algorithm:seasonal_naive" data-target="source:0d2b62ba65897f56" data-relation="EXTRACTED_FROM"><title>EXTRACTED_FROM</title><path d="M 395.0 437.0 Q 245.0 385.0 95.0 281.0" class="edge" stroke="#0891b2" marker-end="url(#arrow)" /><text x="245.0" y="372.0" class="edge-label">EXTRACTED_FROM</text></g><g class="edge-group" data-source="run:c4e594e423da" data-target="algorithm:seasonal_naive" data-relation="VALIDATED"><title>VALIDATED</title><path d="M 1295.0 125.0 Q 845.0 255.0 395.0 437.0" class="edge" stroke="#7c3aed" marker-end="url(#arrow)" /><text x="845.0" y="268.0" class="edge-label">VALIDATED</text></g><g class="edge-group" data-source="run:c4e594e423da" data-target="version:seasonal_naive:6c2d6284158f" data-relation="VALIDATED_VERSION"><title>VALIDATED_VERSION</title><path d="M 1295.0 125.0 Q 1295.0 346.0 1295.0 515.0" class="edge" stroke="#db2777" marker-end="url(#arrow)" /><text x="1295.0" y="333.0" class="edge-label">VALIDATED_VERSION</text></g><g class="edge-group" data-source="run:c4e594e423da" data-target="failure:0b494e8f4d0bcb6f" data-relation="OBSERVED_FAILURE"><title>OBSERVED_FAILURE</title><path d="M 1295.0 125.0 Q 1295.0 177.0 1295.0 281.0" class="edge" stroke="#ea580c" marker-end="url(#arrow)" /><text x="1295.0" y="190.0" class="edge-label">OBSERVED_FAILURE</text></g><g class="edge-group" data-source="run:c4e594e423da" data-target="repair:4ded2f418bfd5b94" data-relation="REPAIRED_BY"><title>REPAIRED_BY</title><path d="M 1295.0 125.0 Q 1295.0 268.0 1295.0 359.0" class="edge" stroke="#dc2626" marker-end="url(#arrow)" /><text x="1295.0" y="255.0" class="edge-label">REPAIRED_BY</text></g><g class="edge-group" data-source="version:seasonal_naive:6c2d6284158f" data-target="algorithm:seasonal_naive" data-relation="VERSION_OF"><title>VERSION_OF</title><path d="M 1295.0 515.0 Q 845.0 450.0 395.0 437.0" class="edge" stroke="#db2777" marker-end="url(#arrow)" /><text x="845.0" y="463.0" class="edge-label">VERSION_OF</text></g><g class="edge-group" data-source="failure:0b494e8f4d0bcb6f" data-target="algorithm:seasonal_naive" data-relation="FAILURE_OF"><title>FAILURE_OF</title><path d="M 1295.0 281.0 Q 845.0 385.0 395.0 437.0" class="edge" stroke="#ea580c" marker-end="url(#arrow)" /><text x="845.0" y="372.0" class="edge-label">FAILURE_OF</text></g><g class="edge-group" data-source="repair:4ded2f418bfd5b94" data-target="failure:0b494e8f4d0bcb6f" data-relation="ADDRESSES"><title>ADDRESSES</title><path d="M 1295.0 359.0 Q 1295.0 294.0 1295.0 281.0" class="edge" stroke="#dc2626" marker-end="url(#arrow)" /><text x="1295.0" y="307.0" class="edge-label">ADDRESSES</text></g><g class="edge-group" data-source="run:fbabfce1b1ee" data-target="algorithm:seasonal_naive" data-relation="VALIDATED"><title>VALIDATED</title><path d="M 1295.0 203.0 Q 845.0 346.0 395.0 437.0" class="edge" stroke="#7c3aed" marker-end="url(#arrow)" /><text x="845.0" y="333.0" class="edge-label">VALIDATED</text></g><g class="edge-group" data-source="run:fbabfce1b1ee" data-target="version:seasonal_naive:6c2d6284158f" data-relation="VALIDATED_VERSION"><title>VALIDATED_VERSION</title><path d="M 1295.0 203.0 Q 1295.0 333.0 1295.0 515.0" class="edge" stroke="#db2777" marker-end="url(#arrow)" /><text x="1295.0" y="346.0" class="edge-label">VALIDATED_VERSION</text></g><g class="edge-group" data-source="run:fbabfce1b1ee" data-target="failure:0b494e8f4d0bcb6f" data-relation="OBSERVED_FAILURE"><title>OBSERVED_FAILURE</title><path d="M 1295.0 203.0 Q 1295.0 268.0 1295.0 281.0" class="edge" stroke="#ea580c" marker-end="url(#arrow)" /><text x="1295.0" y="255.0" class="edge-label">OBSERVED_FAILURE</text></g><g class="edge-group" data-source="run:fbabfce1b1ee" data-target="repair:9391a7dc6a98ab59" data-relation="REPAIRED_BY"><title>REPAIRED_BY</title><path d="M 1295.0 203.0 Q 1295.0 294.0 1295.0 437.0" class="edge" stroke="#dc2626" marker-end="url(#arrow)" /><text x="1295.0" y="307.0" class="edge-label">REPAIRED_BY</text></g><g class="edge-group" data-source="repair:9391a7dc6a98ab59" data-target="failure:0b494e8f4d0bcb6f" data-relation="ADDRESSES"><title>ADDRESSES</title><path d="M 1295.0 437.0 Q 1295.0 385.0 1295.0 281.0" class="edge" stroke="#dc2626" marker-end="url(#arrow)" /><text x="1295.0" y="372.0" class="edge-label">ADDRESSES</text></g><g class="node" data-node-id="profile:stable" data-node-type="DemandProfile" data-search="profile:stable demandprofile stable" data-details="{
+  &quot;id&quot;: &quot;profile:stable&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;stable&quot;
+}" tabindex="0"><title>stable · DemandProfile</title><circle cx="695.0" cy="437.0" r="17" fill="#16a34a" /><text x="718.0" y="442.0" class="node-label">stable</text></g><g class="node" data-node-id="profile:volatile" data-node-type="DemandProfile" data-search="profile:volatile demandprofile volatile" data-details="{
+  &quot;id&quot;: &quot;profile:volatile&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;volatile&quot;
+}" tabindex="0"><title>volatile · DemandProfile</title><circle cx="695.0" cy="593.0" r="17" fill="#16a34a" /><text x="718.0" y="598.0" class="node-label">volatile</text></g><g class="node" data-node-id="profile:intermittent" data-node-type="DemandProfile" data-search="profile:intermittent demandprofile intermittent" data-details="{
+  &quot;id&quot;: &quot;profile:intermittent&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;intermittent&quot;
+}" tabindex="0"><title>intermittent · DemandProfile</title><circle cx="695.0" cy="203.0" r="17" fill="#16a34a" /><text x="718.0" y="208.0" class="node-label">intermittent</text></g><g class="node" data-node-id="profile:weekly_seasonal" data-node-type="DemandProfile" data-search="profile:weekly_seasonal demandprofile weekly_seasonal" data-details="{
+  &quot;id&quot;: &quot;profile:weekly_seasonal&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;weekly_seasonal&quot;
+}" tabindex="0"><title>weekly_seasonal · DemandProfile</title><circle cx="695.0" cy="671.0" r="17" fill="#16a34a" /><text x="718.0" y="676.0" class="node-label">weekly_seasonal</text></g><g class="node" data-node-id="profile:trend" data-node-type="DemandProfile" data-search="profile:trend demandprofile trend" data-details="{
+  &quot;id&quot;: &quot;profile:trend&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;trend&quot;
+}" tabindex="0"><title>trend · DemandProfile</title><circle cx="695.0" cy="515.0" r="17" fill="#16a34a" /><text x="718.0" y="520.0" class="node-label">trend</text></g><g class="node" data-node-id="profile:dense" data-node-type="DemandProfile" data-search="profile:dense demandprofile dense" data-details="{
+  &quot;id&quot;: &quot;profile:dense&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;dense&quot;
+}" tabindex="0"><title>dense · DemandProfile</title><circle cx="695.0" cy="125.0" r="17" fill="#16a34a" /><text x="718.0" y="130.0" class="node-label">dense</text></g><g class="node" data-node-id="metric:inventory_cost" data-node-type="Metric" data-search="metric:inventory_cost metric inventory_cost" data-details="{
+  &quot;id&quot;: &quot;metric:inventory_cost&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;inventory_cost&quot;,
+  &quot;evaluation_unit&quot;: &quot;horizon_total&quot;,
+  &quot;formula&quot;: &quot;A*max(D-T,0) + B*max(T-D,0)&quot;,
+  &quot;scenario&quot;: &quot;inventory_forecasting&quot;,
+  &quot;cost_a&quot;: &quot;understock&quot;,
+  &quot;cost_b&quot;: &quot;overstock&quot;
+}" tabindex="0"><title>inventory_cost · Metric</title><circle cx="995.0" cy="203.0" r="17" fill="#f59e0b" /><text x="1018.0" y="208.0" class="node-label">inventory_cost</text></g><g class="node" data-node-id="metric:wape" data-node-type="Metric" data-search="metric:wape metric wape" data-details="{
+  &quot;id&quot;: &quot;metric:wape&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;wape&quot;
+}" tabindex="0"><title>wape · Metric</title><circle cx="995.0" cy="437.0" r="17" fill="#f59e0b" /><text x="1018.0" y="442.0" class="node-label">wape</text></g><g class="node" data-node-id="metric:smape" data-node-type="Metric" data-search="metric:smape metric smape" data-details="{
+  &quot;id&quot;: &quot;metric:smape&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;smape&quot;
+}" tabindex="0"><title>smape · Metric</title><circle cx="995.0" cy="359.0" r="17" fill="#f59e0b" /><text x="1018.0" y="364.0" class="node-label">smape</text></g><g class="node" data-node-id="metric:bias" data-node-type="Metric" data-search="metric:bias metric bias" data-details="{
+  &quot;id&quot;: &quot;metric:bias&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;bias&quot;
+}" tabindex="0"><title>bias · Metric</title><circle cx="995.0" cy="125.0" r="17" fill="#f59e0b" /><text x="1018.0" y="130.0" class="node-label">bias</text></g><g class="node" data-node-id="metric:rmse" data-node-type="Metric" data-search="metric:rmse metric rmse" data-details="{
+  &quot;id&quot;: &quot;metric:rmse&quot;,
+  &quot;type&quot;: &quot;Metric&quot;,
+  &quot;name&quot;: &quot;rmse&quot;
+}" tabindex="0"><title>rmse · Metric</title><circle cx="995.0" cy="281.0" r="17" fill="#f59e0b" /><text x="1018.0" y="286.0" class="node-label">rmse</text></g><g class="node" data-node-id="algorithm:croston" data-node-type="Algorithm" data-search="algorithm:croston algorithm croston" data-details="{
+  &quot;id&quot;: &quot;algorithm:croston&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;croston&quot;,
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;description&quot;: &quot;Estimate non-zero demand size and the interval between demands separately.&quot;,
+  &quot;template_name&quot;: &quot;croston&quot;,
+  &quot;min_history&quot;: 14,
+  &quot;dependencies&quot;: [
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;Non-negative daily demand history with possible zero-demand periods.&quot;,
+  &quot;output_contract&quot;: &quot;Non-negative daily forecast and horizon-total target inventory.&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;parameters&quot;: {
+    &quot;alpha&quot;: 0.1
+  },
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md&quot;,
+  &quot;source_hash&quot;: &quot;e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9&quot;,
+  &quot;version&quot;: &quot;1.1.0&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_title&quot;: &quot;Forecasting and Stock Control for Intermittent Demands&quot;,
+  &quot;source_url&quot;: &quot;https://doi.org/10.1057/jors.1972.50&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;confidence&quot;: 0.9,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;Croston 1972 method description&quot;,
+    &quot;inventory_agent/forecasting/models.py:52&quot;
+  ],
+  &quot;extraction_warnings&quot;: [
+    &quot;This implementation is classic Croston rather than the Syntetos-Boylan adjustment.&quot;
+  ],
+  &quot;implementation_kind&quot;: &quot;algorithm&quot;,
+  &quot;entrypoints&quot;: [],
+  &quot;internal_dependencies&quot;: [],
+  &quot;complexity&quot;: {}
+}" tabindex="0"><title>croston · Algorithm</title><circle cx="395.0" cy="125.0" r="17" fill="#2563eb" /><text x="418.0" y="130.0" class="node-label">croston</text></g><g class="node" data-node-id="profile:many_zeros" data-node-type="DemandProfile" data-search="profile:many_zeros demandprofile many_zeros" data-details="{
+  &quot;id&quot;: &quot;profile:many_zeros&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;many_zeros&quot;
+}" tabindex="0"><title>many_zeros · DemandProfile</title><circle cx="695.0" cy="281.0" r="17" fill="#16a34a" /><text x="718.0" y="286.0" class="node-label">many_zeros</text></g><g class="node" data-node-id="algorithm:last_value" data-node-type="Algorithm" data-search="algorithm:last_value algorithm last_value" data-details="{
+  &quot;id&quot;: &quot;algorithm:last_value&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;last_value&quot;,
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;description&quot;: &quot;Repeat the latest observed demand as a transparent baseline.&quot;,
+  &quot;template_name&quot;: &quot;last_value&quot;,
+  &quot;min_history&quot;: 1,
+  &quot;dependencies&quot;: [
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;Non-negative daily demand history and a positive forecast horizon.&quot;,
+  &quot;output_contract&quot;: &quot;Non-negative daily forecast and horizon-total target inventory.&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;parameters&quot;: {},
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md&quot;,
+  &quot;source_hash&quot;: &quot;cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1&quot;,
+  &quot;version&quot;: &quot;1.1.0&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_title&quot;: &quot;M5 accuracy competition results, findings, and conclusions&quot;,
+  &quot;source_url&quot;: &quot;https://www.sciencedirect.com/science/article/pii/S0169207021001874&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;confidence&quot;: 0.95,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;article benchmark discussion&quot;,
+    &quot;inventory_agent/forecasting/models.py:12&quot;
+  ],
+  &quot;extraction_warnings&quot;: [],
+  &quot;implementation_kind&quot;: &quot;algorithm&quot;,
+  &quot;entrypoints&quot;: [],
+  &quot;internal_dependencies&quot;: [],
+  &quot;complexity&quot;: {}
+}" tabindex="0"><title>last_value · Algorithm</title><circle cx="395.0" cy="203.0" r="17" fill="#2563eb" /><text x="418.0" y="208.0" class="node-label">last_value</text></g><g class="node" data-node-id="profile:short_history" data-node-type="DemandProfile" data-search="profile:short_history demandprofile short_history" data-details="{
+  &quot;id&quot;: &quot;profile:short_history&quot;,
+  &quot;type&quot;: &quot;DemandProfile&quot;,
+  &quot;name&quot;: &quot;short_history&quot;
+}" tabindex="0"><title>short_history · DemandProfile</title><circle cx="695.0" cy="359.0" r="17" fill="#16a34a" /><text x="718.0" y="364.0" class="node-label">short_history</text></g><g class="node" data-node-id="algorithm:moving_average" data-node-type="Algorithm" data-search="algorithm:moving_average algorithm moving_average" data-details="{
+  &quot;id&quot;: &quot;algorithm:moving_average&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;moving_average&quot;,
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;description&quot;: &quot;Forecast stable demand with the mean of the most recent observations.&quot;,
+  &quot;template_name&quot;: &quot;moving_average&quot;,
+  &quot;min_history&quot;: 7,
+  &quot;dependencies&quot;: [
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;Non-negative daily demand history and a positive forecast horizon.&quot;,
+  &quot;output_contract&quot;: &quot;Non-negative daily forecast and horizon-total target inventory.&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;parameters&quot;: {
+    &quot;window&quot;: 14
+  },
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md&quot;,
+  &quot;source_hash&quot;: &quot;4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d&quot;,
+  &quot;version&quot;: &quot;1.1.0&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_title&quot;: &quot;The accuracy of intermittent demand estimates&quot;,
+  &quot;source_url&quot;: &quot;https://www.sciencedirect.com/science/article/pii/S0169207004000792&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;confidence&quot;: 0.9,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;SMA benchmark description&quot;,
+    &quot;inventory_agent/forecasting/models.py:22&quot;
+  ],
+  &quot;extraction_warnings&quot;: [],
+  &quot;implementation_kind&quot;: &quot;algorithm&quot;,
+  &quot;entrypoints&quot;: [],
+  &quot;internal_dependencies&quot;: [],
+  &quot;complexity&quot;: {}
+}" tabindex="0"><title>moving_average · Algorithm</title><circle cx="395.0" cy="281.0" r="17" fill="#2563eb" /><text x="418.0" y="286.0" class="node-label">moving_average</text></g><g class="node" data-node-id="algorithm:ridge_lag" data-node-type="Algorithm" data-search="algorithm:ridge_lag algorithm ridge_lag" data-details="{
+  &quot;id&quot;: &quot;algorithm:ridge_lag&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;ridge_lag&quot;,
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;description&quot;: &quot;Fit regularized autoregression on recent demand lags and forecast recursively.&quot;,
+  &quot;template_name&quot;: &quot;ridge_lag&quot;,
+  &quot;min_history&quot;: 30,
+  &quot;dependencies&quot;: [
+    &quot;numpy&quot;,
+    &quot;pandas&quot;,
+    &quot;scikit-learn&quot;
+  ],
+  &quot;input_contract&quot;: &quot;Dense non-negative daily history with enough observations for lag construction.&quot;,
+  &quot;output_contract&quot;: &quot;Non-negative daily forecast and horizon-total target inventory.&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;parameters&quot;: {
+    &quot;lags&quot;: 14,
+    &quot;alpha&quot;: 1.0
+  },
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md&quot;,
+  &quot;source_hash&quot;: &quot;a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc&quot;,
+  &quot;version&quot;: &quot;1.1.0&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_title&quot;: &quot;scikit-learn Ridge regression API&quot;,
+  &quot;source_url&quot;: &quot;https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html&quot;,
+  &quot;source_license&quot;: &quot;BSD-3-Clause documentation and citation metadata&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;confidence&quot;: 0.9,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;Ridge L2 objective&quot;,
+    &quot;inventory_agent/forecasting/models.py:84&quot;
+  ],
+  &quot;extraction_warnings&quot;: [],
+  &quot;implementation_kind&quot;: &quot;algorithm&quot;,
+  &quot;entrypoints&quot;: [],
+  &quot;internal_dependencies&quot;: [],
+  &quot;complexity&quot;: {}
+}" tabindex="0"><title>ridge_lag · Algorithm</title><circle cx="395.0" cy="359.0" r="17" fill="#2563eb" /><text x="418.0" y="364.0" class="node-label">ridge_lag</text></g><g class="node" data-node-id="algorithm:seasonal_naive" data-node-type="Algorithm" data-search="algorithm:seasonal_naive algorithm seasonal_naive" data-details="{
+  &quot;id&quot;: &quot;algorithm:seasonal_naive&quot;,
+  &quot;type&quot;: &quot;Algorithm&quot;,
+  &quot;name&quot;: &quot;seasonal_naive&quot;,
+  &quot;task_type&quot;: &quot;inventory_forecasting&quot;,
+  &quot;description&quot;: &quot;Repeat the latest weekly pattern over the forecast horizon.&quot;,
+  &quot;template_name&quot;: &quot;seasonal_naive&quot;,
+  &quot;min_history&quot;: 14,
+  &quot;dependencies&quot;: [
+    &quot;pandas&quot;
+  ],
+  &quot;input_contract&quot;: &quot;Non-negative daily demand history and a positive forecast horizon.&quot;,
+  &quot;output_contract&quot;: &quot;Non-negative daily forecast and horizon-total target inventory.&quot;,
+  &quot;locations&quot;: [
+    &quot;all&quot;,
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+    &quot;4&quot;,
+    &quot;5&quot;
+  ],
+  &quot;parameters&quot;: {
+    &quot;period&quot;: 7
+  },
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md&quot;,
+  &quot;source_hash&quot;: &quot;0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3&quot;,
+  &quot;version&quot;: &quot;1.1.0&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_title&quot;: &quot;M5 accuracy competition results, findings, and conclusions&quot;,
+  &quot;source_url&quot;: &quot;https://www.sciencedirect.com/science/article/pii/S0169207021001874&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;confidence&quot;: 0.95,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;,
+  &quot;evidence_refs&quot;: [
+    &quot;article seasonal-naive benchmark discussion&quot;,
+    &quot;inventory_agent/forecasting/models.py:36&quot;
+  ],
+  &quot;extraction_warnings&quot;: [],
+  &quot;implementation_kind&quot;: &quot;algorithm&quot;,
+  &quot;entrypoints&quot;: [],
+  &quot;internal_dependencies&quot;: [],
+  &quot;complexity&quot;: {}
+}" tabindex="0"><title>seasonal_naive · Algorithm</title><circle cx="395.0" cy="437.0" r="17" fill="#2563eb" /><text x="418.0" y="442.0" class="node-label">seasonal_naive</text></g><g class="node" data-node-id="source:e7fbe6265bbd3cee" data-node-type="SourceArtifact" data-search="source:e7fbe6265bbd3cee sourceartifact forecasting and stock control for intermittent demands" data-details="{
+  &quot;id&quot;: &quot;source:e7fbe6265bbd3cee&quot;,
+  &quot;type&quot;: &quot;SourceArtifact&quot;,
+  &quot;name&quot;: &quot;Forecasting and Stock Control for Intermittent Demands&quot;,
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md&quot;,
+  &quot;source_hash&quot;: &quot;e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_url&quot;: &quot;https://doi.org/10.1057/jors.1972.50&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;
+}" tabindex="0"><title>Forecasting and Stock Control for Intermittent Demands · SourceArtifact</title><circle cx="95.0" cy="125.0" r="17" fill="#0891b2" /><text x="118.0" y="130.0" class="node-label">Forecasting and Stock Contr…</text></g><g class="node" data-node-id="source:cc24b90807e0ed4e" data-node-type="SourceArtifact" data-search="source:cc24b90807e0ed4e sourceartifact m5 accuracy competition results, findings, and conclusions" data-details="{
+  &quot;id&quot;: &quot;source:cc24b90807e0ed4e&quot;,
+  &quot;type&quot;: &quot;SourceArtifact&quot;,
+  &quot;name&quot;: &quot;M5 accuracy competition results, findings, and conclusions&quot;,
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md&quot;,
+  &quot;source_hash&quot;: &quot;cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_url&quot;: &quot;https://www.sciencedirect.com/science/article/pii/S0169207021001874&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;
+}" tabindex="0"><title>M5 accuracy competition results, findings, and conclusions · SourceArtifact</title><circle cx="95.0" cy="203.0" r="17" fill="#0891b2" /><text x="118.0" y="208.0" class="node-label">last_value.md: M5 accuracy …</text></g><g class="node" data-node-id="source:4191b6ea63dffed1" data-node-type="SourceArtifact" data-search="source:4191b6ea63dffed1 sourceartifact the accuracy of intermittent demand estimates" data-details="{
+  &quot;id&quot;: &quot;source:4191b6ea63dffed1&quot;,
+  &quot;type&quot;: &quot;SourceArtifact&quot;,
+  &quot;name&quot;: &quot;The accuracy of intermittent demand estimates&quot;,
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md&quot;,
+  &quot;source_hash&quot;: &quot;4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_url&quot;: &quot;https://www.sciencedirect.com/science/article/pii/S0169207004000792&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;
+}" tabindex="0"><title>The accuracy of intermittent demand estimates · SourceArtifact</title><circle cx="95.0" cy="437.0" r="17" fill="#0891b2" /><text x="118.0" y="442.0" class="node-label">The accuracy of intermitten…</text></g><g class="node" data-node-id="source:a6da8bbaf91c57db" data-node-type="SourceArtifact" data-search="source:a6da8bbaf91c57db sourceartifact scikit-learn ridge regression api" data-details="{
+  &quot;id&quot;: &quot;source:a6da8bbaf91c57db&quot;,
+  &quot;type&quot;: &quot;SourceArtifact&quot;,
+  &quot;name&quot;: &quot;scikit-learn Ridge regression API&quot;,
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md&quot;,
+  &quot;source_hash&quot;: &quot;a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_url&quot;: &quot;https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html&quot;,
+  &quot;source_license&quot;: &quot;BSD-3-Clause documentation and citation metadata&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;
+}" tabindex="0"><title>scikit-learn Ridge regression API · SourceArtifact</title><circle cx="95.0" cy="359.0" r="17" fill="#0891b2" /><text x="118.0" y="364.0" class="node-label">scikit-learn Ridge regressi…</text></g><g class="node" data-node-id="source:0d2b62ba65897f56" data-node-type="SourceArtifact" data-search="source:0d2b62ba65897f56 sourceartifact m5 accuracy competition results, findings, and conclusions" data-details="{
+  &quot;id&quot;: &quot;source:0d2b62ba65897f56&quot;,
+  &quot;type&quot;: &quot;SourceArtifact&quot;,
+  &quot;name&quot;: &quot;M5 accuracy competition results, findings, and conclusions&quot;,
+  &quot;source_type&quot;: &quot;document&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md&quot;,
+  &quot;source_hash&quot;: &quot;0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3&quot;,
+  &quot;extracted_by&quot;: &quot;deterministic&quot;,
+  &quot;source_url&quot;: &quot;https://www.sciencedirect.com/science/article/pii/S0169207021001874&quot;,
+  &quot;source_license&quot;: &quot;citation_only&quot;,
+  &quot;accessed_at&quot;: &quot;2026-07-16&quot;,
+  &quot;review_status&quot;: &quot;source_reviewed&quot;
+}" tabindex="0"><title>M5 accuracy competition results, findings, and conclusions · SourceArtifact</title><circle cx="95.0" cy="281.0" r="17" fill="#0891b2" /><text x="118.0" y="286.0" class="node-label">seasonal_naive.md: M5 accur…</text></g><g class="node" data-node-id="run:c4e594e423da" data-node-type="ValidationRun" data-search="run:c4e594e423da validationrun 验证:seasonal_naive@1" data-details="{
+  &quot;id&quot;: &quot;run:c4e594e423da&quot;,
+  &quot;type&quot;: &quot;ValidationRun&quot;,
+  &quot;name&quot;: &quot;验证:seasonal_naive@1&quot;,
+  &quot;item_id&quot;: 1002,
+  &quot;store_code&quot;: &quot;1&quot;,
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;metrics&quot;: &quot;{\&quot;bias\&quot;: 0.0, \&quot;inventory_cost\&quot;: 0.0, \&quot;mae\&quot;: 0.0, \&quot;mean_actual_total\&quot;: 184.0, \&quot;mean_target_inventory\&quot;: 184.0, \&quot;rmse\&quot;: 0.0, \&quot;smape\&quot;: 0.0, \&quot;wape\&quot;: 0.0}&quot;,
+  &quot;validation_checks&quot;: &quot;{\&quot;equivalence\&quot;: true, \&quot;imports\&quot;: true, \&quot;interface\&quot;: true, \&quot;runtime\&quot;: true, \&quot;stability\&quot;: true, \&quot;syntax\&quot;: true}&quot;,
+  &quot;timestamp&quot;: &quot;2026-07-17T07:42:57.788556+00:00&quot;
+}" tabindex="0"><title>验证:seasonal_naive@1 · ValidationRun</title><circle cx="1295.0" cy="125.0" r="17" fill="#7c3aed" /><text x="1318.0" y="130.0" class="node-label">验证:seasonal_naive@1</text></g><g class="node" data-node-id="version:seasonal_naive:6c2d6284158f" data-node-type="CapabilityVersion" data-search="version:seasonal_naive:6c2d6284158f capabilityversion seasonal_naive@6c2d6284158f" data-details="{
+  &quot;id&quot;: &quot;version:seasonal_naive:6c2d6284158f&quot;,
+  &quot;type&quot;: &quot;CapabilityVersion&quot;,
+  &quot;name&quot;: &quot;seasonal_naive@6c2d6284158f&quot;,
+  &quot;created_at&quot;: &quot;2026-07-17T07:42:57.788556+00:00&quot;,
+  &quot;lifecycle_status&quot;: &quot;candidate&quot;,
+  &quot;capability_version&quot;: &quot;1.1.0&quot;,
+  &quot;generation_mode&quot;: &quot;spec_template&quot;,
+  &quot;variant_id&quot;: &quot;primary&quot;,
+  &quot;generation_strategy&quot;: &quot;specification_fidelity&quot;,
+  &quot;prompt_hash&quot;: &quot;89cca1155d66972b3d3d77f0cfac06272c9a733c66918f9dda9a11bf30de743d&quot;,
+  &quot;spec_hash&quot;: &quot;9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6&quot;,
+  &quot;source_hash&quot;: &quot;6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff&quot;,
+  &quot;source_ref&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md&quot;,
+  &quot;generated_path&quot;: &quot;F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_final_refresh\\runs\\case_02_experience_reuse\\20260717_154257_824231\\generated\\forecast_seasonal_naive.py&quot;,
+  &quot;collaboration&quot;: {
+    &quot;protocol&quot;: &quot;architecture-implementation-review-validation&quot;,
+    &quot;architecture_mode&quot;: &quot;&quot;,
+    &quot;review_mode&quot;: &quot;&quot;,
+    &quot;revision_applied&quot;: false
+  },
+  &quot;parent_version&quot;: &quot;&quot;,
+  &quot;repair_count&quot;: 1,
+  &quot;validation_profile&quot;: &quot;inventory_target&quot;,
+  &quot;performance&quot;: {
+    &quot;mean_latency_ms&quot;: 0.7288199994945899,
+    &quot;peak_memory_kb&quot;: 25.9462890625,
+    &quot;throughput_calls_per_second&quot;: 1372.0808988412277
+  },
+  &quot;validation_status&quot;: &quot;success&quot;,
+  &quot;validation_count&quot;: 2,
+  &quot;last_validated_at&quot;: &quot;2026-07-17T07:43:03.122513+00:00&quot;,
+  &quot;latest_metrics&quot;: &quot;{\&quot;bias\&quot;: 0.0, \&quot;inventory_cost\&quot;: 0.0, \&quot;mae\&quot;: 0.0, \&quot;mean_actual_total\&quot;: 184.0, \&quot;mean_target_inventory\&quot;: 184.0, \&quot;rmse\&quot;: 0.0, \&quot;smape\&quot;: 0.0, \&quot;wape\&quot;: 0.0}&quot;,
+  &quot;latest_validation_checks&quot;: &quot;{\&quot;equivalence\&quot;: true, \&quot;imports\&quot;: true, \&quot;interface\&quot;: true, \&quot;runtime\&quot;: true, \&quot;stability\&quot;: true, \&quot;syntax\&quot;: true}&quot;
+}" tabindex="0"><title>seasonal_naive@6c2d6284158f · CapabilityVersion</title><circle cx="1295.0" cy="515.0" r="17" fill="#db2777" /><text x="1318.0" y="520.0" class="node-label">seasonal_naive@6c2d6284158f</text></g><g class="node" data-node-id="failure:0b494e8f4d0bcb6f" data-node-type="FailureCase" data-search="failure:0b494e8f4d0bcb6f failurecase interface:0b494e8f4d0bcb6f" data-details="{
+  &quot;id&quot;: &quot;failure:0b494e8f4d0bcb6f&quot;,
+  &quot;type&quot;: &quot;FailureCase&quot;,
+  &quot;name&quot;: &quot;interface:0b494e8f4d0bcb6f&quot;,
+  &quot;category&quot;: &quot;interface&quot;,
+  &quot;fingerprint&quot;: &quot;0b494e8f4d0bcb6f&quot;,
+  &quot;normalized_error&quot;: &quot;interface: forecast returned ndarray instead of required list[float]&quot;,
+  &quot;retryable&quot;: true,
+  &quot;severity&quot;: &quot;high&quot;,
+  &quot;likely_stage&quot;: &quot;contract_validation&quot;,
+  &quot;root_cause&quot;: &quot;生成模块未满足 forecast/build_inventory_target 统一接口契约。&quot;,
+  &quot;recommended_actions&quot;: [
+    &quot;按接口签名重新生成&quot;,
+    &quot;补齐返回字段&quot;,
+    &quot;运行契约测试&quot;
+  ],
+  &quot;occurrence_count&quot;: 2,
+  &quot;last_seen&quot;: &quot;2026-07-17T07:43:03.122513+00:00&quot;
+}" tabindex="0"><title>interface:0b494e8f4d0bcb6f · FailureCase</title><circle cx="1295.0" cy="281.0" r="17" fill="#ea580c" /><text x="1318.0" y="286.0" class="node-label">interface:0b494e8f4d0bcb6f</text></g><g class="node" data-node-id="repair:4ded2f418bfd5b94" data-node-type="RepairStrategy" data-search="repair:4ded2f418bfd5b94 repairstrategy 修复:seasonal_naive" data-details="{
+  &quot;id&quot;: &quot;repair:4ded2f418bfd5b94&quot;,
+  &quot;type&quot;: &quot;RepairStrategy&quot;,
+  &quot;name&quot;: &quot;修复:seasonal_naive&quot;,
+  &quot;description&quot;: &quot;第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]&quot;,
+  &quot;strategy_fingerprint&quot;: &quot;4ded2f418bfd5b94&quot;,
+  &quot;attempt_count&quot;: 1,
+  &quot;success_count&quot;: 1,
+  &quot;last_used&quot;: &quot;2026-07-17T07:42:57.788556+00:00&quot;
+}" tabindex="0"><title>修复:seasonal_naive · RepairStrategy</title><circle cx="1295.0" cy="359.0" r="17" fill="#dc2626" /><text x="1318.0" y="364.0" class="node-label">修复:seasonal_naive</text></g><g class="node" data-node-id="run:fbabfce1b1ee" data-node-type="ValidationRun" data-search="run:fbabfce1b1ee validationrun 验证:seasonal_naive@1" data-details="{
+  &quot;id&quot;: &quot;run:fbabfce1b1ee&quot;,
+  &quot;type&quot;: &quot;ValidationRun&quot;,
+  &quot;name&quot;: &quot;验证:seasonal_naive@1&quot;,
+  &quot;item_id&quot;: 1002,
+  &quot;store_code&quot;: &quot;1&quot;,
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;metrics&quot;: &quot;{\&quot;bias\&quot;: 0.0, \&quot;inventory_cost\&quot;: 0.0, \&quot;mae\&quot;: 0.0, \&quot;mean_actual_total\&quot;: 184.0, \&quot;mean_target_inventory\&quot;: 184.0, \&quot;rmse\&quot;: 0.0, \&quot;smape\&quot;: 0.0, \&quot;wape\&quot;: 0.0}&quot;,
+  &quot;validation_checks&quot;: &quot;{\&quot;equivalence\&quot;: true, \&quot;imports\&quot;: true, \&quot;interface\&quot;: true, \&quot;runtime\&quot;: true, \&quot;stability\&quot;: true, \&quot;syntax\&quot;: true}&quot;,
+  &quot;timestamp&quot;: &quot;2026-07-17T07:43:03.122513+00:00&quot;
+}" tabindex="0"><title>验证:seasonal_naive@1 · ValidationRun</title><circle cx="1295.0" cy="203.0" r="17" fill="#7c3aed" /><text x="1318.0" y="208.0" class="node-label">验证:seasonal_naive@1</text></g><g class="node" data-node-id="repair:9391a7dc6a98ab59" data-node-type="RepairStrategy" data-search="repair:9391a7dc6a98ab59 repairstrategy 修复:seasonal_naive" data-details="{
+  &quot;id&quot;: &quot;repair:9391a7dc6a98ab59&quot;,
+  &quot;type&quot;: &quot;RepairStrategy&quot;,
+  &quot;name&quot;: &quot;修复:seasonal_naive&quot;,
+  &quot;description&quot;: &quot;第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=1;best_success_rate=100.00%]&quot;,
+  &quot;strategy_fingerprint&quot;: &quot;9391a7dc6a98ab59&quot;,
+  &quot;attempt_count&quot;: 1,
+  &quot;success_count&quot;: 1,
+  &quot;last_used&quot;: &quot;2026-07-17T07:43:03.122513+00:00&quot;
+}" tabindex="0"><title>修复:seasonal_naive · RepairStrategy</title><circle cx="1295.0" cy="437.0" r="17" fill="#dc2626" /><text x="1318.0" y="442.0" class="node-label">修复:seasonal_naive</text></g></g></svg></div>
+<aside class="details" id="details-panel"><h2>节点详情</h2>
+<p>点击任一节点查看完整属性；点击图例可筛选节点类型。</p>
+<pre id="details-content">尚未选择节点</pre></aside></div>
+<script>
+const svg=document.getElementById("graph"),viewport=document.getElementById("viewport");
+const nodes=[...document.querySelectorAll(".node")],edges=[...document.querySelectorAll(".edge-group")];
+const disabledTypes=new Set();let scale=1,tx=0,ty=0,dragging=false,lastX=0,lastY=0;
+function transform(){viewport.setAttribute("transform",`translate(${tx} ${ty}) scale(${scale})`)}
+function refreshVisibility(){
+  const query=document.getElementById("graph-search").value.trim().toLowerCase();
+  const visible=new Set();
+  nodes.forEach(node=>{
+    const typeOff=disabledTypes.has(node.dataset.nodeType);
+    const matched=!query||node.dataset.search.includes(query);
+    node.style.display=typeOff?"none":"";
+    node.classList.toggle("is-dimmed",!matched);
+    if(!typeOff)visible.add(node.dataset.nodeId);
+  });
+  edges.forEach(edge=>{
+    const shown=visible.has(edge.dataset.source)&&visible.has(edge.dataset.target);
+    edge.style.display=shown?"":"none";
+    const source=document.querySelector(`[data-node-id="${CSS.escape(edge.dataset.source)}"]`);
+    const target=document.querySelector(`[data-node-id="${CSS.escape(edge.dataset.target)}"]`);
+    edge.classList.toggle("is-dimmed",!!query&&source?.classList.contains("is-dimmed")
+      &&target?.classList.contains("is-dimmed"));
+  });
+}
+function selectNode(node){
+  nodes.forEach(item=>item.classList.toggle("is-selected",item===node));
+  edges.forEach(edge=>edge.classList.toggle("is-connected",
+    edge.dataset.source===node.dataset.nodeId||edge.dataset.target===node.dataset.nodeId));
+  document.getElementById("details-content").textContent=node.dataset.details;
+}
+nodes.forEach(node=>{node.addEventListener("click",()=>selectNode(node));
+node.addEventListener("keydown",event=>{if(event.key==="Enter")selectNode(node)})});
+document.querySelectorAll(".legend-item").forEach(button=>button.addEventListener("click",()=>{
+  const type=button.dataset.filterType;
+  disabledTypes.has(type)?disabledTypes.delete(type):disabledTypes.add(type);
+  button.classList.toggle("is-off");refreshVisibility();
+}));
+document.getElementById("graph-search").addEventListener("input",refreshVisibility);
+document.getElementById("toggle-relations").addEventListener("change",event=>
+  document.body.classList.toggle("show-relations",event.target.checked));
+document.getElementById("zoom-in").addEventListener("click",()=>{scale=Math.min(2.5,scale*1.2);transform()});
+document.getElementById("zoom-out").addEventListener("click",()=>{scale=Math.max(.55,scale/1.2);transform()});
+document.getElementById("reset-view").addEventListener("click",()=>{
+  scale=1;tx=0;ty=0;disabledTypes.clear();transform();
+  document.getElementById("graph-search").value="";
+  document.querySelectorAll(".legend-item").forEach(item=>item.classList.remove("is-off"));
+  nodes.forEach(item=>item.classList.remove("is-selected"));
+  edges.forEach(item=>item.classList.remove("is-connected"));refreshVisibility();
+});
+svg.addEventListener("wheel",event=>{event.preventDefault();
+  scale=Math.max(.55,Math.min(2.5,scale*(event.deltaY<0?1.1:.9)));transform()},{passive:false});
+svg.addEventListener("pointerdown",event=>{if(event.target.closest(".node"))return;
+  dragging=true;lastX=event.clientX;lastY=event.clientY;svg.classList.add("is-dragging");
+  svg.setPointerCapture(event.pointerId)});
+svg.addEventListener("pointermove",event=>{if(!dragging)return;
+  const ratio=1600/svg.getBoundingClientRect().width;
+  tx+=(event.clientX-lastX)*ratio;ty+=(event.clientY-lastY)*ratio;
+  lastX=event.clientX;lastY=event.clientY;transform()});
+svg.addEventListener("pointerup",()=>{dragging=false;svg.classList.remove("is-dragging")});
+</script></body></html>

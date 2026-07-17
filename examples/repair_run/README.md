@@ -1,23 +1,12 @@
 # 自动修复闭环示例
 
-本目录由 `scripts/generate_submission_examples.py` 生成，刻意在最终代码第一次验证时注入一个
-语法类失败，用于展示：
+本页由 `scripts/generate_submission_examples.py` 自动刷新，避免主 README 固定到失效的时间戳目录。
 
-```text
-生成代码
-  -> 验证失败
-  -> 失败归一化与指纹
-  -> RepairAgent 安全修复
-  -> 再次验证通过
-  -> FailureCase / RepairStrategy / CapabilityVersion 写入图谱
-```
+- 当前运行：[技术验证报告](20260717_154221_004840/validation_report.md)
+- 面向业务用户：[业务报告](20260717_154221_004840/business_report.md)
+- 完整过程：[详细 Trace](20260717_154221_004840/detailed_trace.md)
+- 多智能体协作：[协作记录](20260717_154221_004840/generated/multi_agent_collaboration.json)
+- 代码演进：[版本快照](20260717_154221_004840/generated_versions/)
+- 机器可读入口：[运行索引](index.json)
 
-先查看 `index.json` 找到当前时间戳运行目录，再依次打开：
-
-1. `validation_report.md`：修复次数、失败记录和最终结果；
-2. `detailed_trace.md`：验证失败、RepairAgent输入输出和重新验证事件；
-3. `generated_versions/`：初始版本和修复版本；
-4. `run_manifest.json`：运行状态与产物索引。
-
-该失败只用于演示修复闭环，不表示算法本身存在已知语法缺陷。
-
+当前结果为 `success_after_repair`：选中 `seasonal_naive`，注入的语法失败经 1 轮自动修复后通过统一验证。

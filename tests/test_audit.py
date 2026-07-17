@@ -44,8 +44,8 @@ def test_audit_formats_are_plain_language_and_boundary_aware():
     assert "需求理解 → 能力抽取 → 方案规划 → 代码复刻" in text
     assert "证据：" in text
     assert "不纳入本次目标" in markdown
-    assert "外部 API 是否验收取决于运行环境" in markdown
-    assert "评分边界说明" in markdown
+    assert "外部 API 是否可用取决于运行环境" in markdown
+    assert "结果与边界说明" in markdown
 
 
 def test_cli_audit_writes_markdown_and_honors_strict_mode(
@@ -69,8 +69,8 @@ def test_cli_audit_writes_markdown_and_honors_strict_mode(
         == 0
     )
     content = output.read_text(encoding="utf-8")
-    assert "# 笔试要求评分验收中心" in content
-    assert "必需项 **19/19** 已完成" in content
+    assert "# 项目功能自检" in content
+    assert "核心检查项 **19/19** 已完成" in content
 
 
 def test_web_application_exposes_the_same_audit_payload():

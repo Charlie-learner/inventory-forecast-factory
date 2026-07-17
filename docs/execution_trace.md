@@ -1,6 +1,6 @@
 # 详细运行过程、候选代码比较与结果保留
 
-完整追踪用于评审、调试和复现实验。CLI 的 `run` 命令默认使用 `full` 级别：
+完整追踪用于调试、查看 Agent 中间过程和复现实验。CLI 的 `run` 命令默认使用 `full` 级别：
 
 ```bash
 python -m inventory_agent run \

@@ -33,8 +33,8 @@ CATEGORY_ORDER = (
     "开发要求",
     "基础交付",
     "进阶要求",
-    "加分能力",
-    "本次边界",
+    "拓展尝试",
+    "实现边界",
 )
 
 STATUS_LABELS = {
@@ -62,6 +62,27 @@ def _latest_showcase(root: Path) -> Path | None:
             path
             for path in showcase_root.glob("20*")
             if path.is_dir() and (path / "showcase_summary.md").is_file()
+        ),
+        reverse=True,
+    )
+    return sessions[0] if sessions else None
+
+
+def _latest_research_showcase(root: Path) -> Path | None:
+    """Find the newest showcase that contains actual research evidence.
+
+    Offline refreshes intentionally do not fabricate a research result.  Research
+    evidence therefore has its own freshness selector instead of being coupled to
+    whichever offline showcase happened to run most recently.
+    """
+
+    showcase_root = root / "examples" / "advanced_showcase"
+    sessions = sorted(
+        (
+            path
+            for path in showcase_root.glob("20*")
+            if path.is_dir()
+            and (path / "online_knowledge_extraction.json").is_file()
         ),
         reverse=True,
     )
@@ -118,6 +139,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
 
     root = Path(workspace).resolve()
     latest = _latest_showcase(root)
+    latest_research = _latest_research_showcase(root)
     latest_repair = _latest_repair_run(root)
     showcase = (
         latest.relative_to(root).as_posix()
@@ -128,7 +150,12 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
     collaboration_path = (
         f"{showcase}/protocol_demo/review_manifest.json"
     )
-    research_path = f"{showcase}/online_knowledge_extraction.json"
+    research_showcase = (
+        latest_research.relative_to(root).as_posix()
+        if latest_research is not None
+        else "examples/advanced_showcase/<latest-research>"
+    )
+    research_path = f"{research_showcase}/online_knowledge_extraction.json"
     repair_run = (
         latest_repair.relative_to(root).as_posix()
         if latest_repair is not None
@@ -149,7 +176,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
             ),
             "uv run python -m inventory_agent doctor --live-llm",
             "系统总览 / 完整能力工厂",
-            boundary="外部 API 是否验收取决于运行环境；doctor 会发起最小真实请求并安全报告结果，Mock 模式不冒充外部调用。",
+            boundary="外部 API 是否可用取决于运行环境；doctor 会发起最小真实请求并安全报告结果，Mock 模式不会冒充外部调用。",
         ),
         _item(
             root,
@@ -251,7 +278,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
                 "tests",
             ),
             "uv sync && uv run pytest -q",
-            "系统总览 / 评分验收",
+            "系统总览 / 项目自检",
         ),
         _item(
             root,
@@ -290,7 +317,6 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
             "抽取结果以 JSON 保存来源、函数、依赖、调用关系和能力说明，并可同步写入 JSON、GraphML 和 HTML 图谱。",
             (
                 "knowledge/extracted_external_capabilities.json",
-                research_path,
                 "examples/knowledge_graph/complete_capability_graph.graphml",
             ),
             "uv run python -m inventory_agent extract-capability --source inventory_agent/forecasting",
@@ -301,14 +327,14 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
             "delivery_example",
             "基础交付",
             "提供完整自然语言到代码、验证与报告示例",
-            "高级展示保存两次端到端运行、代码候选、修复过程、研究抽取、回写图谱和面向评审者的汇总。",
+            "高级展示保存两次端到端运行、代码候选、修复过程、研究抽取、图谱回写和结果汇总。",
             (
                 summary_path,
                 f"{repair_run}/validation_report.md",
                 f"{repair_run}/detailed_trace.md",
             ),
             "uv run python scripts/run_advanced_showcase.py --mode summarize",
-            "运行证据 / 评分验收",
+            "运行证据 / 项目自检",
         ),
         _item(
             root,
@@ -324,14 +350,14 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
                 "tests",
             ),
             "uv run python scripts/validate_project.py",
-            "运行证据 / 评分验收",
+            "运行证据 / 项目自检",
         ),
         _item(
             root,
             "advanced_interfaces",
             "进阶要求",
             "同时提供 Web、CLI 和 API",
-            "三种入口复用同一业务服务：Web 面向普通用户，CLI 面向复现和验收，API 面向程序集成。",
+            "三种入口复用同一业务服务：Web 面向普通用户，CLI 方便复现和调试，API 用于程序集成。",
             (
                 "inventory_agent/web/app.py",
                 "inventory_agent/web/server.py",
@@ -414,7 +440,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         _item(
             root,
             "bonus_multi_agent",
-            "加分能力",
+            "拓展尝试",
             "多智能体协作，而非单次 Prompt 直接生成代码",
             "架构 Agent 先定义约束，多个实现 Agent 并行产出不同方案，审查 Agent 给出结构化修改意见，验证与修复 Agent 再闭环执行。",
             (
@@ -430,7 +456,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         _item(
             root,
             "bonus_repo_extract",
-            "加分能力",
+            "拓展尝试",
             "从真实代码仓库抽取函数、依赖和能力描述",
             "抽取器递归分析 Python 仓库，记录函数签名、导入依赖、内部调用、复杂度、源码哈希和来源位置。",
             (
@@ -445,7 +471,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         _item(
             root,
             "bonus_failure_experience",
-            "加分能力",
+            "拓展尝试",
             "自动分析失败案例并形成可复用经验",
             "系统将失败归类并生成稳定指纹，保存根因、修复动作和结果；下一次遇到同类问题时优先检索历史修复经验。",
             (
@@ -460,7 +486,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         _item(
             root,
             "bonus_versions",
-            "加分能力",
+            "拓展尝试",
             "算法能力版本管理",
             "已验证代码按哈希形成版本，可比较指标和验证证据，并支持发布和回滚生命周期事件。",
             (
@@ -475,7 +501,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         _item(
             root,
             "bonus_explanation",
-            "加分能力",
+            "拓展尝试",
             "用自然语言解释生成方案的设计依据",
             "业务报告先给一句话结论，再说明预测需求、目标库存、补货建议、采用方法、可信度和风险；技术术语收纳到可展开的技术报告。",
             (
@@ -490,7 +516,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         _item(
             root,
             "bonus_research_performance",
-            "加分能力",
+            "拓展尝试",
             "支持可追溯联网研究、性能优化和资源分析",
             "联网研究仅接收带 DOI 的可追溯资料并形成抽取文件；生成算法同时记录耗时、吞吐、内存和复杂度提示。",
             (
@@ -507,7 +533,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         _item(
             root,
             "bonus_api_deploy",
-            "加分能力",
+            "拓展尝试",
             "提供 API 文档和部署运行说明",
             "API 路由目录同时生成 OpenAPI JSON 和浏览器文档，Web 服务可由一条 CLI 命令启动。",
             (
@@ -521,31 +547,31 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
         ),
         AuditItem(
             item_id="boundary_search",
-            category="本次边界",
+            category="实现边界",
             requirement="Beam Search、MCTS 或通用图搜索",
             plain_language="当前候选方案采用受约束的多实现生成、滚动回测和指标排序，没有把通用搜索算法包装成已完成功能。",
             status="excluded",
             required=False,
             evidence=(),
             cli_command="",
-            web_view="评分验收",
-            boundary="按本次任务约定不纳入实现范围。",
+            web_view="项目自检",
+            boundary="当前版本没有实现该功能。",
         ),
         AuditItem(
             item_id="boundary_transfer",
-            category="本次边界",
+            category="实现边界",
             requirement="跨行业能力迁移",
             plain_language="项目专注库存预测行业，不声称已经验证跨行业迁移。",
             status="excluded",
             required=False,
             evidence=(),
             cli_command="",
-            web_view="评分验收",
-            boundary="按本次任务约定不纳入实现范围。",
+            web_view="项目自检",
+            boundary="当前版本没有实现该功能。",
         ),
         AuditItem(
             item_id="boundary_sandbox",
-            category="本次边界",
+            category="实现边界",
             requirement="容器级代码沙箱",
             plain_language="当前提供 AST 安全门禁、导入白名单、临时目录、子进程超时和资源分析，但不等同于 OS 或容器级强隔离。",
             status="excluded",
@@ -556,7 +582,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
             ),
             cli_command="uv run pytest tests/test_codegen.py -q",
             web_view="运行证据",
-            boundary="按本次任务约定不实现容器沙箱，并在界面中如实说明现有安全边界。",
+            boundary="当前只做到应用层安全检查，没有实现容器级沙箱。",
         ),
     ]
 
@@ -573,7 +599,7 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
 
     return {
         "schema_version": "1.0",
-        "title": "笔试要求评分验收中心",
+        "title": "项目功能自检",
         "summary": {
             "required_total": len(required_items),
             "passed": passed,
@@ -581,9 +607,9 @@ def build_submission_audit(workspace: str | Path = ".") -> dict[str, Any]:
             "missing": missing,
             "completion_rate": completion,
             "conclusion": (
-                "基础与进阶必需项均有可执行证据，可进入提交前演示。"
+                "当前列出的核心功能都有可运行代码或示例。"
                 if not partial and not missing
-                else "仍有必需项需要补充或复核，请查看部分完成和未完成条目。"
+                else "仍有功能缺少代码或示例，请查看部分完成和未完成条目。"
             ),
         },
         "closed_loop": [
@@ -626,7 +652,7 @@ def audit_as_text(audit: dict[str, Any]) -> str:
         audit["title"],
         "=" * len(audit["title"]),
         (
-            f"必需项：{summary['passed']}/{summary['required_total']} 已完成；"
+            f"核心检查项：{summary['passed']}/{summary['required_total']} 已完成；"
             f"部分完成 {summary['partial']}；未完成 {summary['missing']}；"
             f"完成率 {summary['completion_rate']:.1f}%"
         ),
@@ -657,14 +683,14 @@ def audit_as_markdown(audit: dict[str, Any]) -> str:
     lines = [
         f"# {audit['title']}",
         "",
-        "> 本文由 `inventory_agent audit` 根据仓库当前证据生成；Web 端“评分验收”页面使用同一数据源。",
+        "> 本文由 `inventory_agent audit` 根据仓库当前文件生成；Web 端“项目自检”页面使用同一数据源。",
         "",
         "## 一句话结论",
         "",
         summary["conclusion"],
         "",
         (
-            f"必需项 **{summary['passed']}/{summary['required_total']}** 已完成，"
+            f"核心检查项 **{summary['passed']}/{summary['required_total']}** 已完成，"
             f"部分完成 **{summary['partial']}**，未完成 **{summary['missing']}**，"
             f"完成率 **{summary['completion_rate']:.1f}%**。"
         ),
@@ -686,7 +712,7 @@ def audit_as_markdown(audit: dict[str, Any]) -> str:
                 "",
                 f"## {category['name']}",
                 "",
-                "| 状态 | 要求 | 评审者能看到什么 | 主要证据 |",
+                "| 状态 | 功能 | 可以检查的结果 | 主要文件 |",
                 "|---|---|---|---|",
             ]
         )
@@ -700,10 +726,10 @@ def audit_as_markdown(audit: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "## 建议演示顺序",
+            "## 建议查看顺序",
             "",
-            "1. 在 Web“评分验收”页先看总览和七阶段闭环。",
-            "2. 在“完整能力工厂”提交自然语言与数据，查看业务报告。",
+            "1. 在 Web“项目自检”页先看总览和七阶段闭环。",
+            "2. 在“完整能力工厂”输入自然语言并上传数据，查看业务报告。",
             "3. 在“运行证据”查看候选代码、修复、技术报告和 Trace。",
             "4. 在“知识图谱”查看验证、失败、修复策略和版本回写。",
             "5. 用 CLI 运行下列命令复核关键结论。",
@@ -714,9 +740,9 @@ def audit_as_markdown(audit: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "## 评分边界说明",
+            "## 结果与边界说明",
             "",
-            "状态为“不纳入本次目标”的能力不会被包装成已完成。外部 LLM 和联网研究的真实性以运行时验收结果为准；离线协议测试会明确标注为测试替身。",
+            "没有实现的功能会直接标出来。外部 LLM 和联网研究以实际运行结果为准；离线协议测试会明确标注为测试替身。",
             "",
         ]
     )
