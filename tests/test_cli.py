@@ -86,3 +86,22 @@ def test_versions_command_promotes_validated_version(tmp_path: Path, monkeypatch
     assert saved.graph.nodes["version:moving_average:aaaaaaaaaaaa"][
         "lifecycle_status"
     ] == "active"
+
+
+def test_doctor_can_make_secret_safe_live_llm_check(monkeypatch, capsys):
+    monkeypatch.setenv("LLM_MODE", "api")
+    monkeypatch.setenv("API_KEY", "test-secret-never-print")
+    monkeypatch.setattr(
+        "inventory_agent.cli.verify_llm_connection",
+        lambda settings: {
+            "status": "passed",
+            "model": settings.model,
+            "latency_ms": 12.3,
+            "api_key_exposed": False,
+        },
+    )
+
+    assert main(["doctor", "--live-llm"]) == 0
+    output = capsys.readouterr().out
+    assert '"status": "passed"' in output
+    assert "test-secret-never-print" not in output

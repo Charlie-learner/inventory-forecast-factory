@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import threading
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,6 +24,7 @@ class RunTraceRecorder:
         self.events: list[dict[str, Any]] = []
         self.artifacts: list[str] = []
         self._snapshot_count = 0
+        self._lock = threading.RLock()
         self.jsonl_path = self.run_dir / "detailed_trace.jsonl"
         self.markdown_path = self.run_dir / "detailed_trace.md"
         self.manifest_path = self.run_dir / "run_manifest.json"
@@ -52,27 +54,28 @@ class RunTraceRecorder:
 
         if not self.enabled:
             return {}
-        artifact_paths = [str(Path(path)) for path in artifacts or []]
-        for path in artifact_paths:
-            if path not in self.artifacts:
-                self.artifacts.append(path)
-        event = {
-            "sequence": len(self.events) + 1,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "stage": stage,
-            "component": component,
-            "component_type": component_type,
-            "action": action,
-            "status": status,
-            "inputs": self._jsonable(inputs),
-            "outputs": self._jsonable(outputs),
-            "artifacts": artifact_paths,
-        }
-        self.events.append(event)
-        with self.jsonl_path.open("a", encoding="utf-8") as stream:
-            stream.write(json.dumps(event, ensure_ascii=False) + "\n")
-        with self.markdown_path.open("a", encoding="utf-8") as stream:
-            stream.write(self._markdown_event(event))
+        with self._lock:
+            artifact_paths = [str(Path(path)) for path in artifacts or []]
+            for path in artifact_paths:
+                if path not in self.artifacts:
+                    self.artifacts.append(path)
+            event = {
+                "sequence": len(self.events) + 1,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "stage": stage,
+                "component": component,
+                "component_type": component_type,
+                "action": action,
+                "status": status,
+                "inputs": self._jsonable(inputs),
+                "outputs": self._jsonable(outputs),
+                "artifacts": artifact_paths,
+            }
+            self.events.append(event)
+            with self.jsonl_path.open("a", encoding="utf-8") as stream:
+                stream.write(json.dumps(event, ensure_ascii=False) + "\n")
+            with self.markdown_path.open("a", encoding="utf-8") as stream:
+                stream.write(self._markdown_event(event))
         return event
 
     def snapshot_code(self, source: str, label: str, model: str) -> Path | None:
@@ -80,17 +83,22 @@ class RunTraceRecorder:
 
         if not self.enabled:
             return None
-        safe_label = re.sub(r"[^A-Za-z0-9_-]+", "_", label).strip("_") or "version"
-        safe_model = re.sub(r"[^A-Za-z0-9_]+", "_", model).strip("_") or "model"
-        self._snapshot_count += 1
-        output = self.run_dir / "generated_versions" / (
-            f"{self._snapshot_count:02d}_{safe_label}_{safe_model}.py"
-        )
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(source, encoding="utf-8")
-        path = str(output)
-        if path not in self.artifacts:
-            self.artifacts.append(path)
+        with self._lock:
+            safe_label = (
+                re.sub(r"[^A-Za-z0-9_-]+", "_", label).strip("_") or "version"
+            )
+            safe_model = (
+                re.sub(r"[^A-Za-z0-9_]+", "_", model).strip("_") or "model"
+            )
+            self._snapshot_count += 1
+            output = self.run_dir / "generated_versions" / (
+                f"{self._snapshot_count:02d}_{safe_label}_{safe_model}.py"
+            )
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(source, encoding="utf-8")
+            path = str(output)
+            if path not in self.artifacts:
+                self.artifacts.append(path)
         return output
 
     def finalize(self, status: str, summary: Any = None) -> dict[str, str] | None:

@@ -318,5 +318,10 @@
     "json": "artifacts\\knowledge\\capability_graph.json",
     "graphml": "artifacts\\knowledge\\capability_graph.graphml",
     "html": "artifacts\\knowledge\\capability_graph.html"
+  },
+  "design_explanation": {
+    "mode": "mock",
+    "summary": "使用可复现规则完成需求理解、模型检索与验证。",
+    "evidence_scope": "由任务、需求画像、候选回测、代码验证和资源基准构成；不替代业务审批。"
   }
 }

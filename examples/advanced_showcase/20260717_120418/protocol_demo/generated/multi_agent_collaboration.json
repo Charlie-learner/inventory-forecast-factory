@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "protocol": "architecture -> parallel implementation -> independent review",
+  "roles": [
+    "CodeArchitectureAgent",
+    "CodeImplementationAgent",
+    "CodeReviewAgent",
+    "GeneratedCodeValidator"
+  ],
+  "blueprint": {
+    "agent": "CodeArchitectureAgent",
+    "mode": "llm_architecture",
+    "algorithm": "moving_average",
+    "algorithm_steps": [
+      "clean non-negative numeric history",
+      "average the latest 14 observations",
+      "repeat the estimate for the requested horizon"
+    ],
+    "required_contracts": [
+      "forecast returns built-in list[float]",
+      "target_inventory equals sum(daily_forecast)"
+    ],
+    "edge_cases": [
+      "empty history",
+      "non-positive horizon"
+    ],
+    "allowed_dependencies": [
+      "numpy",
+      "pandas"
+    ],
+    "performance_goal": "linear history cleaning and constant forecast cost",
+    "risks": [
+      "constant-rate forecast does not express daily seasonality"
+    ]
+  },
+  "candidates": [
+    {
+      "variant_id": "candidate_1",
+      "strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\protocol_demo\\generated\\forecast_moving_average_candidate_1.py",
+      "source_hash": "214ce1aa3bdaa5d29777294d8006e39f6c7c1c9bc2f0c337a2599f187b4510a1",
+      "generation_mode": "llm_multi_agent_generation",
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "candidate_1",
+        "mode": "llm_review",
+        "approved": true,
+        "findings": [],
+        "revision_applied": false,
+        "post_review_static_findings": []
+      }
+    },
+    {
+      "variant_id": "candidate_2",
+      "strategy": "robust_edge_cases: 在保持算法语义的前提下，重点增强空值、短历史、全零历史和极端数值处理。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\protocol_demo\\generated\\forecast_moving_average_candidate_2.py",
+      "source_hash": "90ab379b299f8f871471cb2b3000d03743caec9506addbdc242464bd32c9ce4f",
+      "generation_mode": "llm_multi_agent_revised",
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "candidate_2",
+        "mode": "llm_review",
+        "approved": true,
+        "findings": [
+          "ndarray output violates list[float] contract"
+        ],
+        "revision_applied": true,
+        "post_review_static_findings": []
+      }
+    },
+    {
+      "variant_id": "candidate_3",
+      "strategy": "minimal_dependency: 在保持算法语义的前提下，尽量减少依赖和状态，生成结构清晰的独立实现。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\protocol_demo\\generated\\forecast_moving_average_candidate_3.py",
+      "source_hash": "1e518b2b343cbacd36db3ef55a78f292f48c2693ea7844017a98d05d4af89d8d",
+      "generation_mode": "llm_multi_agent_generation",
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "candidate_3",
+        "mode": "llm_review",
+        "approved": true,
+        "findings": [],
+        "revision_applied": false,
+        "post_review_static_findings": []
+      }
+    }
+  ]
+}

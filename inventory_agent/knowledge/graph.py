@@ -21,7 +21,7 @@ from inventory_agent.domain import CapabilitySpec
 class CapabilityKnowledgeGraph:
     """Store algorithm metadata and validation experience in a directed graph."""
 
-    SCHEMA_VERSION = "1.4"
+    SCHEMA_VERSION = "1.5"
 
     def __init__(self, graph: nx.DiGraph | None = None):
         """Initialize a graph and attach the current schema version."""
@@ -35,7 +35,14 @@ class CapabilityKnowledgeGraph:
 
         registry = registry or default_registry()
         knowledge = cls()
-        for demand_type in ["stable", "volatile", "intermittent", "weekly_seasonal", "dense"]:
+        for demand_type in [
+            "stable",
+            "volatile",
+            "intermittent",
+            "weekly_seasonal",
+            "trend",
+            "dense",
+        ]:
             knowledge.graph.add_node(f"profile:{demand_type}", type="DemandProfile", name=demand_type)
         for metric in ["inventory_cost", "wape", "smape", "bias", "rmse"]:
             attributes = {"type": "Metric", "name": metric}
@@ -172,6 +179,46 @@ class CapabilityKnowledgeGraph:
                 self.graph.add_edge(model_node, source_node, relation="EXTRACTED_FROM")
             ingested.append(model_node)
         return ingested
+
+    def ingest_research_evidence(self, research: dict) -> list[str]:
+        """Link DOI-backed online evidence to registered algorithm nodes."""
+
+        source_nodes = []
+        recommended = research.get("analysis", {}).get("recommended_models", [])
+        for record in research.get("records", []):
+            identifier = str(record.get("doi") or record.get("url") or "").strip()
+            if not identifier:
+                continue
+            source_hash = hashlib.sha256(identifier.encode("utf-8")).hexdigest()
+            source_node = f"source:research:{source_hash[:16]}"
+            self.graph.add_node(
+                source_node,
+                type="SourceArtifact",
+                name=str(record.get("title", identifier)),
+                source_type="online_research",
+                source_ref=identifier,
+                source_hash=source_hash,
+                source_url=str(record.get("url", "")),
+                source_license=str(record.get("license_url", "")),
+                accessed_at=str(research.get("created_at", "")),
+                extracted_by=str(
+                    research.get("analysis", {}).get("analysis_mode", "deterministic")
+                ),
+                review_status="evidence_only",
+                provider=str(research.get("provider", "")),
+                relevance_score=float(record.get("relevance_score", 0.0)),
+                doi=str(record.get("doi", "")),
+            )
+            source_nodes.append(source_node)
+            for model in recommended:
+                algorithm = f"algorithm:{model}"
+                if self.graph.has_node(algorithm):
+                    self.graph.add_edge(
+                        algorithm,
+                        source_node,
+                        relation="SUPPORTED_BY_RESEARCH",
+                    )
+        return source_nodes
 
     @staticmethod
     def _normalized_source_ref(source_ref: str) -> str:

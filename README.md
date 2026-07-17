@@ -10,11 +10,11 @@
 
 ```text
 文档/代码 -> 能力抽取 -> CapabilitySpec -> 知识图谱
-自然语言需求 -> 检索与规划 -> 规格驱动代码生成
+自然语言需求 -> 检索与规划 -> 架构Agent -> 多实现Agent -> 审查Agent
              -> 自动验证/等价性检查 -> 错误修复 -> 版本沉淀
 ```
 
-能力工厂负责需求理解、知识增强规划、能力代码生成、统一验证、修复与经验回写。库存场景适配器负责预测某个商品在全国或区域仓未来 14 天的需求总量，并给出目标库存 `T`；菜鸟数据中的 A/B 公式仅作为该场景的一项业务验证指标，WAPE、sMAPE 和 Bias 作为辅助诊断指标。
+能力工厂负责需求理解、知识增强规划、能力代码生成、统一验证、修复与经验回写。库存场景适配器负责预测某个商品在全国或区域仓未来需求并给出目标库存 `T`；存在库存快照时，还会结合现货、在途、欠单、安全库存、MOQ、包装倍数和仓容计算建议补货量。菜鸟数据中的 A/B 公式是场景业务验证指标，WAPE、sMAPE 和 Bias 作为辅助诊断指标。
 
 ## 2. 系统架构和模块设计
 
@@ -27,8 +27,10 @@ flowchart LR
     P --> K
     K --> L[PlanningAgent]
     L --> B[候选模型滚动回测]
-    B --> C[CodeGenerationAgent]
-    C --> V[静态和受限运行验证]
+    B --> A[CodeArchitectureAgent]
+    A --> C[多个 CodeImplementationAgent 候选]
+    C --> Q[CodeReviewAgent 独立审查]
+    Q --> V[静态和受限运行验证]
     V -->|失败| F[RepairAgent]
     F --> V
     V -->|成功| E[ExperienceAgent]
@@ -39,7 +41,7 @@ flowchart LR
 主要模块：
 
 - 能力工厂核心：`extraction`、`agents`、`knowledge`、`codegen`、`workflow`，负责来源解析、规格化、检索、规划、生成、验证、修复和沉淀。
-- 库存场景适配：`data`、`forecasting`、`services/benchmark.py`，负责菜鸟数据读取、需求画像、预测模型和成本回测。
+- 库存场景适配：`data`、`forecasting`、`services/benchmark.py`、`services/replenishment.py`，负责菜鸟与通用数据读取、需求画像、预测模型、成本回测和约束补货建议。
 - 通用验证层：`validation` 提供滚动验证、`ValidationProfileRegistry` 任务配置和 `MetricRegistry` 指标插件；`codegen/validator.py` 提供生成能力的接口、稳定性与受限运行检查。
 
 项目已从旧时序预测原型独立重构，所有核心功能均位于 `inventory_agent/`。
@@ -56,11 +58,15 @@ examples/          可复现的演示数据与结果
 data/              本地原始/处理中间数据（大文件由 Git 忽略）
 ```
 
+更详细的模块依赖、提交/忽略边界和安全清理方法见
+[docs/project_structure.md](docs/project_structure.md)；精选示例的用途见
+[examples/README.md](examples/README.md)。
+
 ## 3. 能力知识图谱 schema 和示例
 
 知识图谱包含 `Algorithm`、`SourceArtifact`、`CapabilityVersion`、`VersionEvent`、`DemandProfile`、`Metric`、`ValidationRun`、`FailureCase` 和 `RepairStrategy` 节点。算法节点保留输入输出、适用条件、依赖、参数、模板、来源哈希和版本；运行节点与实际生成源码版本、归一化失败和修复策略建立关联。
 
-抽取、复刻、验证和版本沉淀说明见 [docs/capability_extraction.md](docs/capability_extraction.md)，图谱结构见 [docs/knowledge_graph_schema.md](docs/knowledge_graph_schema.md)，库存业务场景见 [docs/business/inventory_forecasting_scenario.md](docs/business/inventory_forecasting_scenario.md)，权威资料清单见 [docs/references.md](docs/references.md)，详细中间过程和自动清理说明见 [docs/execution_trace.md](docs/execution_trace.md)，按笔试四类评分标准整理的运行证据见 [docs/scoring_alignment.md](docs/scoring_alignment.md)。可直接检查：
+抽取、复刻、验证和版本沉淀说明见 [docs/capability_extraction.md](docs/capability_extraction.md)，多智能体代码协作见 [docs/multi_agent_code_collaboration.md](docs/multi_agent_code_collaboration.md)，高级验收用例见 [docs/advanced_showcase_cases.md](docs/advanced_showcase_cases.md)，图谱结构见 [docs/knowledge_graph_schema.md](docs/knowledge_graph_schema.md)，库存业务场景见 [docs/business/inventory_forecasting_scenario.md](docs/business/inventory_forecasting_scenario.md)，联网搜索与自修复策略见 [docs/online_research_and_optimization.md](docs/online_research_and_optimization.md)，执行耗时和资源分析见 [docs/performance_and_runtime.md](docs/performance_and_runtime.md)，权威资料清单见 [docs/references.md](docs/references.md)，详细中间过程和自动清理说明见 [docs/execution_trace.md](docs/execution_trace.md)，按笔试四类评分标准整理的运行证据见 [docs/scoring_alignment.md](docs/scoring_alignment.md)，由 CLI 与 Web 共用证据生成的逐项验收矩阵见 [docs/evaluation_acceptance_matrix.md](docs/evaluation_acceptance_matrix.md)。可直接检查：
 
 - `knowledge/base_capability_graph.json`
 - `knowledge/base_capability_graph.graphml`
@@ -90,13 +96,20 @@ uv run python -m inventory_agent visualize-graph \
 3. `RequirementAgent` 从中文或英文需求中提取商品、仓库、预测周期和目标；数据画像计算需求类型。
 4. `PlanningAgent` 从图谱检索适用算法，结合历史验证经验形成多个候选方案。
 5. 验证配置注册表使用能力规格中的同一组超参数，按库存成本或预测精度执行无时间泄漏的滚动回测并选择能力；仅已注册的可执行能力进入自动回测。
-6. `SafeCodeGenerator` 根据胜出 `CapabilitySpec` 生成自包含实现；API 模式可让 LLM 首次生成，Mock 模式使用可审计模板。生成代码不再只是调用注册表的薄包装。
-7. 验证器检查语法、导入、接口、边界输入、确定性、受限运行，并在周期、间歇、趋势和全零需求上将生成输出与参考能力进行数值等价性比较。
-8. 失败时先生成类别和稳定指纹，从图谱检索同模型、同类失败的历史成功修复经验；`RepairAgent` 最多修复两轮，API 模式先结合错误和历史经验修复源码，仍失败则回退安全规格模板；所有版本重新验证。
-9. `ExperienceAgent` 将指标、验证检查、修复记录和生成源码哈希写入 `ValidationRun` 与 `CapabilityVersion`，供后续排序复用。
-10. `ReportAgent` 输出 JSON 和 Markdown，展示抽取来源、规格哈希、源码哈希、生成模式和等价性误差。
+6. `CodeArchitectureAgent` 先根据胜出 `CapabilitySpec` 形成算法步骤、接口、边界、依赖、性能目标和风险蓝图，不直接生成代码。
+7. 一个或多个 `CodeImplementationAgent` 按不同策略独立生成自包含实现，`CodeReviewAgent` 再逐份审查并可返回完整修订源码；Mock 模式执行对应的确定性角色实现。
+8. 验证器检查审查后源码的语法、导入、接口、边界输入、确定性、受限运行，并在周期、间歇、趋势和全零需求上与参考能力做数值等价比较。LLM 审查结论不能替代验证门禁。
+9. 失败时先生成类别和稳定指纹，从图谱检索同模型、同类失败的历史成功修复经验；`RepairAgent` 最多修复两轮，API 模式先结合错误和历史经验修复源码，仍失败则回退安全规格模板；所有版本重新验证。
+10. `ExperienceAgent` 将指标、验证检查、修复记录、协作方式和生成源码哈希写入 `ValidationRun` 与 `CapabilityVersion`，供后续排序复用。
+11. `ReportAgent` 输出业务 Markdown、技术 Markdown 和 JSON，展示库存/补货建议、角色协作记录、抽取来源、规格哈希、源码哈希、生成模式和等价性误差。
 
-默认使用 Mock LLM，依靠确定性抽取器和安全模板完全离线复现。切换到 OpenAI 兼容接口后，LLM 可参与非结构化文档抽取、首次代码生成、失败修复和报告总结；模型选择及生成代码验收仍由实际回测和统一验证器裁决。
+默认使用 Mock LLM，依靠确定性抽取器、架构蓝图、安全模板和静态审查完全离线复现。切换到 OpenAI 兼容接口后，LLM 会以架构、实现、审查三个独立角色协作，并可参与非结构化文档抽取、失败修复和报告总结；模型选择及生成代码验收仍由实际回测和统一验证器裁决。
+
+API 模式下，最终代码不再只生成一个实现：系统会把业务请求、需求画像、能力规格、设计依据和
+主验证指标一起交给代码生成 Agent，按照规格忠实、边界鲁棒、最小依赖等不同策略生成最多 5 份
+独立源码。每份源码都禁止调用项目内部注册模型，并分别经过语法、导入安全、接口、受限运行、
+稳定性和参考行为等价验证；系统从通过门禁的候选中按运行耗时、代码规模和确定性规则选出最终版本。
+Mock 模式仍只生成一份模板实现，以保证离线测试完全可复现。
 
 新抽取但尚未注册实现的算法会保留在知识图谱中，状态相当于“待人工接入/审核”，不会被误送入自动回测。当前全自动闭环覆盖五个内置库存预测能力；新算法可先由 API 模式生成，再经人工确认接口和注册后进入同一验证闭环，属于半自动扩展路径。
 
@@ -144,7 +157,53 @@ API_KEY=your-new-api-key
 uv run python -m inventory_agent doctor
 ```
 
-CLI 支持 `doctor`、`prepare-sample`、`extract-capability`、`replicate-capability`、`versions`、`benchmark`、`run` 和 `visualize-graph`。使用 `--verbose` 可查看不包含密钥的工作流进度日志。
+按笔试要求逐项核查当前仓库，并在任一必需项缺失时返回非零退出码：
+
+```bash
+uv run python -m inventory_agent audit --strict
+```
+
+同一核查结果也显示在 Web 的“评分验收”页面。需要重新生成可提交的 Markdown 证据时：
+
+```bash
+uv run python -m inventory_agent audit \
+  --format markdown \
+  --output docs/evaluation_acceptance_matrix.md \
+  --strict
+```
+
+启动本地 Web 工作台：
+
+```bash
+uv run python -m inventory_agent web --open-browser
+```
+
+默认访问地址与自动接口文档：
+
+```text
+Web：http://127.0.0.1:8000
+API 文档：http://127.0.0.1:8000/api/docs
+OpenAPI JSON：http://127.0.0.1:8000/api/openapi.json
+```
+
+接口文档由服务端路由目录自动生成，POST 请求分发也复用同一目录，减少接口实现和文档不一致。
+Web 使用方式见 [`docs/web_interface.md`](docs/web_interface.md)，自然语言示例和评审测试矩阵见
+[`docs/usage_examples_and_test_cases.md`](docs/usage_examples_and_test_cases.md)。
+
+实际验证外部 LLM，而不只是检查环境变量：
+
+```bash
+uv run python -m inventory_agent doctor --live-llm
+```
+
+可选联网行业研究会从 Crossref 检索 DOI 元数据，生成
+`online_knowledge_extraction.json`，并将证据用于候选规划、代码生成与修复上下文：
+
+```bash
+uv run python -m inventory_agent run --description "为商品 1003 在仓库 1 预测未来14天间歇需求" --data examples/business_data/demand_history.csv --online-research
+```
+
+CLI 支持 `doctor`、`audit`、`prepare-sample`、`extract-capability`、`replicate-capability`、`versions`、`benchmark`、`run`、`visualize-graph`、`plugins` 和 `web`。使用 `--verbose` 可查看不包含密钥的工作流进度日志。
 
 递归扫描当前本地代码仓库，抽取五个预测能力、输出扫描诊断并更新知识图谱：
 
@@ -161,7 +220,8 @@ uv run python -m inventory_agent extract-capability \
 uv run python -m inventory_agent replicate-capability \
   --source examples/capabilities/moving_average.md \
   --output-dir artifacts/replication/generated \
-  --manifest artifacts/replication/review_manifest.json
+  --manifest artifacts/replication/review_manifest.json \
+  --candidates 3
 ```
 
 有注册参考实现时会自动执行四组数值等价验证；没有参考实现时即使安全和运行检查通过，也只会标记为 `review_required`。审核人可在确认算法语义后显式增加 `--approve`，该决定会写入审核清单。
@@ -197,6 +257,10 @@ python -m inventory_agent run \
 
 ## 6. 库存场景示例数据和测试任务
 
+面向业务用户、开发人员和评审人员的完整示例、预期结果与验收矩阵见：
+
+- [使用示例与验收测试用例](docs/usage_examples_and_test_cases.md)
+
 原始 ZIP 和解压后的大 CSV 均不提交 Git。当前支持原始 ZIP、解压目录和带表头的演示面板 CSV。已经在 `data/` 放置解压文件时可直接运行工作流，无需执行数据准备命令；只有原始 ZIP 或需要轻量样本时，才使用可选命令：
 
 ```bash
@@ -218,7 +282,9 @@ uv run python -m inventory_agent prepare-sample \
 
 此外，`examples/business_data/` 提供可随 Git 分发的确定性合成业务数据：6 个商品、3 个仓库、
 2880 条需求历史，并包含商品主数据、库存快照、补货策略和需求事件。它覆盖稳定、周期、间歇、
-趋势、波动和冷启动需求，字段关系见 [docs/business/data_contract.md](docs/business/data_contract.md)。
+趋势、波动和冷启动需求。工作流会自动读取同目录的库存快照与补货策略，把预测目标转换为考虑
+现货、在途、欠单、安全库存、最小订货量、包装倍数和仓容的建议补货量。字段关系见
+[docs/business/data_contract.md](docs/business/data_contract.md)。
 
 重新生成并校验这套业务材料：
 
@@ -309,6 +375,18 @@ python scripts/generate_submission_examples.py
 uv run python scripts/validate_project.py
 ```
 
+该脚本会执行完整测试、Ruff、至少 80% 的覆盖率门禁、真实本地仓库能力抽取、独立代码复刻、
+完整 Agent 工作流、业务/技术报告、知识图谱、版本发布以及 Web/API 文档一致性检查。
+
+单独重新生成多场景评审报告：
+
+```bash
+uv run python scripts/run_acceptance_cases.py
+```
+
+提交用结果见 `examples/acceptance/acceptance_report.{json,md}`，覆盖六类需求画像、约束补货、
+多商品/所有仓库解析、能力复刻、自动修复、知识图谱生命周期和 API 文档一致性。
+
 或者分别运行：
 
 ```bash
@@ -331,14 +409,15 @@ uv run ruff check inventory_agent tests scripts
 - 经验无法复用：将验证次数、成功率和平均库存成本汇总为检索排序依据，同时保留原始验证节点便于审计。
 - API 不可用：Mock LLM 保证核心流程、测试和展示完全离线可运行。
 - 全国与分仓字段不同：`all` 使用全国表，1-5 使用分仓表，通过统一位置接口处理。
+- 预测值不等于采购量：当库存快照和补货策略存在时，单独的补货决策层应用库存位置、安全库存、MOQ、包装倍数和仓容；缺少业务输入时明确回退为公式，不虚构下单量。
 
 ## 10. 后续可扩展方向
 
 - 基于 `A/(A+B)` 临界分位进一步进行成本感知的目标库存校准。
 - 加入浏览、收藏、加购等外生特征的 pooled Gradient Boosting 模型。
-- 针对 37 个无历史商品实现类目和品牌相似商品冷启动迁移。
+- 针对无历史或短历史商品实现类目、品牌和相似商品冷启动迁移。
 - 抽象场景 Adapter，使同一能力工厂可接入异常检测、流失预测等新任务；当前可插拔的是库存预测内部的验证配置。
 - 增加全国预测与五仓预测的层级一致性约束。
-- 加入安全库存、在途库存和提前期，输出最终补货量。
-- 在现有静态 HTML 图谱基础上增加 Streamlit 交互式预测报告。
+- 增加供应商可供量、预算、采购日历、运输时效分布和跨仓调拨优化。
+- 在现有 Web 工作台上增加任务队列、用户权限和多人审核流程。
 - 将子进程执行升级为容器级资源和网络隔离沙箱。

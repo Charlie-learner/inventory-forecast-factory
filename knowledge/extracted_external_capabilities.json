@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.1",
-  "created_at": "2026-07-16T09:43:11.607560+00:00",
+  "schema_version": "1.2",
+  "created_at": "2026-07-17T02:23:59.502668+00:00",
   "count": 5,
   "scan_reports": [
     {
@@ -81,7 +81,11 @@
       ],
       "extraction_warnings": [
         "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
-      ]
+      ],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
     },
     {
       "name": "last_value",
@@ -119,7 +123,11 @@
         "article benchmark discussion",
         "inventory_agent/forecasting/models.py:12"
       ],
-      "extraction_warnings": []
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
     },
     {
       "name": "moving_average",
@@ -160,7 +168,11 @@
         "SMA benchmark description",
         "inventory_agent/forecasting/models.py:22"
       ],
-      "extraction_warnings": []
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
     },
     {
       "name": "ridge_lag",
@@ -205,7 +217,11 @@
         "Ridge L2 objective",
         "inventory_agent/forecasting/models.py:84"
       ],
-      "extraction_warnings": []
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
     },
     {
       "name": "seasonal_naive",
@@ -246,7 +262,11 @@
         "article seasonal-naive benchmark discussion",
         "inventory_agent/forecasting/models.py:36"
       ],
-      "extraction_warnings": []
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
     }
   ]
 }

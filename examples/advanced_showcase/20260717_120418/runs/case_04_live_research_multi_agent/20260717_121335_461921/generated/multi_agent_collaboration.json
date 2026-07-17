@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "protocol": "architecture -> parallel implementation -> independent review",
+  "roles": [
+    "CodeArchitectureAgent",
+    "CodeImplementationAgent",
+    "CodeReviewAgent",
+    "GeneratedCodeValidator"
+  ],
+  "blueprint": {
+    "agent": "CodeArchitectureAgent",
+    "mode": "deterministic",
+    "algorithm": "croston",
+    "algorithm_steps": [
+      "normalize history to finite non-negative numeric observations",
+      "apply croston semantics using declared parameters",
+      "produce exactly horizon non-negative float values",
+      "sum the daily forecast into target_inventory"
+    ],
+    "required_contracts": [
+      "forecast(history, horizon) -> list[float]",
+      "build_inventory_target(history, horizon) -> dict",
+      "target_inventory == sum(daily_forecast)"
+    ],
+    "edge_cases": [
+      "empty history",
+      "non-positive horizon",
+      "all-zero history"
+    ],
+    "allowed_dependencies": [
+      "pandas"
+    ],
+    "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+    "risks": [
+      "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+    ],
+    "fallback_reason": "APITimeoutError: Request timed out."
+  },
+  "candidates": [
+    {
+      "variant_id": "candidate_1",
+      "strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\forecast_croston_candidate_1.py",
+      "source_hash": "1c96601ed98f337a3b2438a8bc702ea09e8d4a06aaf9cb4f1f4ee647d7a87202",
+      "generation_mode": "spec_template_fallback",
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "candidate_1",
+        "mode": "deterministic",
+        "approved": true,
+        "findings": [],
+        "revision_applied": false,
+        "fallback_reason": "APITimeoutError: Request timed out.",
+        "post_review_static_findings": []
+      }
+    },
+    {
+      "variant_id": "candidate_2",
+      "strategy": "robust_edge_cases: 在保持算法语义的前提下，重点增强空值、短历史、全零历史和极端数值处理。",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\forecast_croston_candidate_2.py",
+      "source_hash": "1c96601ed98f337a3b2438a8bc702ea09e8d4a06aaf9cb4f1f4ee647d7a87202",
+      "generation_mode": "spec_template_fallback",
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "candidate_2",
+        "mode": "deterministic",
+        "approved": true,
+        "findings": [],
+        "revision_applied": false,
+        "fallback_reason": "APITimeoutError: Request timed out.",
+        "post_review_static_findings": []
+      }
+    }
+  ]
+}

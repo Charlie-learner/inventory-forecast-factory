@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "created_at": "2026-07-16T09:44:43.766663+00:00",
+  "created_at": "2026-07-17T02:28:16.851542+00:00",
   "capability": {
     "name": "moving_average",
     "task_type": "inventory_forecasting",
@@ -40,15 +40,163 @@
       "SMA benchmark description",
       "inventory_agent/forecasting/models.py:22"
     ],
-    "extraction_warnings": []
+    "extraction_warnings": [],
+    "implementation_kind": "algorithm",
+    "entrypoints": [],
+    "internal_dependencies": [],
+    "complexity": {}
   },
   "generation": {
     "model": "moving_average",
     "path": "examples\\replication_run\\generated\\forecast_moving_average.py",
     "mode": "spec_template",
-    "spec_hash": "8faf39d71356ee079452d6dfe8884c22a736d17fad19f5bbe53eda0707d83dd4",
-    "source_hash": "14e0942ab0cb6bb3751708b807839aae08f452e024759018c611be69c35d3cd0"
+    "spec_hash": "6d5a7644b3e06bafc07be2f1871e6a76ae1c8c171b209028a12fe0be0a82edd1",
+    "source_hash": "6f4ed1926562e5a7967d716a45e5916da094808468fd2fb4b4cede9e2b76885c",
+    "variant_id": "primary",
+    "strategy": "specification_fidelity",
+    "prompt_hash": "c4c05cb98336fffea9fc8a27039c84ac69562a8f09031e8e65f45238e36f5d9e",
+    "collaboration": {
+      "architecture": {
+        "agent": "CodeArchitectureAgent",
+        "mode": "deterministic",
+        "algorithm": "moving_average",
+        "algorithm_steps": [
+          "normalize history to finite non-negative numeric observations",
+          "apply moving_average semantics using declared parameters",
+          "produce exactly horizon non-negative float values",
+          "sum the daily forecast into target_inventory"
+        ],
+        "required_contracts": [
+          "forecast(history, horizon) -> list[float]",
+          "build_inventory_target(history, horizon) -> dict",
+          "target_inventory == sum(daily_forecast)"
+        ],
+        "edge_cases": [
+          "empty history",
+          "non-positive horizon",
+          "all-zero history"
+        ],
+        "allowed_dependencies": [
+          "pandas"
+        ],
+        "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+        "risks": []
+      },
+      "implementation": {
+        "agent": "CodeImplementationAgent",
+        "strategy": "specification_fidelity",
+        "variant_id": "primary"
+      },
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "primary",
+        "mode": "deterministic",
+        "approved": true,
+        "findings": [],
+        "revision_applied": false
+      }
+    }
   },
+  "multi_agent_collaboration": {
+    "protocol": "architecture -> parallel implementation -> independent review -> validation",
+    "roles": [
+      "CodeArchitectureAgent",
+      "CodeImplementationAgent",
+      "CodeReviewAgent",
+      "GeneratedCodeValidator"
+    ],
+    "blueprint_path": "examples\\replication_run\\generated\\implementation_blueprint.json",
+    "manifest_path": "examples\\replication_run\\generated\\multi_agent_collaboration.json"
+  },
+  "implementation_candidates": [
+    {
+      "variant_id": "primary",
+      "strategy": "specification_fidelity",
+      "path": "examples\\replication_run\\generated\\forecast_moving_average.py",
+      "mode": "spec_template",
+      "source_hash": "6f4ed1926562e5a7967d716a45e5916da094808468fd2fb4b4cede9e2b76885c",
+      "prompt_hash": "c4c05cb98336fffea9fc8a27039c84ac69562a8f09031e8e65f45238e36f5d9e",
+      "collaboration": {
+        "architecture": {
+          "agent": "CodeArchitectureAgent",
+          "mode": "deterministic",
+          "algorithm": "moving_average",
+          "algorithm_steps": [
+            "normalize history to finite non-negative numeric observations",
+            "apply moving_average semantics using declared parameters",
+            "produce exactly horizon non-negative float values",
+            "sum the daily forecast into target_inventory"
+          ],
+          "required_contracts": [
+            "forecast(history, horizon) -> list[float]",
+            "build_inventory_target(history, horizon) -> dict",
+            "target_inventory == sum(daily_forecast)"
+          ],
+          "edge_cases": [
+            "empty history",
+            "non-positive horizon",
+            "all-zero history"
+          ],
+          "allowed_dependencies": [
+            "pandas"
+          ],
+          "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+          "risks": []
+        },
+        "implementation": {
+          "agent": "CodeImplementationAgent",
+          "strategy": "specification_fidelity",
+          "variant_id": "primary"
+        },
+        "review": {
+          "agent": "CodeReviewAgent",
+          "variant_id": "primary",
+          "mode": "deterministic",
+          "approved": true,
+          "findings": [],
+          "revision_applied": false
+        }
+      },
+      "validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        "sample_target_inventory": 56.0,
+        "runtime_seconds": 0.9705863000126556,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.7731799996690825,
+        "cpu_time_ms": 15.625,
+        "peak_memory_kb": 25.8095703125,
+        "throughput_calls_per_second": 1293.3598908766335
+      },
+      "selected": true
+    }
+  ],
   "validation": {
     "valid": true,
     "checks": {
@@ -77,9 +225,48 @@
       4.0
     ],
     "sample_target_inventory": 56.0,
-    "runtime_seconds": 0.9560424999945099,
+    "runtime_seconds": 0.9705863000126556,
     "equivalence_max_error": 0.0,
-    "equivalence_cases": 4
+    "equivalence_cases": 4,
+    "performance_iterations": 20,
+    "mean_latency_ms": 0.7731799996690825,
+    "cpu_time_ms": 15.625,
+    "peak_memory_kb": 25.8095703125,
+    "throughput_calls_per_second": 1293.3598908766335
+  },
+  "performance_analysis": {
+    "schema_version": "1.0",
+    "measurement_scope": "Isolated deterministic micro-benchmark; tracemalloc covers Python allocations and may not include all native-library memory.",
+    "selected_source": "examples\\replication_run\\generated\\forecast_moving_average.py",
+    "source_bytes": 2611,
+    "source_lines": 38,
+    "ast_loop_count": 0,
+    "ast_call_count": 18,
+    "measurements": {
+      "iterations": 20,
+      "mean_latency_ms": 0.7731799996690825,
+      "cpu_time_ms": 15.625,
+      "peak_memory_kb": 25.8095703125,
+      "throughput_calls_per_second": 1293.3598908766335
+    },
+    "policy": {
+      "latency_warning_ms": 5.0,
+      "peak_memory_warning_kb": 32768.0,
+      "minimum_throughput": 100.0
+    },
+    "recommendations": [
+      "当前基准未触发资源告警；继续保留回归基准，避免无证据的过早优化。"
+    ],
+    "candidate_profiles": [
+      {
+        "variant_id": "primary",
+        "selected": true,
+        "valid": true,
+        "mean_latency_ms": 0.7731799996690825,
+        "peak_memory_kb": 25.8095703125,
+        "throughput_calls_per_second": 1293.3598908766335
+      }
+    ]
   },
   "reference_model": "moving_average",
   "review": {

@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "protocol": "architecture -> parallel implementation -> independent review",
+  "roles": [
+    "CodeArchitectureAgent",
+    "CodeImplementationAgent",
+    "CodeReviewAgent",
+    "GeneratedCodeValidator"
+  ],
+  "blueprint": {
+    "agent": "CodeArchitectureAgent",
+    "mode": "deterministic",
+    "algorithm": "seasonal_naive",
+    "algorithm_steps": [
+      "normalize history to finite non-negative numeric observations",
+      "apply seasonal_naive semantics using declared parameters",
+      "produce exactly horizon non-negative float values",
+      "sum the daily forecast into target_inventory"
+    ],
+    "required_contracts": [
+      "forecast(history, horizon) -> list[float]",
+      "build_inventory_target(history, horizon) -> dict",
+      "target_inventory == sum(daily_forecast)"
+    ],
+    "edge_cases": [
+      "empty history",
+      "non-positive horizon",
+      "all-zero history"
+    ],
+    "allowed_dependencies": [
+      "pandas"
+    ],
+    "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+    "risks": []
+  },
+  "candidates": [
+    {
+      "variant_id": "primary",
+      "strategy": "specification_fidelity",
+      "path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\generated\\forecast_seasonal_naive.py",
+      "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+      "generation_mode": "spec_template",
+      "review": {
+        "agent": "CodeReviewAgent",
+        "variant_id": "primary",
+        "mode": "deterministic",
+        "approved": true,
+        "findings": [],
+        "revision_applied": false
+      }
+    }
+  ]
+}

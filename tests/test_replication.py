@@ -24,6 +24,23 @@ def build_inventory_target(history, horizon):
 ```"""
 
 
+class _DiverseReplicaLLM:
+    def complete(self, system: str, user: str) -> str:
+        del system
+        variant = json.loads(user)["implementation_variant"]
+        return f'''"""Replica candidate {variant}."""
+
+def forecast(history, horizon):
+    if horizon <= 0 or not history:
+        raise ValueError("invalid input")
+    return [max(float(history[-1]), 0.0)] * horizon
+
+def build_inventory_target(history, horizon):
+    values = forecast(history, horizon)
+    return {{"daily_forecast": values, "target_inventory": float(sum(values))}}
+'''
+
+
 def test_standalone_replication_auto_validates_registered_reference(tmp_path: Path):
     spec = CapabilityExtractor().extract(
         ROOT / "examples/capabilities/moving_average.md"
@@ -40,6 +57,8 @@ def test_standalone_replication_auto_validates_registered_reference(tmp_path: Pa
     assert manifest["validation"]["equivalence_cases"] == 4
     assert manifest["review"]["status"] == "auto_validated"
     assert manifest["review"]["registration_ready"]
+    assert len(manifest["implementation_candidates"]) == 1
+    assert manifest["implementation_candidates"][0]["selected"]
     assert manifest_path.exists()
     assert manifest_path.with_suffix(".md").exists()
     saved = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -67,3 +86,25 @@ def test_novel_llm_replica_requires_semantic_human_review(tmp_path: Path):
     assert "equivalence" not in manifest["validation"]["checks"]
     assert manifest["review"]["status"] == "review_required"
     assert not manifest["review"]["registration_ready"]
+    assert len(manifest["implementation_candidates"]) == 1
+
+
+def test_replication_ranks_multiple_autonomous_implementations(tmp_path: Path):
+    spec = CapabilityExtractor().extract(
+        ROOT / "examples/capabilities/last_value.md"
+    )[0]
+
+    manifest = CapabilityReplicator().replicate(
+        spec,
+        tmp_path / "generated",
+        tmp_path / "review.json",
+        llm=_DiverseReplicaLLM(),
+        candidate_count=3,
+    )
+
+    candidates = manifest["implementation_candidates"]
+    assert len(candidates) == 3
+    assert sum(bool(candidate["selected"]) for candidate in candidates) == 1
+    assert all(candidate["validation"]["valid"] for candidate in candidates)
+    assert manifest["generation"]["variant_id"].startswith("candidate_")
+    assert manifest["review"]["status"] == "auto_validated"

@@ -1,0 +1,26 @@
+{
+  "agent": "CodeArchitectureAgent",
+  "mode": "deterministic",
+  "algorithm": "moving_average",
+  "algorithm_steps": [
+    "normalize history to finite non-negative numeric observations",
+    "apply moving_average semantics using declared parameters",
+    "produce exactly horizon non-negative float values",
+    "sum the daily forecast into target_inventory"
+  ],
+  "required_contracts": [
+    "forecast(history, horizon) -> list[float]",
+    "build_inventory_target(history, horizon) -> dict",
+    "target_inventory == sum(daily_forecast)"
+  ],
+  "edge_cases": [
+    "empty history",
+    "non-positive horizon",
+    "all-zero history"
+  ],
+  "allowed_dependencies": [
+    "pandas"
+  ],
+  "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+  "risks": []
+}

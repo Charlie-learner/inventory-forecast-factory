@@ -102,6 +102,15 @@ class CapabilityRequest:
 
 
 @dataclass(frozen=True)
+class ExecutionTask:
+    """Describe one user-visible task in the Planner Agent execution plan."""
+
+    task_id: str
+    title: str
+    description: str
+
+
+@dataclass(frozen=True)
 class AlgorithmPlan:
     """Represent the candidate algorithm plan produced by the planning agent."""
 
@@ -111,3 +120,4 @@ class AlgorithmPlan:
     max_repairs: int = 2
     design_basis: dict[str, Any] = field(default_factory=dict)
     risks: tuple[str, ...] = field(default_factory=tuple)
+    execution_tasks: tuple[ExecutionTask, ...] = field(default_factory=tuple)

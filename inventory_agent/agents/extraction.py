@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,6 +12,9 @@ from pathlib import Path
 from inventory_agent.domain import CapabilitySpec
 from inventory_agent.extraction.extractor import CapabilityExtractor
 from inventory_agent.llm.client import LLMClient, MockLLMClient
+
+
+logger = logging.getLogger(__name__)
 
 
 class CapabilityExtractionAgent:
@@ -48,9 +52,13 @@ class CapabilityExtractionAgent:
                         }
                     )
                     continue
-                except Exception:
+                except Exception as exc:
                     # Deterministic extraction keeps the offline and provider-failure path usable.
-                    pass
+                    logger.warning(
+                        "LLM extraction failed for %s; using deterministic parser: %s",
+                        path,
+                        type(exc).__name__,
+                    )
             capabilities.extend(self.extractor.extract(path))
             self.scan_reports.append(dict(self.extractor.last_scan_report))
         return capabilities

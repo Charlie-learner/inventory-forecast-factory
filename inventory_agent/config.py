@@ -29,6 +29,7 @@ class Settings:
     model: str = "gpt-4o-mini"
     base_url: str = "https://api.openai.com/v1"
     api_key: str | None = None
+    llm_timeout_seconds: float = 30.0
     cainiao_zip_path: Path | None = None
     sample_submission_path: Path | None = None
 
@@ -45,6 +46,7 @@ class Settings:
             model=os.getenv("MODEL", "gpt-4o-mini"),
             base_url=os.getenv("BASE_URL", "https://api.openai.com/v1"),
             api_key=os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY"),
+            llm_timeout_seconds=float(os.getenv("LLM_TIMEOUT_SECONDS", "30")),
             cainiao_zip_path=Path(zip_value) if zip_value else None,
             sample_submission_path=Path(submission_value) if submission_value else None,
         )
@@ -57,6 +59,8 @@ class Settings:
             issues.append("LLM_MODE must be 'mock' or 'api'.")
         if self.llm_mode == "api" and not self.api_key:
             issues.append("API_KEY is required when LLM_MODE=api.")
+        if not 1 <= self.llm_timeout_seconds <= 300:
+            issues.append("LLM_TIMEOUT_SECONDS must be between 1 and 300.")
         if self.cainiao_zip_path and not self.cainiao_zip_path.exists():
             issues.append(f"Cainiao ZIP not found: {self.cainiao_zip_path}")
         return issues

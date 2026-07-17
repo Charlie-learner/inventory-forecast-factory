@@ -23,6 +23,29 @@ def test_profile_detects_intermittent_demand():
     assert profile["zero_ratio"] == 4 / 6
 
 
+def test_profile_detects_weekly_seasonality():
+    weekly = pd.Series(([2, 4, 7, 10, 6, 3, 1] * 8), dtype=float)
+    profile = profile_series(weekly)
+
+    assert profile["demand_type"] == "weekly_seasonal"
+    assert profile["lag_7_correlation"] > 0.9
+
+
+def test_profile_detects_trend_before_generic_volatility():
+    profile = profile_series(pd.Series(range(1, 61), dtype=float))
+
+    assert profile["demand_type"] == "trend"
+    assert profile["trend_strength"] > 0.9
+
+
+def test_profile_detects_dense_volatile_demand():
+    volatile = pd.Series(([2, 18, 4, 24, 3, 20] * 8), dtype=float)
+    profile = profile_series(volatile)
+
+    assert profile["demand_type"] == "volatile"
+    assert profile["coefficient_of_variation"] >= 0.35
+
+
 def test_national_series_without_store_column_uses_global_calendar():
     frame = pd.DataFrame(
         {

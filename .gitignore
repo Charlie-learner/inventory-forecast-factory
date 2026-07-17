@@ -11,7 +11,11 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .coverage
+.coverage.*
+coverage.xml
 htmlcov/
+build/
+dist/
 .venv/
 venv/
 .uv-cache/

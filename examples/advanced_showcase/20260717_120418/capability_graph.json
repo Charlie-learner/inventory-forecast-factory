@@ -1,0 +1,983 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {
+    "schema_version": "1.5"
+  },
+  "nodes": [
+    {
+      "type": "DemandProfile",
+      "name": "stable",
+      "id": "profile:stable"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "volatile",
+      "id": "profile:volatile"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "intermittent",
+      "id": "profile:intermittent"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "weekly_seasonal",
+      "id": "profile:weekly_seasonal"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "trend",
+      "id": "profile:trend"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "dense",
+      "id": "profile:dense"
+    },
+    {
+      "type": "Metric",
+      "name": "inventory_cost",
+      "evaluation_unit": "horizon_total",
+      "formula": "A*max(D-T,0) + B*max(T-D,0)",
+      "scenario": "inventory_forecasting",
+      "cost_a": "understock",
+      "cost_b": "overstock",
+      "id": "metric:inventory_cost"
+    },
+    {
+      "type": "Metric",
+      "name": "wape",
+      "id": "metric:wape"
+    },
+    {
+      "type": "Metric",
+      "name": "smape",
+      "id": "metric:smape"
+    },
+    {
+      "type": "Metric",
+      "name": "bias",
+      "id": "metric:bias"
+    },
+    {
+      "type": "Metric",
+      "name": "rmse",
+      "id": "metric:rmse"
+    },
+    {
+      "type": "Algorithm",
+      "name": "croston",
+      "task_type": "inventory_forecasting",
+      "description": "Estimate non-zero demand size and the interval between demands separately.",
+      "template_name": "croston",
+      "min_history": 14,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history with possible zero-demand periods.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "alpha": 0.1
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "Forecasting and Stock Control for Intermittent Demands",
+      "source_url": "https://doi.org/10.1057/jors.1972.50",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Croston 1972 method description",
+        "inventory_agent/forecasting/models.py:52"
+      ],
+      "extraction_warnings": [
+        "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+      ],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "id": "algorithm:croston"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "many_zeros",
+      "id": "profile:many_zeros"
+    },
+    {
+      "type": "Algorithm",
+      "name": "last_value",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest observed demand as a transparent baseline.",
+      "template_name": "last_value",
+      "min_history": 1,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {},
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article benchmark discussion",
+        "inventory_agent/forecasting/models.py:12"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "id": "algorithm:last_value"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "short_history",
+      "id": "profile:short_history"
+    },
+    {
+      "type": "Algorithm",
+      "name": "moving_average",
+      "task_type": "inventory_forecasting",
+      "description": "Forecast stable demand with the mean of the most recent observations.",
+      "template_name": "moving_average",
+      "min_history": 7,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "window": 14
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "The accuracy of intermittent demand estimates",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "SMA benchmark description",
+        "inventory_agent/forecasting/models.py:22"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "id": "algorithm:moving_average"
+    },
+    {
+      "type": "Algorithm",
+      "name": "ridge_lag",
+      "task_type": "inventory_forecasting",
+      "description": "Fit regularized autoregression on recent demand lags and forecast recursively.",
+      "template_name": "ridge_lag",
+      "min_history": 30,
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "scikit-learn"
+      ],
+      "input_contract": "Dense non-negative daily history with enough observations for lag construction.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "lags": 14,
+        "alpha": 1.0
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "scikit-learn Ridge regression API",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
+      "source_license": "BSD-3-Clause documentation and citation metadata",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Ridge L2 objective",
+        "inventory_agent/forecasting/models.py:84"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "id": "algorithm:ridge_lag"
+    },
+    {
+      "type": "Algorithm",
+      "name": "seasonal_naive",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest weekly pattern over the forecast horizon.",
+      "template_name": "seasonal_naive",
+      "min_history": 14,
+      "dependencies": [
+        "pandas"
+      ],
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "locations": [
+        "all",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "parameters": {
+        "period": 7
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+      "version": "1.1.0",
+      "extracted_by": "deterministic",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article seasonal-naive benchmark discussion",
+        "inventory_agent/forecasting/models.py:36"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
+      "id": "algorithm:seasonal_naive"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "Forecasting and Stock Control for Intermittent Demands",
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
+      "extracted_by": "deterministic",
+      "source_url": "https://doi.org/10.1057/jors.1972.50",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:e7fbe6265bbd3cee"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "M5 accuracy competition results, findings, and conclusions",
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
+      "extracted_by": "deterministic",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:cc24b90807e0ed4e"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "The accuracy of intermittent demand estimates",
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
+      "extracted_by": "deterministic",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:4191b6ea63dffed1"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "scikit-learn Ridge regression API",
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
+      "extracted_by": "deterministic",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
+      "source_license": "BSD-3-Clause documentation and citation metadata",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:a6da8bbaf91c57db"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "M5 accuracy competition results, findings, and conclusions",
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+      "extracted_by": "deterministic",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "review_status": "source_reviewed",
+      "id": "source:0d2b62ba65897f56"
+    },
+    {
+      "type": "ValidationRun",
+      "name": "验证:seasonal_naive@1",
+      "item_id": 1002,
+      "store_code": "1",
+      "status": "success",
+      "metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
+      "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "timestamp": "2026-07-17T04:04:23.769806+00:00",
+      "id": "run:7dd16ecccf74"
+    },
+    {
+      "type": "CapabilityVersion",
+      "name": "seasonal_naive@6c2d6284158f",
+      "created_at": "2026-07-17T04:04:23.769806+00:00",
+      "lifecycle_status": "candidate",
+      "capability_version": "1.1.0",
+      "generation_mode": "spec_template",
+      "variant_id": "primary",
+      "generation_strategy": "specification_fidelity",
+      "prompt_hash": "89cca1155d66972b3d3d77f0cfac06272c9a733c66918f9dda9a11bf30de743d",
+      "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+      "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "generated_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\forecast_seasonal_naive.py",
+      "collaboration": {
+        "protocol": "architecture-implementation-review-validation",
+        "architecture_mode": "",
+        "review_mode": "",
+        "revision_applied": false
+      },
+      "parent_version": "",
+      "repair_count": 1,
+      "validation_profile": "inventory_target",
+      "performance": {
+        "mean_latency_ms": 0.7155049999710172,
+        "peak_memory_kb": 26.0419921875,
+        "throughput_calls_per_second": 1397.6142724935628
+      },
+      "validation_status": "success",
+      "validation_count": 4,
+      "last_validated_at": "2026-07-17T04:28:57.250605+00:00",
+      "latest_metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
+      "latest_validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "id": "version:seasonal_naive:6c2d6284158f"
+    },
+    {
+      "type": "FailureCase",
+      "name": "interface:0b494e8f4d0bcb6f",
+      "category": "interface",
+      "fingerprint": "0b494e8f4d0bcb6f",
+      "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
+      "retryable": true,
+      "severity": "high",
+      "likely_stage": "contract_validation",
+      "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+      "recommended_actions": [
+        "按接口签名重新生成",
+        "补齐返回字段",
+        "运行契约测试"
+      ],
+      "occurrence_count": 4,
+      "last_seen": "2026-07-17T04:28:57.250605+00:00",
+      "id": "failure:0b494e8f4d0bcb6f"
+    },
+    {
+      "type": "RepairStrategy",
+      "name": "修复:seasonal_naive",
+      "description": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]",
+      "strategy_fingerprint": "4ded2f418bfd5b94",
+      "attempt_count": 1,
+      "success_count": 1,
+      "last_used": "2026-07-17T04:04:23.769806+00:00",
+      "id": "repair:4ded2f418bfd5b94"
+    },
+    {
+      "type": "ValidationRun",
+      "name": "验证:seasonal_naive@1",
+      "item_id": 1002,
+      "store_code": "1",
+      "status": "success",
+      "metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
+      "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "timestamp": "2026-07-17T04:04:28.698524+00:00",
+      "id": "run:54608c30868e"
+    },
+    {
+      "type": "RepairStrategy",
+      "name": "修复:seasonal_naive",
+      "description": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=3;best_success_rate=100.00%]",
+      "strategy_fingerprint": "9391a7dc6a98ab59",
+      "attempt_count": 3,
+      "success_count": 3,
+      "last_used": "2026-07-17T04:28:57.250605+00:00",
+      "id": "repair:9391a7dc6a98ab59"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "Intermittent demand forecasting for spare parts: A Critical review",
+      "source_type": "online_research",
+      "source_ref": "10.1016/j.omega.2021.102513",
+      "source_hash": "745208df6a8596734b05401eeb2d42374e7a588730ba72cb07360234f7d6abcf",
+      "source_url": "https://doi.org/10.1016/j.omega.2021.102513",
+      "source_license": "https://www.elsevier.com/tdm/userlicense/1.0/",
+      "accessed_at": "2026-07-17T04:05:58.604012+00:00",
+      "extracted_by": "deterministic",
+      "review_status": "evidence_only",
+      "provider": "crossref",
+      "relevance_score": 0.7801,
+      "doi": "10.1016/j.omega.2021.102513",
+      "id": "source:research:745208df6a859673"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "Intermittent demand forecasting for aircraft inventories: a study of Brazilian’s Boeing 737NG aircraft´s spare parts management",
+      "source_type": "online_research",
+      "source_ref": "10.14295/transportes.v27i2.1600",
+      "source_hash": "9ff659e2af1890a7beeb051066af836aa10a2f495cc090e342a5636972123431",
+      "source_url": "https://doi.org/10.14295/transportes.v27i2.1600",
+      "source_license": "http://creativecommons.org/licenses/by/4.0",
+      "accessed_at": "2026-07-17T04:05:58.604012+00:00",
+      "extracted_by": "deterministic",
+      "review_status": "evidence_only",
+      "provider": "crossref",
+      "relevance_score": 0.7143,
+      "doi": "10.14295/transportes.v27i2.1600",
+      "id": "source:research:9ff659e2af1890a7"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "Forecasting Intermittent Demand for Spare Parts",
+      "source_type": "online_research",
+      "source_ref": "10.5120/13154-0805",
+      "source_hash": "c0cb0e47f7758c37c94ac1557dd9244c44437a2f63024d1ed86d92709685881a",
+      "source_url": "https://doi.org/10.5120/13154-0805",
+      "source_license": "",
+      "accessed_at": "2026-07-17T04:05:58.604012+00:00",
+      "extracted_by": "deterministic",
+      "review_status": "evidence_only",
+      "provider": "crossref",
+      "relevance_score": 0.661,
+      "doi": "10.5120/13154-0805",
+      "id": "source:research:c0cb0e47f7758c37"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "A Data Mining Approach for Intermittent Demand Forecasting of Aircraft Spare Parts － Focusing on the E-737(AEW&C: Airborne Early Warning & Control) Spare Parts －",
+      "source_type": "online_research",
+      "source_ref": "10.30529/amsok.2018.16.4.008",
+      "source_hash": "a2dfc575b8146368314328bf8e06d8f90975668ff5b463dc30e136eb3e6a7429",
+      "source_url": "https://doi.org/10.30529/amsok.2018.16.4.008",
+      "source_license": "",
+      "accessed_at": "2026-07-17T04:05:58.604012+00:00",
+      "extracted_by": "deterministic",
+      "review_status": "evidence_only",
+      "provider": "crossref",
+      "relevance_score": 0.6061,
+      "doi": "10.30529/amsok.2018.16.4.008",
+      "id": "source:research:a2dfc575b8146368"
+    },
+    {
+      "type": "SourceArtifact",
+      "name": "Cost-Aligned Deep Learning for Intermittent Spare-Parts Demand and Inventory",
+      "source_type": "online_research",
+      "source_ref": "10.2139/ssrn.5554492",
+      "source_hash": "690f39a4e90633dab25dd02f97733a4425f15ead65ccb4ed8c79ab5442821580",
+      "source_url": "https://doi.org/10.2139/ssrn.5554492",
+      "source_license": "",
+      "accessed_at": "2026-07-17T04:05:58.604012+00:00",
+      "extracted_by": "deterministic",
+      "review_status": "evidence_only",
+      "provider": "crossref",
+      "relevance_score": 0.2857,
+      "doi": "10.2139/ssrn.5554492",
+      "id": "source:research:690f39a4e90633da"
+    },
+    {
+      "type": "ValidationRun",
+      "name": "验证:croston@2",
+      "item_id": 1003,
+      "store_code": "2",
+      "status": "success",
+      "metrics": "{\"bias\": 0.636745984665587, \"inventory_cost\": 40.114997033931985, \"mae\": 9.337486743341737, \"mean_actual_total\": 116.0, \"mean_target_inventory\": 129.37166567797732, \"rmse\": 11.452716357996065, \"smape\": 1.8658957142439725, \"wape\": 1.690785523132061}",
+      "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "timestamp": "2026-07-17T04:17:46.788342+00:00",
+      "id": "run:4f655b833ae3"
+    },
+    {
+      "type": "CapabilityVersion",
+      "name": "croston@1c96601ed98f",
+      "created_at": "2026-07-17T04:17:46.788342+00:00",
+      "lifecycle_status": "candidate",
+      "capability_version": "1.1.0",
+      "generation_mode": "spec_template_fallback",
+      "variant_id": "candidate_1",
+      "generation_strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+      "prompt_hash": "f102e1c620ffe8945a5f3de1a681049d5ae7e38359486c5b8f3c41eb09136b02",
+      "spec_hash": "d356dc7116b4262846c698aad77104431a947ebd915771d751bae6c2227ad7ca",
+      "source_hash": "1c96601ed98f337a3b2438a8bc702ea09e8d4a06aaf9cb4f1f4ee647d7a87202",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "generated_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\forecast_croston_candidate_1.py",
+      "collaboration": {
+        "protocol": "architecture-implementation-review-validation",
+        "architecture_mode": "deterministic",
+        "review_mode": "deterministic",
+        "revision_applied": false
+      },
+      "parent_version": "",
+      "repair_count": 0,
+      "validation_profile": "intermittent_demand",
+      "performance": {
+        "mean_latency_ms": 0.8815000008326024,
+        "peak_memory_kb": 28.0751953125,
+        "throughput_calls_per_second": 1134.4299478791502
+      },
+      "validation_status": "success",
+      "validation_count": 1,
+      "last_validated_at": "2026-07-17T04:17:46.788342+00:00",
+      "latest_metrics": "{\"bias\": 0.636745984665587, \"inventory_cost\": 40.114997033931985, \"mae\": 9.337486743341737, \"mean_actual_total\": 116.0, \"mean_target_inventory\": 129.37166567797732, \"rmse\": 11.452716357996065, \"smape\": 1.8658957142439725, \"wape\": 1.690785523132061}",
+      "latest_validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "id": "version:croston:1c96601ed98f"
+    },
+    {
+      "type": "ValidationRun",
+      "name": "验证:seasonal_naive@1",
+      "item_id": 1002,
+      "store_code": "1",
+      "status": "success",
+      "metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
+      "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "timestamp": "2026-07-17T04:28:52.345810+00:00",
+      "id": "run:21e1228bc7b1"
+    },
+    {
+      "type": "ValidationRun",
+      "name": "验证:seasonal_naive@1",
+      "item_id": 1002,
+      "store_code": "1",
+      "status": "success",
+      "metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
+      "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "timestamp": "2026-07-17T04:28:57.250605+00:00",
+      "id": "run:e30063e2f18e"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:bias"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:croston",
+      "target": "profile:intermittent"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:croston",
+      "target": "profile:many_zeros"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:croston",
+      "target": "source:e7fbe6265bbd3cee"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:croston",
+      "target": "source:research:745208df6a859673"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:croston",
+      "target": "source:research:9ff659e2af1890a7"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:croston",
+      "target": "source:research:c0cb0e47f7758c37"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:croston",
+      "target": "source:research:a2dfc575b8146368"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:croston",
+      "target": "source:research:690f39a4e90633da"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:bias"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:last_value",
+      "target": "profile:short_history"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:last_value",
+      "target": "source:cc24b90807e0ed4e"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:bias"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:moving_average",
+      "target": "profile:stable"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:moving_average",
+      "target": "profile:short_history"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:moving_average",
+      "target": "source:4191b6ea63dffed1"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:moving_average",
+      "target": "source:research:745208df6a859673"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:moving_average",
+      "target": "source:research:9ff659e2af1890a7"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:moving_average",
+      "target": "source:research:c0cb0e47f7758c37"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:moving_average",
+      "target": "source:research:a2dfc575b8146368"
+    },
+    {
+      "relation": "SUPPORTED_BY_RESEARCH",
+      "source": "algorithm:moving_average",
+      "target": "source:research:690f39a4e90633da"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:bias"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:trend"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:dense"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:ridge_lag",
+      "target": "profile:volatile"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:ridge_lag",
+      "target": "source:a6da8bbaf91c57db"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:inventory_cost"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:bias"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:seasonal_naive",
+      "target": "profile:weekly_seasonal"
+    },
+    {
+      "relation": "SUITABLE_FOR",
+      "source": "algorithm:seasonal_naive",
+      "target": "profile:stable"
+    },
+    {
+      "relation": "EXTRACTED_FROM",
+      "source": "algorithm:seasonal_naive",
+      "target": "source:0d2b62ba65897f56"
+    },
+    {
+      "relation": "VALIDATED",
+      "source": "run:7dd16ecccf74",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "VALIDATED_VERSION",
+      "source": "run:7dd16ecccf74",
+      "target": "version:seasonal_naive:6c2d6284158f"
+    },
+    {
+      "relation": "OBSERVED_FAILURE",
+      "source": "run:7dd16ecccf74",
+      "target": "failure:0b494e8f4d0bcb6f"
+    },
+    {
+      "relation": "REPAIRED_BY",
+      "source": "run:7dd16ecccf74",
+      "target": "repair:4ded2f418bfd5b94"
+    },
+    {
+      "relation": "VERSION_OF",
+      "source": "version:seasonal_naive:6c2d6284158f",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "FAILURE_OF",
+      "source": "failure:0b494e8f4d0bcb6f",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "ADDRESSES",
+      "source": "repair:4ded2f418bfd5b94",
+      "target": "failure:0b494e8f4d0bcb6f"
+    },
+    {
+      "relation": "VALIDATED",
+      "source": "run:54608c30868e",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "VALIDATED_VERSION",
+      "source": "run:54608c30868e",
+      "target": "version:seasonal_naive:6c2d6284158f"
+    },
+    {
+      "relation": "OBSERVED_FAILURE",
+      "source": "run:54608c30868e",
+      "target": "failure:0b494e8f4d0bcb6f"
+    },
+    {
+      "relation": "REPAIRED_BY",
+      "source": "run:54608c30868e",
+      "target": "repair:9391a7dc6a98ab59"
+    },
+    {
+      "relation": "ADDRESSES",
+      "source": "repair:9391a7dc6a98ab59",
+      "target": "failure:0b494e8f4d0bcb6f"
+    },
+    {
+      "relation": "VALIDATED",
+      "source": "run:4f655b833ae3",
+      "target": "algorithm:croston"
+    },
+    {
+      "relation": "VALIDATED_VERSION",
+      "source": "run:4f655b833ae3",
+      "target": "version:croston:1c96601ed98f"
+    },
+    {
+      "relation": "VERSION_OF",
+      "source": "version:croston:1c96601ed98f",
+      "target": "algorithm:croston"
+    },
+    {
+      "relation": "VALIDATED",
+      "source": "run:21e1228bc7b1",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "VALIDATED_VERSION",
+      "source": "run:21e1228bc7b1",
+      "target": "version:seasonal_naive:6c2d6284158f"
+    },
+    {
+      "relation": "OBSERVED_FAILURE",
+      "source": "run:21e1228bc7b1",
+      "target": "failure:0b494e8f4d0bcb6f"
+    },
+    {
+      "relation": "REPAIRED_BY",
+      "source": "run:21e1228bc7b1",
+      "target": "repair:9391a7dc6a98ab59"
+    },
+    {
+      "relation": "VALIDATED",
+      "source": "run:e30063e2f18e",
+      "target": "algorithm:seasonal_naive"
+    },
+    {
+      "relation": "VALIDATED_VERSION",
+      "source": "run:e30063e2f18e",
+      "target": "version:seasonal_naive:6c2d6284158f"
+    },
+    {
+      "relation": "OBSERVED_FAILURE",
+      "source": "run:e30063e2f18e",
+      "target": "failure:0b494e8f4d0bcb6f"
+    },
+    {
+      "relation": "REPAIRED_BY",
+      "source": "run:e30063e2f18e",
+      "target": "repair:9391a7dc6a98ab59"
+    }
+  ]
+}

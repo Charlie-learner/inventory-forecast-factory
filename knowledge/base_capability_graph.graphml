@@ -1,28 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key id="d30" for="edge" attr.name="relation" attr.type="string" />
-  <key id="d29" for="node" attr.name="extraction_warnings" attr.type="string" />
-  <key id="d28" for="node" attr.name="evidence_refs" attr.type="string" />
-  <key id="d27" for="node" attr.name="review_status" attr.type="string" />
-  <key id="d26" for="node" attr.name="confidence" attr.type="double" />
-  <key id="d25" for="node" attr.name="accessed_at" attr.type="string" />
-  <key id="d24" for="node" attr.name="source_license" attr.type="string" />
-  <key id="d23" for="node" attr.name="source_url" attr.type="string" />
-  <key id="d22" for="node" attr.name="source_title" attr.type="string" />
+  <key id="d22" for="edge" attr.name="relation" attr.type="string" />
   <key id="d21" for="node" attr.name="extracted_by" attr.type="string" />
   <key id="d20" for="node" attr.name="version" attr.type="string" />
   <key id="d19" for="node" attr.name="source_hash" attr.type="string" />
   <key id="d18" for="node" attr.name="source_ref" attr.type="string" />
   <key id="d17" for="node" attr.name="source_type" attr.type="string" />
   <key id="d16" for="node" attr.name="parameters" attr.type="string" />
-  <key id="d15" for="node" attr.name="template_name" attr.type="string" />
-  <key id="d14" for="node" attr.name="task_type" attr.type="string" />
-  <key id="d13" for="node" attr.name="locations" attr.type="string" />
-  <key id="d12" for="node" attr.name="output_contract" attr.type="string" />
-  <key id="d11" for="node" attr.name="input_contract" attr.type="string" />
-  <key id="d10" for="node" attr.name="dependencies" attr.type="string" />
-  <key id="d9" for="node" attr.name="min_history" attr.type="long" />
-  <key id="d8" for="node" attr.name="description" attr.type="string" />
+  <key id="d15" for="node" attr.name="locations" attr.type="string" />
+  <key id="d14" for="node" attr.name="output_contract" attr.type="string" />
+  <key id="d13" for="node" attr.name="input_contract" attr.type="string" />
+  <key id="d12" for="node" attr.name="dependencies" attr.type="string" />
+  <key id="d11" for="node" attr.name="min_history" attr.type="long" />
+  <key id="d10" for="node" attr.name="template_name" attr.type="string" />
+  <key id="d9" for="node" attr.name="description" attr.type="string" />
+  <key id="d8" for="node" attr.name="task_type" attr.type="string" />
   <key id="d7" for="node" attr.name="cost_b" attr.type="string" />
   <key id="d6" for="node" attr.name="cost_a" attr.type="string" />
   <key id="d5" for="node" attr.name="scenario" attr.type="string" />
@@ -47,6 +39,10 @@
     <node id="profile:weekly_seasonal">
       <data key="d1">DemandProfile</data>
       <data key="d2">weekly_seasonal</data>
+    </node>
+    <node id="profile:trend">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">trend</data>
     </node>
     <node id="profile:dense">
       <data key="d1">DemandProfile</data>
@@ -80,28 +76,20 @@
     <node id="algorithm:croston">
       <data key="d1">Algorithm</data>
       <data key="d2">croston</data>
-      <data key="d8">Classic Croston forecast for intermittent demand.</data>
-      <data key="d9">14</data>
-      <data key="d10">["numpy", "pandas"]</data>
-      <data key="d11">non-negative daily demand history and positive horizon</data>
-      <data key="d12">non-negative daily forecast and horizon-total target inventory</data>
-      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
-      <data key="d14">inventory_forecasting</data>
-      <data key="d15">croston</data>
-      <data key="d16">{"alpha": 0.1}</data>
-      <data key="d17">python</data>
-      <data key="d18">inventory_agent\forecasting\models.py:55</data>
-      <data key="d19">6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Estimates demand size and interval separately.</data>
+      <data key="d10">croston</data>
+      <data key="d11">14</data>
+      <data key="d12">[]</data>
+      <data key="d13">non-negative daily qty_alipay_njhs history</data>
+      <data key="d14">daily forecast plus horizon-total target inventory</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{}</data>
+      <data key="d17">registry</data>
+      <data key="d18">inventory_agent.forecasting.registry:default_registry</data>
+      <data key="d19">8d008209cfff197ed82672c08e2d61d9f19344889709d7a7f8b4137bcadeae35</data>
       <data key="d20">1.0.0</data>
-      <data key="d21">python_ast</data>
-      <data key="d22">models.py</data>
-      <data key="d23" />
-      <data key="d24" />
-      <data key="d25" />
-      <data key="d26">0.95</data>
-      <data key="d27">auto_extracted</data>
-      <data key="d28">["inventory_agent\\forecasting\\models.py:55", "inventory_agent\\forecasting\\models.py:85"]</data>
-      <data key="d29">[]</data>
+      <data key="d21">registry_bootstrap</data>
     </node>
     <node id="profile:many_zeros">
       <data key="d1">DemandProfile</data>
@@ -110,28 +98,20 @@
     <node id="algorithm:last_value">
       <data key="d1">Algorithm</data>
       <data key="d2">last_value</data>
-      <data key="d8">Repeat the latest observed demand as a simple baseline.</data>
-      <data key="d9">1</data>
-      <data key="d10">["numpy", "pandas"]</data>
-      <data key="d11">non-negative daily demand history and positive horizon</data>
-      <data key="d12">non-negative daily forecast and horizon-total target inventory</data>
-      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
-      <data key="d14">inventory_forecasting</data>
-      <data key="d15">last_value</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Repeats the last observed demand.</data>
+      <data key="d10">last_value</data>
+      <data key="d11">1</data>
+      <data key="d12">[]</data>
+      <data key="d13">non-negative daily qty_alipay_njhs history</data>
+      <data key="d14">daily forecast plus horizon-total target inventory</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
       <data key="d16">{}</data>
-      <data key="d17">python</data>
-      <data key="d18">inventory_agent\forecasting\models.py:12</data>
-      <data key="d19">6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5</data>
+      <data key="d17">registry</data>
+      <data key="d18">inventory_agent.forecasting.registry:default_registry</data>
+      <data key="d19">fa3f89965508818993cb716c6e4a6d8e241ba9c6d7ab0f3532c8d1efb8ab869b</data>
       <data key="d20">1.0.0</data>
-      <data key="d21">python_ast</data>
-      <data key="d22">models.py</data>
-      <data key="d23" />
-      <data key="d24" />
-      <data key="d25" />
-      <data key="d26">0.95</data>
-      <data key="d27">auto_extracted</data>
-      <data key="d28">["inventory_agent\\forecasting\\models.py:12", "inventory_agent\\forecasting\\models.py:20"]</data>
-      <data key="d29">[]</data>
+      <data key="d21">registry_bootstrap</data>
     </node>
     <node id="profile:short_history">
       <data key="d1">DemandProfile</data>
@@ -140,217 +120,162 @@
     <node id="algorithm:moving_average">
       <data key="d1">Algorithm</data>
       <data key="d2">moving_average</data>
-      <data key="d8">Forecast with the mean of the most recent demand window.</data>
-      <data key="d9">7</data>
-      <data key="d10">["numpy", "pandas"]</data>
-      <data key="d11">non-negative daily demand history and positive horizon</data>
-      <data key="d12">non-negative daily forecast and horizon-total target inventory</data>
-      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
-      <data key="d14">inventory_forecasting</data>
-      <data key="d15">moving_average</data>
-      <data key="d16">{"window": 14}</data>
-      <data key="d17">python</data>
-      <data key="d18">inventory_agent\forecasting\models.py:23</data>
-      <data key="d19">6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Uses the recent 14-day demand average.</data>
+      <data key="d10">moving_average</data>
+      <data key="d11">7</data>
+      <data key="d12">[]</data>
+      <data key="d13">non-negative daily qty_alipay_njhs history</data>
+      <data key="d14">daily forecast plus horizon-total target inventory</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{}</data>
+      <data key="d17">registry</data>
+      <data key="d18">inventory_agent.forecasting.registry:default_registry</data>
+      <data key="d19">b0ecce8b54b2cc88074e1a67fd99a0b8314f57e9426c51d8f169c0d05794243a</data>
       <data key="d20">1.0.0</data>
-      <data key="d21">python_ast</data>
-      <data key="d22">models.py</data>
-      <data key="d23" />
-      <data key="d24" />
-      <data key="d25" />
-      <data key="d26">0.95</data>
-      <data key="d27">auto_extracted</data>
-      <data key="d28">["inventory_agent\\forecasting\\models.py:23", "inventory_agent\\forecasting\\models.py:35"]</data>
-      <data key="d29">[]</data>
+      <data key="d21">registry_bootstrap</data>
     </node>
     <node id="algorithm:ridge_lag">
       <data key="d1">Algorithm</data>
       <data key="d2">ridge_lag</data>
-      <data key="d8">Autoregressive ridge model using leakage-safe lag features.</data>
-      <data key="d9">30</data>
-      <data key="d10">["numpy", "pandas", "sklearn"]</data>
-      <data key="d11">non-negative daily demand history and positive horizon</data>
-      <data key="d12">non-negative daily forecast and horizon-total target inventory</data>
-      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
-      <data key="d14">inventory_forecasting</data>
-      <data key="d15">ridge_lag</data>
-      <data key="d16">{"lags": 14, "alpha": 1.0}</data>
-      <data key="d17">python</data>
-      <data key="d18">inventory_agent\forecasting\models.py:88</data>
-      <data key="d19">6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Regularized autoregression over the last 14 days.</data>
+      <data key="d10">ridge_lag</data>
+      <data key="d11">30</data>
+      <data key="d12">["scikit-learn"]</data>
+      <data key="d13">non-negative daily qty_alipay_njhs history</data>
+      <data key="d14">daily forecast plus horizon-total target inventory</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{}</data>
+      <data key="d17">registry</data>
+      <data key="d18">inventory_agent.forecasting.registry:default_registry</data>
+      <data key="d19">8316633ed5af13ac1061f0fee2568af5e26114500f690838d337a16571fe7238</data>
       <data key="d20">1.0.0</data>
-      <data key="d21">python_ast</data>
-      <data key="d22">models.py</data>
-      <data key="d23" />
-      <data key="d24" />
-      <data key="d25" />
-      <data key="d26">0.95</data>
-      <data key="d27">auto_extracted</data>
-      <data key="d28">["inventory_agent\\forecasting\\models.py:88", "inventory_agent\\forecasting\\models.py:116"]</data>
-      <data key="d29">[]</data>
-    </node>
-    <node id="profile:trend">
-      <data key="d1">DemandProfile</data>
-      <data key="d2">trend</data>
+      <data key="d21">registry_bootstrap</data>
     </node>
     <node id="algorithm:seasonal_naive">
       <data key="d1">Algorithm</data>
       <data key="d2">seasonal_naive</data>
-      <data key="d8">Repeat the latest seasonal pattern over the forecast horizon.</data>
-      <data key="d9">14</data>
-      <data key="d10">["numpy", "pandas"]</data>
-      <data key="d11">non-negative daily demand history and positive horizon</data>
-      <data key="d12">non-negative daily forecast and horizon-total target inventory</data>
-      <data key="d13">["all", "1", "2", "3", "4", "5"]</data>
-      <data key="d14">inventory_forecasting</data>
-      <data key="d15">seasonal_naive</data>
-      <data key="d16">{"period": 7}</data>
-      <data key="d17">python</data>
-      <data key="d18">inventory_agent\forecasting\models.py:38</data>
-      <data key="d19">6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5</data>
+      <data key="d8">inventory_forecasting</data>
+      <data key="d9">Repeats the most recent weekly demand pattern.</data>
+      <data key="d10">seasonal_naive</data>
+      <data key="d11">14</data>
+      <data key="d12">[]</data>
+      <data key="d13">non-negative daily qty_alipay_njhs history</data>
+      <data key="d14">daily forecast plus horizon-total target inventory</data>
+      <data key="d15">["all", "1", "2", "3", "4", "5"]</data>
+      <data key="d16">{}</data>
+      <data key="d17">registry</data>
+      <data key="d18">inventory_agent.forecasting.registry:default_registry</data>
+      <data key="d19">802ec5427dc47b8de7c7408e730122aff31a0faac868128d8aaa11dfbd4cffaf</data>
       <data key="d20">1.0.0</data>
-      <data key="d21">python_ast</data>
-      <data key="d22">models.py</data>
-      <data key="d23" />
-      <data key="d24" />
-      <data key="d25" />
-      <data key="d26">0.95</data>
-      <data key="d27">auto_extracted</data>
-      <data key="d28">["inventory_agent\\forecasting\\models.py:38", "inventory_agent\\forecasting\\models.py:52"]</data>
-      <data key="d29">[]</data>
-    </node>
-    <node id="source:6ae88282402d0c9f">
-      <data key="d1">SourceArtifact</data>
-      <data key="d2">models.py</data>
-      <data key="d17">python</data>
-      <data key="d18">inventory_agent\forecasting\models.py</data>
-      <data key="d19">6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5</data>
-      <data key="d21">python_ast</data>
-      <data key="d23" />
-      <data key="d24" />
-      <data key="d25" />
-      <data key="d27">auto_extracted</data>
+      <data key="d21">registry_bootstrap</data>
     </node>
     <edge source="algorithm:croston" target="metric:inventory_cost">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:wape">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:croston" target="profile:intermittent">
-      <data key="d30">SUITABLE_FOR</data>
-    </edge>
-    <edge source="algorithm:croston" target="profile:many_zeros">
-      <data key="d30">SUITABLE_FOR</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:rmse">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:croston" target="source:6ae88282402d0c9f">
-      <data key="d30">EXTRACTED_FROM</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:smape">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:bias">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:croston" target="profile:intermittent">
+      <data key="d22">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:croston" target="profile:many_zeros">
+      <data key="d22">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:inventory_cost">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:wape">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:last_value" target="profile:short_history">
-      <data key="d30">SUITABLE_FOR</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:rmse">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:last_value" target="source:6ae88282402d0c9f">
-      <data key="d30">EXTRACTED_FROM</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:smape">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:bias">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:last_value" target="profile:short_history">
+      <data key="d22">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:inventory_cost">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:wape">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:moving_average" target="profile:stable">
-      <data key="d30">SUITABLE_FOR</data>
-    </edge>
-    <edge source="algorithm:moving_average" target="profile:short_history">
-      <data key="d30">SUITABLE_FOR</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:rmse">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:moving_average" target="source:6ae88282402d0c9f">
-      <data key="d30">EXTRACTED_FROM</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:smape">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:bias">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="profile:stable">
+      <data key="d22">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:moving_average" target="profile:short_history">
+      <data key="d22">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:inventory_cost">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:wape">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:ridge_lag" target="profile:trend">
-      <data key="d30">SUITABLE_FOR</data>
-    </edge>
-    <edge source="algorithm:ridge_lag" target="profile:dense">
-      <data key="d30">SUITABLE_FOR</data>
-    </edge>
-    <edge source="algorithm:ridge_lag" target="profile:volatile">
-      <data key="d30">SUITABLE_FOR</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:rmse">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:ridge_lag" target="source:6ae88282402d0c9f">
-      <data key="d30">EXTRACTED_FROM</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:smape">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:bias">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:trend">
+      <data key="d22">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:dense">
+      <data key="d22">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:ridge_lag" target="profile:volatile">
+      <data key="d22">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:inventory_cost">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:wape">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:seasonal_naive" target="profile:weekly_seasonal">
-      <data key="d30">SUITABLE_FOR</data>
-    </edge>
-    <edge source="algorithm:seasonal_naive" target="profile:stable">
-      <data key="d30">SUITABLE_FOR</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:rmse">
-      <data key="d30">EVALUATED_BY</data>
-    </edge>
-    <edge source="algorithm:seasonal_naive" target="source:6ae88282402d0c9f">
-      <data key="d30">EXTRACTED_FROM</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:smape">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:bias">
-      <data key="d30">EVALUATED_BY</data>
+      <data key="d22">EVALUATED_BY</data>
     </edge>
-    <data key="d0">1.4</data>
+    <edge source="algorithm:seasonal_naive" target="profile:weekly_seasonal">
+      <data key="d22">SUITABLE_FOR</data>
+    </edge>
+    <edge source="algorithm:seasonal_naive" target="profile:stable">
+      <data key="d22">SUITABLE_FOR</data>
+    </edge>
+    <data key="d0">1.5</data>
   </graph>
 </graphml>

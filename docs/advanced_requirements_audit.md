@@ -11,11 +11,11 @@
 
 | 进阶要求 | 当前结论 | 主要实现 | 可演示证据 |
 |---|---|---|---|
-| Web、CLI 或 API 接口 | 高质量完成 | 提供 CLI，覆盖诊断、能力抽取、能力复刻、版本管理、回测、完整工作流、插件检查、图谱可视化 | `python -m inventory_agent --help` |
+| Web、CLI 或 API 接口 | 高质量完成 | 同时提供 CLI、可视化 Web 工作台和本地 JSON API；接口参考与 OpenAPI JSON 由路由目录自动生成 | `python -m inventory_agent --help`、`/api/docs` |
 | 支持多轮代码修复 | 完成 | LangGraph 的 `validate -> repair -> validate` 条件循环，默认最多两轮；记录失败指纹、修复策略和历史经验复用 | `examples/repair_run/`、`tests/test_workflow.py` |
 | 多个候选算法方案自动比较 | 高质量完成 | 从知识图谱检索多个可执行能力，执行无时间泄漏的滚动回测，按任务验证配置排序；完整追踪还会逐个生成并验证候选代码 | `examples/detailed_run/candidate_solutions/` |
 | 知识图谱可视化 | 高质量完成 | 独立 HTML 分层视图，支持搜索、类型筛选、缩放、拖动、关系名称、关联高亮和节点详情 | `knowledge/base_capability_graph.html` |
-| 自动生成验证报告 | 高质量完成 | 自动输出 JSON 和中文 Markdown；包含候选比较、代码验证、修复轮次、插件、验证配置和使用边界 | 每次运行目录的 `validation_report.json/.md` |
+| 自动生成验证报告 | 高质量完成 | 自动输出业务 Markdown、技术 Markdown 和 JSON；包含候选比较、多实现代码生成、验证、修复、插件、配置和使用边界；Web 直接渲染 | 每次运行目录的 `business_report.md`、`validation_report.json/.md` |
 | 验证结果回写知识库或知识图谱 | 高质量完成 | 成功与最终失败均写入图谱；关联验证运行、失败案例、修复策略、源码版本和版本事件 | `examples/knowledge_graph/complete_capability_graph.html` |
 | 不同任务类型的验证配置 | 高质量完成 | 内置库存成本、预测精度、间歇性需求三类配置；支持 CLI 显式覆盖和插件新增配置 | `python -m inventory_agent plugins` |
 | 插件式接入算法模板或评估指标 | 完成 | 模型与指标均有注册表；新增可信本地插件加载器，可通过 CLI 注入自定义指标和验证配置 | `examples/plugins/stockout_priority.py` |
@@ -77,7 +77,7 @@ python -m inventory_agent run \
 
 ## 仍需诚实说明的边界
 
-- 题目要求 Web、CLI、API 三选一，项目选择 CLI；当前没有 Web 页面或 HTTP API。
+- Web、CLI 和本地 JSON API 均已提供，但 Web/API 没有登录、租户隔离和公网鉴权，不应直接暴露公网。
 - 修复循环是有上限的工程闭环，不是无限自主修改；Mock 模式优先保证离线可复现。
 - 算法候选是知识图谱检索加滚动回测，不是 Beam Search、MCTS 或通用图搜索。
 - 外部插件采用显式可信加载，不会自动安装第三方包，也没有使用 Python entry points 自动发现。

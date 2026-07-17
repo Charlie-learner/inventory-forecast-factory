@@ -31,7 +31,7 @@ class RequirementAgent:
             re.IGNORECASE,
         )
         store_match = re.search(
-            r"(?:store|仓库|分仓|区域)[_\s:=号#-]*(all|全国|\d+)",
+            r"(?:store|仓库|分仓|区域)[_\s:=号#-]*(all|全国|[A-Za-z0-9_-]+)",
             description,
             re.IGNORECASE,
         )

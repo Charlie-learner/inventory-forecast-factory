@@ -10,20 +10,25 @@ inventory_position = on_hand + on_order - backorder
 recommended_order_qty = max(production_target_inventory - inventory_position, 0)
 ```
 
-当前能力工厂的 `target_inventory` 等于预测周期需求总量，不自动叠加安全库存。示例业务数据补充了计算
-`inventory_position` 和建议补货量所需的字段，但项目不自动执行采购或调拨。
+能力工厂的 `target_inventory` 等于预测周期需求总量，不直接把安全库存混入预测值。当需求文件旁
+存在 `inventory_snapshot.csv` 时，决策层会进一步计算 `inventory_position`、生产目标库存和
+建议补货量；结果只作为建议，不自动执行采购或调拨。
 
 ## 2. 约束后的建议补货量
 
-业务系统通常还需应用以下规则：
+当前原型自动应用以下规则：
 
 1. 小于最小订货量 `min_order_qty` 时提升到最小订货量；
 2. 按包装倍数 `pack_size` 向上取整；
 3. 不得超过仓库剩余容量；
-4. 不得超过供应商可供量或预算；
-5. 根据采购提前期覆盖提前期内需求；
-6. 高服务水平商品使用更高安全库存；
-7. 缺货、促销和新品需要人工复核。
+4. 输出供应提前期和仓容限制提示。
+
+仍需由外部业务系统或人工处理：
+
+- 供应商可供量和预算；
+- 采购日历、运输时效分布；
+- 促销、新品、断货和异常事件复核；
+- 跨仓调拨成本与执行审批。
 
 ## 3. 成本口径
 

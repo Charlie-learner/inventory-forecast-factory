@@ -259,7 +259,8 @@ def main() -> int:
         },
         "limitations": [
             "Values are synthetic and must not be interpreted as real commercial performance.",
-            "The forecasting workflow consumes demand_history.csv; other tables document downstream replenishment inputs.",
+            "The workflow consumes demand_history.csv and, when colocated, uses inventory_snapshot.csv and replenishment_policy.csv for replenishment advice.",
+            "Supplier capacity, budget, transport calendars, and execution approval remain outside the prototype.",
         ],
     }
     (OUTPUT / "source_metadata.json").write_text(

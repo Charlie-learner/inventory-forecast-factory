@@ -22,6 +22,13 @@ def test_requirement_agent_understands_nationwide_scope():
     assert request.store_code == "all"
 
 
+def test_requirement_agent_accepts_alphanumeric_warehouse_code():
+    request = RequirementAgent().parse(
+        "为商品 1001 在仓库 WH-A 预测未来14天目标库存"
+    )
+    assert request.store_code == "WH-A"
+
+
 def test_requirement_agent_selects_accuracy_validation_profile():
     request = RequirementAgent().parse(
         "为商品 3424 在仓库 1 预测未来14天日需求，重点比较 WAPE 精度"
@@ -59,6 +66,19 @@ def test_planner_uses_demand_profile_and_baseline():
     assert plan.design_basis["business_goal"]["objective"] == request.objective
     assert plan.design_basis["knowledge_evidence"]
     assert plan.risks
+    assert len(plan.execution_tasks) == 9
+    assert [task.task_id for task in plan.execution_tasks] == [
+        "understand",
+        "extract",
+        "profile",
+        "research",
+        "plan",
+        "compare",
+        "generate",
+        "validate",
+        "deposit",
+    ]
+    assert "3 个候选算法" in plan.execution_tasks[5].title
 
 
 def test_planner_keeps_non_executable_extraction_out_of_automatic_benchmark():

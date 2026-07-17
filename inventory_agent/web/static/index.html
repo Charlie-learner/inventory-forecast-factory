@@ -60,19 +60,58 @@
     .tabs { display:flex; gap:8px; margin-bottom:18px; padding:5px; border-radius:12px; background:#f1f4f9; }.tabs button { flex:1; padding:9px; border:0; border-radius:9px; color:var(--muted); background:transparent; }.tabs button.active { color:var(--blue); background:white; box-shadow:0 3px 10px rgba(30,55,90,.08); font-weight:700; }
     .panel { display:none; }.panel.active { display:block; }
     .activity { min-height:400px; max-height:600px; overflow:auto; }.empty { display:grid; place-items:center; min-height:330px; color:var(--muted); text-align:center; }.spinner { width:34px; height:34px; border:3px solid #dce5f6; border-top-color:var(--blue); border-radius:50%; animation:spin .8s linear infinite; } @keyframes spin { to { transform:rotate(360deg); } }
+    .progress-plan { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }.progress-step { padding:4px 7px; border-radius:7px; color:#7a8699; background:#edf1f6; font-size:10px; }.progress-step.done { color:#147744; background:#e6f8ef; }.progress-step.active { color:#174aa9; background:#e8efff; box-shadow:inset 0 0 0 1px #a9bff2; font-weight:800; }
     .result-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }.mini { padding:15px; border-radius:13px; background:#f7f9fd; }.mini small { color:var(--muted); }.mini strong { display:block; margin-top:4px; font-size:19px; }
     table { width:100%; border-collapse:collapse; } th,td { padding:10px 9px; border-bottom:1px solid var(--line); text-align:left; } th { color:var(--muted); font-size:11px; text-transform:uppercase; } td { font-size:13px; }
     .bar { height:8px; border-radius:6px; background:#e8edf6; overflow:hidden; }.bar i { display:block; height:100%; border-radius:6px; background:linear-gradient(90deg, var(--blue), var(--cyan)); }
     .timeline { display:grid; gap:10px; }.event { display:grid; grid-template-columns:28px 1fr; gap:10px; }.event-index { display:grid; place-items:center; width:26px; height:26px; border-radius:50%; color:white; background:var(--blue); font-size:11px; }.event-body { padding:10px 12px; border:1px solid var(--line); border-radius:10px; }.event-body b { display:block; }.event-body small { color:var(--muted); }
     .graph-frame { width:100%; height:calc(100vh - 170px); min-height:650px; border:1px solid var(--line); border-radius:var(--radius); background:white; }
     .notice { padding:12px 14px; border-radius:10px; color:#7a5510; background:#fff7df; }.error { color:#a9282d; background:#ffecee; }
+    .chat-shell { max-width: 980px; margin: 0 auto; }
+    .chat-message { max-width: 82%; margin-bottom: 14px; padding: 14px 16px; border-radius: 16px; }
+    .chat-message.agent { color: #33415b; background: #edf3ff; border-bottom-left-radius: 5px; }
+    .chat-composer { padding: 16px; border: 1px solid #d9e2f0; border-radius: 18px; background: white; box-shadow: var(--shadow); }
+    .chat-composer textarea { min-height: 112px; border: 0; padding: 4px; box-shadow: none; font-size: 16px; }
+    .chat-tools { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .upload-button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; color: #41506a; background: #f8faff; font-weight: 700; cursor: pointer; }
+    .dataset-card { display: none; margin-top: 12px; padding: 12px 14px; border: 1px solid #cdebdc; border-radius: 12px; color: #17663e; background: #effbf5; }
+    .dataset-card.show { display: block; }
+    .dataset-file { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid rgba(25,167,99,.15); }
+    .mapping-card { margin-top:12px; padding:14px; border:1px solid #f1d49a; border-radius:12px; background:#fff9e9; }
+    details.advanced { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+    details.advanced summary { color: var(--muted); cursor: pointer; font-weight: 700; }
+    .report-panel { display: none; margin-top: 22px; }.report-panel.show { display: block; }
+    .report-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .guide { margin: 0 0 18px; padding: 14px 16px; border: 1px solid #d7e4fa; border-radius: 13px; color: #385273; background: #f2f7ff; }
+    .guide b { color: #183d72; }.guide ul { margin: 7px 0 0; padding-left: 20px; }
+    .example-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 18px; }
+    .example-card { padding: 13px; border: 1px solid var(--line); border-radius: 12px; color: #34445e; background: white; text-align: left; box-shadow: 0 5px 16px rgba(30,55,90,.04); }
+    .example-card:hover { border-color: #8ca8ed; transform: translateY(-1px); }.example-card b { display: block; color: #244f9e; }.example-card small { color: var(--muted); }
+    .markdown-body { margin-top: 16px; padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+    .markdown-body h1 { margin-top: 0; font-size: 24px; }.markdown-body h2 { margin-top: 25px; font-size: 18px; }
+    .markdown-body p { color: #35445c; }.markdown-body li { margin: 5px 0; }.markdown-body table { margin: 12px 0; }
+    details.technical { margin-top: 18px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fafbfd; }
+    details.technical summary { cursor: pointer; color: #3c4c67; font-weight: 700; }
+    .audit-hero { display:grid; grid-template-columns:190px 1fr; gap:24px; align-items:center; padding:24px; border-radius:18px; color:white; background:linear-gradient(120deg,#123063,#315fcd 62%,#168f9f); box-shadow:var(--shadow); }
+    .audit-score { display:grid; place-items:center; width:150px; height:150px; margin:auto; border:10px solid rgba(255,255,255,.22); border-radius:50%; background:rgba(255,255,255,.08); }
+    .audit-score strong { display:block; font-size:34px; line-height:1; }.audit-score small { color:#d8e7ff; }
+    .audit-flow { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin:18px 0; }
+    .audit-stage { position:relative; padding:13px 9px; border:1px solid #d6e1f3; border-radius:11px; background:white; text-align:center; }
+    .audit-stage:not(:last-child):after { content:"→"; position:absolute; z-index:2; right:-10px; top:30%; color:#4b71c8; font-weight:900; }.audit-stage b { display:block; color:#234b98; }.audit-stage small { color:var(--muted); }
+    .audit-group { margin-top:20px; }.audit-group > h3 { margin:0 0 10px; }
+    .audit-list { display:grid; gap:10px; }.audit-item { padding:15px 16px; border:1px solid var(--line); border-left:5px solid #aab5c7; border-radius:12px; background:white; }
+    .audit-item.passed { border-left-color:var(--green); }.audit-item.partial { border-left-color:var(--orange); }.audit-item.missing { border-left-color:var(--red); }.audit-item.excluded { border-left-color:#8792a5; background:#f8f9fb; }
+    .audit-item-head { display:flex; justify-content:space-between; gap:12px; align-items:start; }.audit-item-head h4 { margin:0; font-size:15px; }.audit-item p { margin:7px 0; color:#3c4b63; }
+    .audit-status { flex:none; padding:4px 9px; border-radius:20px; font-size:11px; font-weight:800; }.audit-status.passed { color:#147744; background:#e6f8ef; }.audit-status.partial { color:#8a5b00; background:#fff3d4; }.audit-status.missing { color:#a9282d; background:#ffecee; }.audit-status.excluded { color:#596477; background:#e9edf3; }
+    .audit-meta { display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; }.audit-meta code { padding:4px 7px; border-radius:6px; color:#40506b; background:#f0f3f8; font-size:11px; }
+    .audit-boundary { margin-top:9px; padding:8px 10px; border-radius:8px; color:#765416; background:#fff8e7; font-size:12px; }
     .toast { position:fixed; right:26px; bottom:26px; z-index:30; max-width:420px; padding:13px 17px; border-radius:12px; color:white; background:#17243a; box-shadow:var(--shadow); opacity:0; transform:translateY(15px); pointer-events:none; transition:.2s; }.toast.show { opacity:1; transform:none; }
     .mobile-menu { display:none; }
-    @media (max-width: 1050px) { .stats { grid-template-columns:repeat(3,1fr); }.grid,.grid.equal { grid-template-columns:1fr; }.result-summary { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width: 1050px) { .stats { grid-template-columns:repeat(3,1fr); }.grid,.grid.equal { grid-template-columns:1fr; }.result-summary { grid-template-columns:repeat(2,1fr); }.example-grid { grid-template-columns:repeat(2,1fr); }.audit-flow { grid-template-columns:repeat(4,1fr); } }
     @media (max-width: 760px) {
       .app { grid-template-columns:1fr; }.sidebar { position:fixed; z-index:20; width:246px; transform:translateX(-105%); transition:.2s; }.sidebar.open { transform:none; }
       .mobile-menu { display:block; border:0; background:transparent; font-size:22px; }.topbar { padding:0 18px; }.content { padding:20px 16px 40px; }
-      .stats { grid-template-columns:1fr 1fr; }.row,.row.three { grid-template-columns:1fr; }.hero { padding:25px; }.hero h2 { font-size:25px; }
+      .stats { grid-template-columns:1fr 1fr; }.row,.row.three { grid-template-columns:1fr; }.hero { padding:25px; }.hero h2 { font-size:25px; }.example-grid { grid-template-columns:1fr; }.audit-hero { grid-template-columns:1fr; }.audit-flow { grid-template-columns:1fr 1fr; }.audit-stage:after { display:none; }
     }
   </style>
 </head>
@@ -87,6 +126,7 @@
       <button data-view="benchmark"><i>≋</i>算法回测比较</button>
       <button data-view="runs"><i>◎</i>运行证据</button>
       <button data-view="graph"><i>⬡</i>知识图谱</button>
+      <button data-view="audit"><i>✓</i>评分验收</button>
       <button data-view="extensions"><i>＋</i>插件与配置</button>
     </nav>
     <div class="sidebar-foot"><div class="online"><span class="dot"></span>本地服务在线</div><small id="sideMode">正在读取配置……</small></div>
@@ -118,31 +158,60 @@
       </section>
 
       <section class="view" id="view-factory">
-        <div class="section-title"><h2>完整 Agent 能力工厂</h2><p>输入业务需求，执行能力抽取—候选比较—代码生成—验证修复—知识沉淀全流程。</p></div>
-        <div class="grid">
-          <article class="card">
-            <form id="runForm">
-              <label><span>自然语言任务描述</span><textarea name="description">为商品 3424 在仓库 1 预测未来14天目标库存</textarea></label>
-              <div class="row"><label><span>业务数据路径</span><input name="data_path" value="examples/data/cainiao_demo.csv"></label><label><span>验证任务类型</span><select name="task_type" id="runTaskType"></select></label></div>
-              <div class="row"><label><span>能力来源（每行一个，可选）</span><textarea name="capability_sources">examples/capabilities/moving_average.md</textarea></label><label><span>插件（每行一个，可选）</span><textarea name="plugins" placeholder="examples/plugins/stockout_priority.py:register"></textarea></label></div>
-              <div class="row"><label><span>追踪级别</span><select name="trace_level"><option value="full">full：候选代码逐一生成验证</option><option value="basic">basic：核心流程追踪</option><option value="off">off：不保存详细追踪</option></select></label><label><span>保留最近运行数</span><input type="number" name="keep_runs" value="10" min="1"></label></div>
-              <div class="actions"><button class="btn" type="submit">启动完整工作流</button></div>
-            </form>
+        <div class="section-title"><h2>和库存预测 Agent 对话</h2><p>描述目标并上传数据即可。任务类型、候选算法、验证指标和代码修复策略由 Agent 自动判断。</p></div>
+        <div class="guide"><b>自然语言可以直接表达批量范围：</b>
+          <ul><li>“预测商品 132 和商品 1013 在仓库 all 未来 14 天的库存。”</li><li>“预测商品 132 在所有仓库未来 7 天的库存。”</li><li>“全国”表示全国汇总需求；“所有仓库”表示分别计算数据中的每个仓库。</li><li>系统会分别运行每个商品—仓库组合，并汇总目标库存和补货建议。</li></ul>
+        </div>
+        <div class="example-grid" aria-label="可直接使用的任务示例">
+          <button type="button" class="example-card prompt-example" data-prompt="预测商品 1013 在仓库 3 未来 14 天的需求，比较多个算法，给出目标库存、进货/补货建议，并用业务语言解释选择依据。"><b>单商品业务预测</b><small>正常需求、目标库存与补货建议</small></button>
+          <button type="button" class="example-card prompt-example" data-prompt="预测商品 132 和 1013 在仓库 all 未来 14 天的库存，分别给出目标库存和补货建议。"><b>多商品全国预测</b><small>验证多个商品不会只取第一个</small></button>
+          <button type="button" class="example-card prompt-example" data-prompt="预测商品 1013 在所有仓库未来 7 天的库存，比较各仓库需求差异并给出补货建议。"><b>所有仓库预测</b><small>自动展开仓库 1-5</small></button>
+          <button type="button" class="example-card prompt-example" data-prompt="预测商品 330 在仓库 5 未来 14 天的库存。该商品需求较稀疏，请重点比较间歇需求算法，并说明缺货风险。"><b>间歇需求预测</b><small>比较 Croston 与可解释基线</small></button>
+          <button type="button" class="example-card prompt-example" data-prompt="预测商品 330 在所有仓库未来 7 天的库存，并解释为什么部分仓库结果可能为 0。"><b>全零历史诊断</b><small>展示数据质量警告与使用边界</small></button>
+          <button type="button" class="example-card prompt-example" data-prompt="预测商品 1013 在仓库 4 未来 14 天的每日需求，重点比较 WAPE 预测误差，并解释误差意味着什么。"><b>预测精度任务</b><small>切换到需求预测验证配置</small></button>
+        </div>
+        <div class="chat-shell">
+          <div class="chat-message agent"><b>你好，我是库存算法能力 Agent。</b><br>请告诉我你想预测什么，并上传 CSV 或菜鸟原始 ZIP。CSV 可以使用常见字段名，如 date/ds、sku_id/item_id、warehouse_id/store_code、sales/demand/qty/y。</div>
+          <form id="runForm" class="chat-composer">
+            <textarea name="description" id="runDescription" aria-label="自然语言任务描述" placeholder="例如：请根据上传的数据预测未来14天需求，并给出合适的目标库存和算法选择依据。">请根据上传的数据预测未来14天需求，比较多个算法后给出目标库存，并解释设计依据</textarea>
+            <input type="hidden" name="data_path" id="runDataPath" value="">
+            <div class="dataset-card" id="datasetCard"><div id="datasetSummary"></div><div id="mappingArea"></div><div class="actions"><button type="button" class="btn alt" id="removeDataset">清空本次数据集</button></div></div>
+            <details class="advanced">
+              <summary>高级设置（一般无需修改）</summary>
+              <div class="row three" style="margin-top:14px"><label><span>执行模式</span><select name="execution_mode"><option value="balanced">均衡模式（推荐）</option><option value="fast">快速模式</option><option value="thorough">深度验收模式</option></select></label><label><span>验证任务类型</span><select name="task_type" id="runTaskType"></select></label><label><span>追踪级别</span><select name="trace_level"><option value="basic">核心流程</option><option value="full">完整证据链</option><option value="off">关闭详细追踪</option></select></label></div>
+              <div class="row"><label><span>能力来源（每行一个，可选）</span><textarea name="capability_sources" placeholder="examples/capabilities/moving_average.md"></textarea></label><label><span>插件（每行一个，可选）</span><textarea name="plugins" placeholder="examples/plugins/stockout_priority.py:register"></textarea></label></div>
+              <div class="row"><label><span>保留最近运行数</span><input type="number" name="keep_runs" value="10" min="1"></label><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="online_research"><span>联网检索 DOI 行业资料并形成知识抽取文件</span></label></div>
+              <div class="notice">均衡模式会并行生成和验证两个实现；快速模式只生成一个实现且使用确定性解释；深度验收模式生成三个实现并增加资源基准次数。联网资料不能绕过滚动回测和代码门禁。</div>
+            </details>
+            <div class="chat-tools">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <label class="upload-button">📎 上传一个或多个文件<input id="datasetFile" type="file" accept=".csv,.zip" multiple hidden></label>
+                <button type="button" class="btn alt" id="useDemoData">使用演示数据</button>
+                <button type="button" class="btn alt" id="useBusinessData">使用完整业务示例</button>
+              </div>
+              <button class="btn" type="submit">发送并运行</button>
+            </div>
+          </form>
+          <aside class="card activity" style="margin-top:20px;min-height:180px"><div class="card-head"><div><h3>Agent 任务状态</h3><p>完成后会在下方直接展示真实报告</p></div></div><div id="runActivity" class="empty" style="min-height:100px"><div><b>等待你的任务</b><br>上传数据并发送自然语言描述即可开始。</div></div></aside>
+          <article class="card report-panel" id="factoryReport">
+            <div class="card-head"><div><h3>真实验证报告</h3><p id="factoryReportHint"></p></div><div class="report-links" id="factoryReportLinks"></div></div>
+            <div id="factoryReportBody"></div>
           </article>
-          <aside class="card activity"><div class="card-head"><div><h3>实时任务状态</h3><p>长任务完成后自动加载真实报告与 trace</p></div></div><div id="runActivity" class="empty"><div><b>Agent 已就绪</b><br>提交任务后，这里会显示执行状态与结果摘要。</div></div></aside>
         </div>
       </section>
 
       <section class="view" id="view-capability">
-        <div class="section-title"><h2>能力抽取与代码复刻</h2><p>从 Markdown、JSON 或 Python 中抽取 CapabilitySpec，再生成可运行代码并自动验证。</p></div>
+        <div class="section-title"><h2>能力抽取与代码复刻</h2><p>从文档、Python 文件或真实本地代码仓库递归抽取函数、依赖、调用关系和能力描述，再生成可运行代码并自动验证。</p></div>
+        <div class="guide"><b>这个页面适合开发或评审人员。</b>“能力抽取”用于理解外部算法资料或代码仓库；“能力复刻”会生成可运行算法代码，并检查接口、安全性、稳定性和结果一致性。普通预测用户通常无需操作这里。</div>
         <div class="grid equal">
-          <article class="card"><div class="card-head"><div><h3>能力抽取</h3><p>解析来源、记录哈希与证据，并可写入知识图谱</p></div></div><form id="extractForm"><label><span>来源路径（每行一个）</span><textarea name="sources">examples/capabilities/moving_average.md</textarea></label><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="update_knowledge" checked>抽取后更新知识图谱</label><div class="actions"><button class="btn" type="submit">开始抽取</button></div></form><div id="extractResult"></div></article>
-          <article class="card"><div class="card-head"><div><h3>能力复刻</h3><p>生成独立算法模块，执行接口、安全、稳定性和等价验证</p></div></div><form id="replicateForm"><label><span>能力来源</span><input name="sources" value="examples/capabilities/moving_average.md"></label><div class="row"><label><span>能力名称（多能力来源时填写）</span><input name="capability" placeholder="moving_average"></label><label><span>参考模型</span><input name="reference_model" value="moving_average"></label></div><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="approved">记录人工审核通过</label><div class="actions"><button class="btn" type="submit">生成并验证</button></div></form><div id="replicateResult"></div></article>
+          <article class="card"><div class="card-head"><div><h3>能力抽取</h3><p>记录函数入口、外部依赖、内部调用、复杂度、源码哈希和证据</p></div></div><form id="extractForm"><label><span>文档、Python 文件或仓库目录（每行一个）</span><textarea name="sources">inventory_agent/forecasting</textarea></label><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="update_knowledge" checked>抽取后更新知识图谱</label><div class="actions"><button class="btn" type="submit">开始抽取</button></div></form><div id="extractResult"></div></article>
+          <article class="card"><div class="card-head"><div><h3>能力复刻</h3><p>API 模式生成多个独立实现，逐份执行接口、安全、稳定性和等价验证后自动选优</p></div></div><form id="replicateForm"><label><span>能力来源</span><input name="sources" value="examples/capabilities/moving_average.md"></label><div class="row three"><label><span>能力名称（多能力来源时填写）</span><input name="capability" placeholder="moving_average"></label><label><span>参考模型（新算法可留空）</span><input name="reference_model" value="moving_average"></label><label><span>代码实现候选数</span><input type="number" name="candidate_count" value="3" min="1" max="5"></label></div><label style="display:flex;gap:8px;align-items:center"><input style="width:auto" type="checkbox" name="approved">记录人工审核通过</label><div class="notice">API 模式会按不同策略自主生成 1-5 份源码并验证选优；Mock 模式为保证可复现，仅生成一份安全模板。未提供参考模型的新算法即使自动检查通过，也需要人工审核算法语义。</div><div class="actions"><button class="btn" type="submit">生成多个实现并验证选优</button></div></form><div id="replicateResult"></div></article>
         </div>
       </section>
 
       <section class="view" id="view-benchmark">
         <div class="section-title"><h2>候选算法自动比较</h2><p>按指定验证配置执行无时间泄漏的滚动回测，并自动选择最优方案。</p></div>
+        <div class="guide"><b>这是专家比较页面。</b>用于单独比较某个商品和仓库上的算法效果。“预测误差比例”和“缺货/积压综合损失”都是越低越好；日常业务用户可直接使用“完整能力工厂”。</div>
         <div class="grid">
           <article class="card"><form id="benchmarkForm"><div class="row"><label><span>数据路径</span><input name="data_path" value="examples/data/cainiao_demo.csv"></label><label><span>验证配置</span><select name="task_type" id="benchmarkTaskType"></select></label></div><div class="row three"><label><span>商品 ID</span><input type="number" name="item_id" value="3424"></label><label><span>仓库</span><input name="store_code" value="1"></label><label><span>预测周期</span><input type="number" name="horizon" value="14"></label></div><label><span>候选模型（每行一个；留空使用全部）</span><textarea name="models">last_value
 moving_average
@@ -155,6 +224,7 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
 
       <section class="view" id="view-runs">
         <div class="section-title"><h2>运行结果与审计证据</h2><p>每次运行都保留候选方案、代码验证、修复记录、报告和工具调用时间线。</p></div>
+        <div class="guide"><b>每个商品—仓库组合对应一条独立运行记录。</b>业务人员优先查看“业务报告”；技术验证报告、JSON、Trace 和产物清单用于复核算法过程与评分验收。</div>
         <div class="grid">
           <article class="card"><div class="card-head"><div><h3>历史运行</h3><p>最近 20 次任务</p></div><button class="btn alt" id="refreshRuns">刷新</button></div><div class="runs" id="allRuns"></div></article>
           <article class="card"><div class="card-head"><div><h3>运行详情</h3><p id="detailHint">请选择一条运行记录</p></div></div><div id="runDetail" class="empty">候选算法比较和验证证据将在这里呈现。</div></article>
@@ -163,11 +233,19 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
 
       <section class="view" id="view-graph">
         <div class="section-title"><h2>能力知识图谱</h2><p>查看算法、需求画像、指标、验证运行、失败案例、修复策略和能力版本之间的关系。</p></div>
+        <div class="guide"><b>知识图谱不是预测结果图。</b>它展示系统积累了哪些算法能力、哪些需求类型适合哪些算法，以及验证、失败修复和版本之间的关联。可搜索、筛选并点击节点查看详情。</div>
         <iframe class="graph-frame" id="graphFrame" title="库存算法能力知识图谱"></iframe>
+      </section>
+
+      <section class="view" id="view-audit">
+        <div class="section-title"><h2>笔试要求评分验收中心</h2><p>把“实现了什么”变成可检查、可运行、可追溯的证据，而不是只给出结论。</p></div>
+        <div class="guide"><b>建议老师先看这里。</b>页面逐条对应笔试中的核心任务、开发要求、基础交付、进阶要求和加分能力。每一项都说明普通人能看到什么、证据文件在哪里、如何用 CLI 复核；未纳入范围或依赖外部环境的能力会明确标注边界。</div>
+        <div id="auditContent"><div class="empty"><div><div class="spinner" style="margin:auto"></div><br>正在根据当前仓库证据生成验收结果……</div></div></div>
       </section>
 
       <section class="view" id="view-extensions">
         <div class="section-title"><h2>插件与验证配置</h2><p>统一注册表让新指标和任务验证策略无需修改核心工作流即可接入。</p></div>
+        <div class="guide"><b>这是扩展与维护页面。</b>可查看当前算法、评价方法和验证策略，也可管理已验证算法版本。只有经过审核的本地插件才应加载。需要程序化集成时，可打开 <a href="/api/docs" target="_blank">自动生成的 API 文档</a> 或 <a href="/api/openapi.json" target="_blank">OpenAPI JSON</a>。</div>
         <div class="grid equal"><article class="card"><div class="card-head"><div><h3>验证配置</h3><p>不同业务目标使用不同主指标、决胜指标和回测要求</p></div></div><div id="profileCards"></div></article><article class="card"><div class="card-head"><div><h3>指标与算法</h3><p>当前可执行的扩展点</p></div></div><h4>指标</h4><div class="chips" id="extensionMetrics"></div><h4>算法</h4><div class="chips" id="extensionAlgorithms"></div><div class="notice" style="margin-top:18px">可通过可信本地插件注册自定义指标和验证配置；插件执行普通 Python 代码，只应加载已审核文件。</div></article></div>
         <article class="card" style="margin-top:20px">
           <div class="card-head"><div><h3>算法能力版本管理</h3><p>查看验证证据、指标变化和版本血缘，并执行发布或回滚</p></div></div>
@@ -183,24 +261,87 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
 </div>
 <div class="toast" id="toast"></div>
 <script>
-  const state = { overview: null, graphLoaded: false };
+  const state = { overview: null, graphLoaded: false, auditLoaded: false, uploadSession: "", dataset: null };
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fmt = (value, digits=2) => value == null ? "—" : Number(value).toFixed(digits);
+  const modelLabel = name => ({last_value:"最近一期需求延续法",moving_average:"近期平均需求法",seasonal_naive:"同期季节规律法",croston:"间歇性需求预测法",ridge_lag:"历史滞后特征回归法"}[name]||name);
+  const metricLabel = name => ({inventory_cost:"缺货与积压综合损失",wape:"预测误差比例",smape:"对称百分比误差",bias:"整体高估/低估倾向",mae:"平均绝对误差",rmse:"均方根误差"}[name]||name);
   const lines = value => String(value || "").split(/\n/).map(x=>x.trim()).filter(Boolean);
+  function markdownHtml(markdown) {
+    const source=String(markdown||"").replace(/\r/g,"").split("\n"), output=[];
+    for(let i=0;i<source.length;i++){
+      const line=source[i];
+      if(!line.trim())continue;
+      if(line.startsWith("# "))output.push(`<h1>${esc(line.slice(2))}</h1>`);
+      else if(line.startsWith("## "))output.push(`<h2>${esc(line.slice(3))}</h2>`);
+      else if(line.startsWith("### "))output.push(`<h3>${esc(line.slice(4))}</h3>`);
+      else if(line.startsWith("- ")){const items=[];while(i<source.length&&source[i].startsWith("- ")){items.push(`<li>${inlineMarkdown(source[i].slice(2))}</li>`);i++;}i--;output.push(`<ul>${items.join("")}</ul>`);}
+      else if(line.startsWith("|")&&i+1<source.length&&/^\|?[\s:|-]+\|?$/.test(source[i+1])){const headers=line.split("|").filter(Boolean).map(x=>`<th>${inlineMarkdown(x.trim())}</th>`);i+=2;const rows=[];while(i<source.length&&source[i].startsWith("|")){rows.push(`<tr>${source[i].split("|").filter(Boolean).map(x=>`<td>${inlineMarkdown(x.trim())}</td>`).join("")}</tr>`);i++;}i--;output.push(`<table><thead><tr>${headers.join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`);}
+      else output.push(`<p>${inlineMarkdown(line)}</p>`);
+    }
+    return output.join("");
+  }
+  function inlineMarkdown(value){return esc(value).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/`(.+?)`/g,"<code>$1</code>");}
+  async function showMarkdown(runId,artifact="business.md",targetId="renderedMarkdown"){
+    const target=$(targetId);if(!target)return;target.innerHTML='<div class="empty" style="min-height:120px"><div class="spinner"></div></div>';
+    try{let response=await fetch(`/api/runs/${encodeURIComponent(runId)}/${artifact}`);if(!response.ok&&artifact==="business.md")response=await fetch(`/api/runs/${encodeURIComponent(runId)}/report.md`);if(!response.ok)throw new Error(`HTTP ${response.status}`);target.innerHTML=markdownHtml(await response.text());}
+    catch(error){target.innerHTML=`<div class="notice error">${esc(error.message)}</div>`;}
+  }
   function toast(message, error=false) { const el=$("toast"); el.textContent=message; el.style.background=error?"#a92c35":"#17243a"; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),3200); }
   async function api(path, options={}) { const response=await fetch(path,{headers:{'Content-Type':'application/json'},...options}); const data=await response.json(); if(!response.ok) throw new Error(data.error||`HTTP ${response.status}`); return data; }
+  const wait=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
+  async function waitForJob(jobId) {
+    const started=Date.now(), timeout=20*60*1000;
+    while(Date.now()-started<timeout){
+      const job=await api(`/api/jobs/${encodeURIComponent(jobId)}`), percent=Math.max(0,Math.min(100,Number(job.percent||0)));
+      const taskIndex=Number(job.task_index||0),taskTotal=Number(job.task_total||0),tasks=Array.isArray(job.execution_tasks)?job.execution_tasks:[],hasPlan=taskIndex>0&&taskTotal>0&&taskIndex<=taskTotal;
+      const taskHeading=hasPlan?`任务 ${taskIndex}/${taskTotal}：${esc(job.task_title||job.message||"Agent 正在执行")}`:esc(job.message||"Planner Agent 正在设计执行任务");
+      const batchTotal=Number(job.batch_total||1),batchIndex=Number(job.batch_index||1),batchItem=job.batch_item||{},batchLine=batchTotal>1?`<div style="margin-top:5px;color:#52627b">批次 ${batchIndex}/${batchTotal} · 商品 ${esc(batchItem.item_id)} / 仓库 ${esc(batchItem.store_code)}</div>`:"";
+      const planHtml=tasks.length?`<div class="progress-plan" aria-label="Planner Agent 执行计划">${tasks.map((task,index)=>`<span class="progress-step ${index+1<taskIndex?"done":index+1===taskIndex?"active":""}" title="${esc(task.description||"")}">${index+1}. ${esc(task.title)}</span>`).join("")}</div>`:"";
+      $("runActivity").innerHTML=`<div style="width:min(760px,94%);text-align:left"><b>${taskHeading}</b>${batchLine}<div style="margin-top:5px;color:var(--muted)">${esc(job.message||"")}</div><div class="bar" style="margin:14px 0 8px;height:12px"><i style="width:${percent}%"></i></div><small>${percent}%${batchTotal>1?" · 全部批次总进度":""} · 可继续浏览其他页面，本任务会在后台运行。</small>${planHtml}</div>`;
+      if(job.status==="completed")return job.result;
+      if(job.status==="failed")throw new Error(job.error||job.message||"后台任务执行失败");
+      await wait(800);
+    }
+    throw new Error("任务执行超过 20 分钟，请在运行证据页检查是否已生成报告。");
+  }
   function formObject(form) { const data=new FormData(form), out={}; for(const [key,value] of data) out[key]=value; form.querySelectorAll('input[type=checkbox]').forEach(x=>out[x.name]=x.checked); return out; }
+  function fileKindLabel(kind) {
+    return {cainiao_national:"菜鸟全国需求表",cainiao_store:"菜鸟分仓需求表",cost_config:"库存成本配置",panel:"通用需求表",zip:"完整数据压缩包",unmapped_csv:"待字段映射 CSV",multi_csv_archive:"多 CSV 压缩包"}[kind]||kind;
+  }
+  function mappingSelect(columns,name,preferred=[]) {
+    const ordered=[...columns].sort((a,b)=>(preferred.includes(String(b).toLowerCase())?1:0)-(preferred.includes(String(a).toLowerCase())?1:0));
+    return `<select data-map="${name}"><option value="">请选择</option>${ordered.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("")}</select>`;
+  }
+  function setDataset(dataset) {
+    state.dataset=dataset; state.uploadSession=dataset.session_id||state.uploadSession; $("runDataPath").value=dataset.runnable_path||"";
+    const itemHint=dataset.item_examples?.length?`商品 ID 示例：${dataset.item_examples.join("、")}`:"";
+    const storeHint=dataset.store_examples?.length?`仓库 ID 示例：${dataset.store_examples.join("、")}`:"";
+    $("datasetSummary").innerHTML=`<div class="notice" style="margin-bottom:10px"><b>${dataset.ready?"数据集已就绪":"数据集尚未就绪"}</b><br>${esc(dataset.message)}${itemHint||storeHint?`<br>${esc(itemHint)}${itemHint&&storeHint?"；":""}${esc(storeHint)}`:""}</div>${dataset.files.map(file=>`<div class="dataset-file"><div><b>${esc(file.original_name)}</b><br><small>${esc(fileKindLabel(file.kind))}${file.rows!=null?` · ${file.rows} 行`:""}${file.item_count!=null?` · ${file.item_count} 商品`:""}${file.store_count!=null?` · ${file.store_count} 仓库`:""}</small></div><span class="badge">${file.status==="ready"?"已识别":"需处理"}</span></div>`).join("")}`;
+    const mappings=dataset.files.filter(file=>file.status==="needs_mapping"&&file.kind==="unmapped_csv");
+    $("mappingArea").innerHTML=mappings.map(file=>`<div class="mapping-card" data-mapping-file="${esc(file.original_name)}"><b>${esc(file.original_name)} 需要字段映射</b><p style="margin:5px 0;color:#7a5510">${esc(file.diagnostic||"请选择字段含义")}</p><div class="row"><label><span>日期字段</span>${mappingSelect(file.columns,"date",["date","ds","day","time"])}</label><label><span>商品字段</span>${mappingSelect(file.columns,"item_id",["item_id","sku_id","product_id","sku"])}</label></div><div class="row"><label><span>仓库字段（可不选）</span>${mappingSelect(file.columns,"store_code",["store_code","warehouse_id","store_id"])}</label><label><span>需求/销量字段</span>${mappingSelect(file.columns,"qty_alipay_njhs",["demand","sales","qty","quantity","target","y"])}</label></div><div class="actions"><button type="button" class="btn apply-mapping">应用字段映射</button></div></div>`).join("");
+    document.querySelectorAll(".apply-mapping").forEach(button=>button.onclick=async()=>{const card=button.closest("[data-mapping-file]"),mapping={};card.querySelectorAll("[data-map]").forEach(select=>{if(select.value)mapping[select.dataset.map]=select.value;});button.disabled=true;try{const result=await api("/api/datasets/map",{method:"POST",body:JSON.stringify({session_id:state.uploadSession,filename:card.dataset.mappingFile,mapping})});setDataset(result.dataset);toast("字段映射成功，数据已规范化");}catch(error){toast(error.message,true);}finally{button.disabled=false;}});
+    $("datasetCard").classList.add("show");
+  }
+  function clearDataset(){ state.uploadSession="";state.dataset=null;$("runDataPath").value="";$("datasetCard").classList.remove("show");$("datasetFile").value="";$("datasetSummary").innerHTML="";$("mappingArea").innerHTML=""; }
   function setBusy(form,busy,text="处理中……") { const button=form.querySelector('button[type=submit]'); if(!button)return; if(!button.dataset.label)button.dataset.label=button.textContent; button.disabled=busy; button.textContent=busy?text:button.dataset.label; }
   function navigate(name) {
     document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===`view-${name}`));
     document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===name));
-    const labels={overview:"系统总览",factory:"完整能力工厂",capability:"能力抽取与复刻",benchmark:"算法回测比较",runs:"运行证据",graph:"知识图谱",extensions:"插件与配置"};
+    const labels={overview:"系统总览",factory:"完整能力工厂",capability:"能力抽取与复刻",benchmark:"算法回测比较",runs:"运行证据",graph:"知识图谱",audit:"评分验收",extensions:"插件与配置"};
     $("pageTitle").textContent=labels[name]; $("sidebar").classList.remove("open");
     if(name==="graph"&&!state.graphLoaded){ $("graphFrame").src="/graph"; state.graphLoaded=true; }
+    if(name==="audit"&&!state.auditLoaded)loadAudit();
   }
   document.querySelectorAll("[data-view]").forEach(x=>x.onclick=()=>navigate(x.dataset.view));
   document.querySelectorAll("[data-jump]").forEach(x=>x.onclick=()=>navigate(x.dataset.jump));
+  document.querySelectorAll(".prompt-example").forEach(button=>button.onclick=()=>{
+    $("runDescription").value=button.dataset.prompt;
+    $("runDescription").focus();
+    $("runDescription").scrollIntoView({behavior:"smooth",block:"center"});
+    toast("示例任务已填入，可直接上传数据并运行");
+  });
   $("menu").onclick=()=>$("sidebar").classList.toggle("open");
 
   function renderRunList(target,runs) {
@@ -215,13 +356,24 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
     $("metricChips").innerHTML=data.metrics.map(x=>`<span class="chip">指标 · ${esc(x)}</span>`).join("");
     renderRunList($("recentRuns"),data.recent_runs);
     const options=data.validation_profiles.map(x=>`<option value="${esc(x.name)}">${esc(x.name)} · ${esc(x.primary_metric)}</option>`).join("");
-    $("runTaskType").innerHTML=options; $("benchmarkTaskType").innerHTML=options;
+    $("runTaskType").innerHTML=`<option value="">由 Agent 根据描述和数据自动判断</option>${options}`; $("benchmarkTaskType").innerHTML=options;
     $("profileCards").innerHTML=data.validation_profiles.map(x=>`<div class="run"><div><b>${esc(x.name)}</b><small>${esc(x.description)}</small></div><div><span class="badge">${esc(x.primary_metric)}</span><small style="display:block">${x.folds} folds</small></div></div>`).join("");
     $("extensionMetrics").innerHTML=data.metrics.map(x=>`<span class="chip">${esc(x)}</span>`).join("");
     $("extensionAlgorithms").innerHTML=data.algorithms.map(x=>`<span class="chip">${esc(x.name)}</span>`).join("");
     $("versionModel").innerHTML=data.algorithms.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join("");
   }
   async function loadOverview(){ try{ renderOverview(await api("/api/overview")); }catch(error){ toast(error.message,true); } }
+  function auditViewTarget(label){if(label.includes("完整能力工厂"))return"factory";if(label.includes("能力抽取"))return"capability";if(label.includes("算法回测"))return"benchmark";if(label.includes("运行证据"))return"runs";if(label.includes("知识图谱"))return"graph";if(label.includes("插件"))return"extensions";return"overview";}
+  function renderAudit(data){
+    const s=data.summary,statusLabel={passed:"已完成",partial:"部分完成",missing:"未完成",excluded:"不纳入本次目标"};
+    $("auditContent").innerHTML=`<div class="audit-hero"><div class="audit-score"><div><strong>${fmt(s.completion_rate,1)}%</strong><small>必需项完成率</small></div></div><div><h2 style="margin:0 0 8px">${esc(s.conclusion)}</h2><p style="margin:0;color:#d9e6ff">必需项 ${s.passed}/${s.required_total} 已完成 · 部分完成 ${s.partial} · 未完成 ${s.missing}</p><div class="actions" style="justify-content:start;margin-top:15px"><button class="btn alt" data-audit-jump="factory">运行完整工作流</button><button class="btn alt" data-audit-jump="runs">查看真实证据</button><a class="btn alt" href="/api/docs" target="_blank">查看 API 文档</a></div></div></div>
+      <h3 style="margin:24px 0 8px">能力生产闭环如何协作</h3><p style="color:var(--muted);margin-top:0">不是一次 Prompt 直接给代码，而是职责分离的 Agent 和验证组件按阶段协作。</p>
+      <div class="audit-flow">${data.closed_loop.map(x=>`<div class="audit-stage"><b>${esc(x.stage)}</b><small>${esc(x.agent)}</small></div>`).join("")}</div>
+      ${data.categories.map(group=>`<section class="audit-group"><h3>${esc(group.name)} <small style="color:var(--muted);font-weight:400">${group.items.length} 项</small></h3><div class="audit-list">${group.items.map(item=>`<article class="audit-item ${item.status}"><div class="audit-item-head"><div><h4>${esc(item.requirement)}</h4><p>${esc(item.plain_language)}</p></div><span class="audit-status ${item.status}">${esc(statusLabel[item.status])}</span></div>${item.evidence.length?`<div class="audit-meta">${item.evidence.map(path=>`<code>${esc(path)}</code>`).join("")}</div>`:""}${item.cli_command?`<details class="technical"><summary>如何复核</summary><p><b>CLI：</b> <code>${esc(item.cli_command)}</code></p><button class="btn alt audit-jump" data-audit-jump="${auditViewTarget(item.web_view)}">在 Web 查看：${esc(item.web_view)}</button></details>`:""}${item.boundary?`<div class="audit-boundary"><b>真实性边界：</b>${esc(item.boundary)}</div>`:""}</article>`).join("")}</div></section>`).join("")}`;
+    document.querySelectorAll("[data-audit-jump]").forEach(button=>button.onclick=()=>navigate(button.dataset.auditJump));
+    state.auditLoaded=true;
+  }
+  async function loadAudit(){try{renderAudit(await api("/api/audit"));}catch(error){$("auditContent").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;toast(error.message,true);}}
   async function loadRuns(){ try{ const data=await api("/api/runs"); renderRunList($("allRuns"),data.runs); }catch(error){ toast(error.message,true); } }
   async function loadRun(id,jump=false) {
     if(jump)navigate("runs"); $("runDetail").innerHTML='<div class="empty"><div class="spinner"></div><br>正在读取运行证据……</div>';
@@ -234,20 +386,69 @@ ridge_lag</textarea></label><div class="actions"><button class="btn" type="submi
       <h4>候选模型比较</h4><table><thead><tr><th>模型</th><th>${esc(report.validation_profile?.primary_metric||"主指标")}</th><th>库存成本</th><th>相对表现</th></tr></thead><tbody>${candidates.map(x=>{const v=Number(x.metrics?.[report.validation_profile?.primary_metric]||0);return`<tr><td><b>${esc(x.model)}</b></td><td>${fmt(v,4)}</td><td>${fmt(x.metrics?.inventory_cost)}</td><td><div class="bar"><i style="width:${Math.max(4,100-v/max*85)}%"></i></div></td></tr>`}).join("")}</tbody></table>
       <h4>代码验证</h4><div class="chips">${Object.entries(validation.checks||{}).map(([k,v])=>`<span class="chip" style="${v?'color:#147744;background:#e6f8ef':'color:#a9282d;background:#ffecee'}">${esc(k)} · ${v?"通过":"失败"}</span>`).join("")}</div>
       <h4>Agent 时间线（${events.length} 个事件）</h4><div class="timeline">${events.map(e=>`<div class="event"><div class="event-index">${e.sequence}</div><div class="event-body"><b>${esc(e.stage)} · ${esc(e.component)}</b><small>${esc(e.action)} · ${esc(e.status)}</small></div></div>`).join("")}</div>`;
+      $("runDetail").insertAdjacentHTML("afterbegin",`<div class="report-links"><button class="btn alt" id="historyBusiness">业务报告</button><button class="btn alt" id="historyTechnical">技术验证报告</button><a class="btn alt" target="_blank" href="/api/runs/${encodeURIComponent(id)}/report.json">JSON 数据</a></div><div class="markdown-body" id="historyMarkdown"></div>`);
+      $("historyBusiness").onclick=()=>showMarkdown(id,"business.md","historyMarkdown");
+      $("historyTechnical").onclick=()=>showMarkdown(id,"report.md","historyMarkdown");
+      showMarkdown(id,"business.md","historyMarkdown");
     } catch(error){ $("runDetail").innerHTML=`<div class="notice error">${esc(error.message)}</div>`; }
   }
 
+  function renderFactoryReport(result) {
+    const rows=result.results||[], primary=rows[0]||{}, detail=primary.detail||result.detail||{}, report=detail.report||{}, bench=report.benchmark||{}, validation=report.code_validation||{}, candidates=bench.candidates||[], implementations=report.implementation_candidates||[], metric=report.validation_profile?.primary_metric||"inventory_cost";
+    $("factoryReport").classList.add("show");
+    $("factoryReportHint").textContent=result.batch?`已完成 ${rows.length} 个商品—仓库子任务，每项都有独立报告与验证证据`:`运行 ${primary.run_id||result.run_id} · 默认展示面向业务用户的报告`;
+    $("factoryReportLinks").innerHTML=`<button class="btn alt" id="showBusinessReport">业务报告</button><button class="btn alt" id="showTechnicalReport">技术验证报告</button><a class="btn alt" target="_blank" href="/api/runs/${encodeURIComponent(primary.run_id||result.run_id)}/collaboration.json">多智能体协作</a><a class="btn alt" target="_blank" href="/api/runs/${encodeURIComponent(primary.run_id||result.run_id)}/blueprint.json">实现蓝图</a><a class="btn alt" target="_blank" href="/api/runs/${encodeURIComponent(primary.run_id||result.run_id)}/performance.json">性能分析</a><a class="btn alt" target="_blank" href="/api/runs/${encodeURIComponent(primary.run_id||result.run_id)}/experience.json">失败与修复经验</a><a class="btn alt" target="_blank" href="/api/runs/${encodeURIComponent(primary.run_id||result.run_id)}/report.json">JSON 数据</a><a class="btn alt" target="_blank" href="/api/runs/${encodeURIComponent(primary.run_id||result.run_id)}/trace.md">详细 Trace</a>`;
+    if(result.batch){
+      $("factoryReportBody").innerHTML=`<div class="result-summary"><div class="mini"><small>完成任务</small><strong>${rows.length} 项</strong></div><div class="mini"><small>目标库存合计</small><strong>${fmt(result.total_target_inventory)}</strong></div><div class="mini"><small>覆盖商品</small><strong>${new Set(rows.map(x=>x.item_id)).size}</strong></div><div class="mini"><small>覆盖仓库</small><strong>${new Set(rows.map(x=>x.store_code)).size}</strong></div></div>
+      <h4>各商品—仓库的业务建议</h4><table><thead><tr><th>商品</th><th>仓库</th><th>未来天数</th><th>目标库存</th><th>建议补货</th><th>日均需求</th><th>数据状态</th><th>采用方法</th><th>报告</th></tr></thead><tbody>${rows.map(x=>`<tr><td><b>${esc(x.item_id)}</b></td><td>${esc(x.store_code)}</td><td>${x.horizon}</td><td><b>${fmt(x.target_inventory)}</b></td><td>${x.replenishment?.available?`<b>${fmt(x.replenishment.recommended_order_qty)}</b>`:"需库存快照"}</td><td>${fmt(x.average_daily_demand)}</td><td>${x.history_status==="all_zero_history"?'<span class="chip" style="color:#a9282d;background:#ffecee">历史销量全为 0</span>':x.history_status==="zero_history_fallback"?'<span class="chip" style="color:#a9282d;background:#ffecee">缺少历史数据</span>':'历史数据可用'}</td><td>${esc(modelLabel(x.selected_model))}</td><td><button class="btn alt batch-report" data-run="${esc(x.run_id)}">查看</button></td></tr>`).join("")}</tbody></table>
+      ${rows.some(x=>x.history_status!=="observed")?'<div class="notice error" style="margin-top:14px"><b>数据警告：</b>部分组合没有非零历史销量。其 0 库存结果表示“数据中没有可学习的需求”，不是未来一定没有需求，也不能把误差为 0 理解为预测准确。</div>':""}
+      <div class="notice" style="margin-top:14px"><b>补货建议：</b>上传数据旁存在库存快照时，系统会应用现货、在途、欠单、安全库存、最小订货量、包装倍数和仓容计算建议补货；缺少这些数据时只展示计算公式，不虚构采购数量。</div>
+      <div class="markdown-body" id="renderedMarkdown"></div>`;
+      document.querySelectorAll(".batch-report").forEach(button=>button.onclick=()=>showMarkdown(button.dataset.run,"business.md"));
+    } else {
+      $("factoryReportBody").innerHTML=`<div class="result-summary"><div class="mini"><small>商品 / 仓库</small><strong>${esc(primary.item_id)} / ${esc(primary.store_code)}</strong></div><div class="mini"><small>目标库存</small><strong>${fmt(primary.target_inventory)}</strong></div><div class="mini"><small>日均预计需求</small><strong>${fmt(primary.average_daily_demand)}</strong></div><div class="mini"><small>推荐方法</small><strong>${esc(modelLabel(primary.selected_model))}</strong></div></div>
+      ${primary.history_status!=="observed"?'<div class="notice error" style="margin-top:14px"><b>数据警告：</b>该商品—仓库缺少非零历史销量。目标库存为 0 不代表未来确定没有需求，请先核查是否未上架、断货或销量口径缺失。</div>':""}
+      <div class="notice" style="margin-top:14px"><b>补货决策：</b>${primary.replenishment?.available?`当前现货 ${fmt(primary.replenishment.on_hand)}、在途 ${fmt(primary.replenishment.on_order)}、安全库存 ${fmt(primary.replenishment.safety_stock)}，应用订货与仓容约束后建议补货 <b>${fmt(primary.replenishment.recommended_order_qty)}</b> 件。`:`${esc(primary.replenishment_formula||"目标库存加安全库存和欠单，再减去现货与在途库存，最低为 0")}。当前缺少库存快照，因此不虚构具体采购数量。`}</div>
+      <div class="markdown-body" id="renderedMarkdown"></div>
+      <details class="technical"><summary>展开算法比较和代码验证等技术细节</summary>
+      <h4>候选方法历史回测</h4><table><thead><tr><th>方法</th><th>${esc(metricLabel(metric))}</th><th>预测误差比例</th><th>缺货/积压损失</th></tr></thead><tbody>${candidates.map(x=>`<tr><td><b>${esc(modelLabel(x.model))}</b>${x.model===bench.selected_model?' <span class="badge">采用</span>':''}</td><td>${fmt(x.metrics?.[metric],4)}</td><td>${x.metrics?.wape==null?"—":fmt(Number(x.metrics.wape)*100,1)+"%"}</td><td>${fmt(x.metrics?.inventory_cost)}</td></tr>`).join("")}</tbody></table>
+      <h4>同一能力的代码实现候选</h4><div class="notice">${implementations.length>1?"LLM 根据不同实现策略生成多份独立源码，并在正确性门禁通过后按预测延迟、内存和代码规模选优。":"当前仅生成一份可复现实现；可切换均衡或深度模式生成更多实现。"}</div>${implementations.length?`<table><thead><tr><th>候选</th><th>策略</th><th>验证</th><th>平均延迟</th><th>内存峰值</th><th>结果</th></tr></thead><tbody>${implementations.map(x=>`<tr><td>${esc(x.variant_id)}</td><td>${esc(x.strategy)}</td><td>${x.validation.valid?"通过":"失败"}</td><td>${fmt(x.validation.mean_latency_ms,4)} ms</td><td>${fmt(x.validation.peak_memory_kb,2)} KB</td><td>${x.selected?'<span class="badge">选中</span>':"—"}</td></tr>`).join("")}</tbody></table>`:""}
+      <h4>性能与资源消耗</h4><div class="notice">单次预测平均延迟 <b>${fmt(report.performance_analysis?.measurements?.mean_latency_ms,4)} ms</b>，吞吐量 <b>${fmt(report.performance_analysis?.measurements?.throughput_calls_per_second,2)} 次/秒</b>，Python 分配内存峰值 <b>${fmt(report.performance_analysis?.measurements?.peak_memory_kb,2)} KB</b>。这是隔离微基准，仅用于候选相对比较。</div>
+      <h4>代码验证</h4><div class="chips">${Object.entries(validation.checks||{}).map(([k,v])=>`<span class="chip" style="${v?'color:#147744;background:#e6f8ef':'color:#a9282d;background:#ffecee'}">${esc(k)} · ${v?"通过":"失败"}</span>`).join("")}</div></details>`;
+    }
+    const activeRun=primary.run_id||result.run_id;
+    $("showBusinessReport").onclick=()=>showMarkdown(activeRun,"business.md");
+    $("showTechnicalReport").onclick=()=>showMarkdown(activeRun,"report.md");
+    showMarkdown(activeRun,"business.md");
+    $("factoryReport").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  $("datasetFile").onchange=async event=>{
+    const files=[...event.target.files]; if(!files.length)return;
+    if(files.some(file=>file.size>100*1024*1024)){toast("单个文件不能超过 100 MB",true);return;}
+    if(!state.uploadSession)state.uploadSession=(crypto.randomUUID?crypto.randomUUID():String(Date.now())).replace(/[^A-Za-z0-9_-]/g,"");
+    $("runActivity").innerHTML=`<div class="empty"><div><div class="spinner" style="margin:auto"></div><br>正在逐个上传并诊断 ${files.length} 个文件……</div></div>`;
+    try {
+      for(const file of files){const dataUrl=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});const content_base64=String(dataUrl).split(",",2)[1];const result=await api("/api/upload",{method:"POST",body:JSON.stringify({session_id:state.uploadSession,filename:file.name,content_base64})});setDataset(result.dataset);}
+      $("runActivity").innerHTML=`<div class="notice">${state.dataset.ready?"数据集已就绪。现在可以发送自然语言任务。":"文件已接收，请根据上方诊断继续上传缺失文件或完成字段映射。"}</div>`; toast("文件上传与诊断完成");
+    } catch(error){$("runActivity").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;toast(error.message,true);}
+  };
+  $("removeDataset").onclick=clearDataset;
+  $("useDemoData").onclick=()=>{setDataset({session_id:"demo_dataset",ready:true,runnable_path:"examples/data/cainiao_demo.csv",mode:"single_panel_unit_cost",message:"已选择仓库内置演示数据。",item_examples:[3424],store_examples:["1"],item_count:1,store_count:1,files:[{original_name:"cainiao_demo.csv",kind:"panel",status:"ready",rows:140,item_count:1,store_count:1}]});toast("已选择演示数据");};
+  $("useBusinessData").onclick=()=>{setDataset({session_id:"business_demo",ready:true,runnable_path:"examples/business_data/demand_history.csv",mode:"business_bundle",message:"已选择完整多表业务示例。运行时会自动读取同目录库存快照和补货策略，计算约束后的建议补货量。",item_examples:[1001,1002,1003,1004,1005,1006],store_examples:["1","2","3"],item_count:6,store_count:3,files:[{original_name:"demand_history.csv + 库存快照 + 补货策略",kind:"panel",status:"ready",rows:2880,item_count:6,store_count:3}]});$("runDescription").value="预测商品 1001 在仓库 1 未来 14 天的需求，比较多个算法并结合现货、在途、安全库存、最小订货量、包装倍数和仓容给出建议补货量。";toast("已选择完整业务示例");};
+
   $("runForm").onsubmit=async event=>{
     event.preventDefault(); const form=event.currentTarget, payload=formObject(form); payload.capability_sources=lines(payload.capability_sources); payload.plugins=lines(payload.plugins); payload.keep_runs=Number(payload.keep_runs);
-    setBusy(form,true,"Agent 正在执行……"); $("runActivity").innerHTML='<div class="empty"><div><div class="spinner" style="margin:auto"></div><br><b>正在执行完整能力闭环</b><br>候选代码验证可能需要数秒，请勿关闭页面。</div></div>';
-    try{const result=await api("/api/run",{method:"POST",body:JSON.stringify(payload)}); $("runActivity").innerHTML=`<div class="notice"><b>运行成功：${esc(result.selected_model)}</b><br>目标库存 ${fmt(result.target_inventory)} · ${result.candidate_count} 个候选 · ${result.repairs} 次修复<br><button class="btn alt" style="margin-top:12px" id="openNewRun">查看完整证据</button></div>`; $("openNewRun").onclick=()=>loadRun(result.run_id,true); toast("完整 Agent 工作流执行成功"); await loadOverview(); await loadRuns();}catch(error){$("runActivity").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;toast(error.message,true);}finally{setBusy(form,false);}
+    if(!payload.data_path){toast("请先上传 CSV/ZIP，或选择演示数据",true);return;}
+    setBusy(form,true,"Agent 后台执行中……"); $("runActivity").innerHTML='<div class="empty"><div><div class="spinner" style="margin:auto"></div><br><b>正在创建后台任务</b><br>稍后会逐阶段显示真实进度。</div></div>';
+    try{const job=await api("/api/run-async",{method:"POST",body:JSON.stringify(payload)}),result=await waitForJob(job.job_id),research=result.results[0]?.online_research; $("runActivity").innerHTML=result.batch?`<div class="notice"><b>批量运行成功：完成 ${result.target_count} 个商品—仓库任务</b><br>各任务的目标库存、补货建议和独立报告已在下方汇总展示。</div>`:`<div class="notice"><b>运行成功：商品 ${esc(result.results[0].item_id)} / 仓库 ${esc(result.results[0].store_code)}</b><br>目标库存 ${fmt(result.target_inventory)}。${research?.status==="success"?`联网研究检索到 ${research.record_count} 条可追溯资料，并已形成知识抽取文件。`:research?.status==="degraded"?"联网研究暂不可用，核心工作流已安全降级完成。":""} 面向业务用户的报告已在下方展开。</div>`; renderFactoryReport(result); toast("完整 Agent 工作流执行成功"); await loadOverview(); await loadRuns();}catch(error){$("runActivity").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;toast(error.message,true);}finally{setBusy(form,false);}
   };
   $("benchmarkForm").onsubmit=async event=>{
     event.preventDefault(); const form=event.currentTarget,payload=formObject(form); payload.models=lines(payload.models); payload.item_id=Number(payload.item_id); payload.horizon=Number(payload.horizon); setBusy(form,true,"正在回测……"); $("benchmarkResult").innerHTML='<div class="empty"><div class="spinner"></div></div>';
     try{const r=await api("/api/benchmark",{method:"POST",body:JSON.stringify(payload)}), metric=r.validation_profile.primary_metric, max=Math.max(...r.candidates.map(x=>Number(x.metrics[metric])),1); $("benchmarkResult").innerHTML=`<div class="notice"><b>推荐模型：${esc(r.selected_model)}</b><br>主指标：${esc(metric)} · 目标库存：${fmt(r.target_inventory)}</div><table><thead><tr><th>模型</th><th>${esc(metric)}</th><th>WAPE</th><th>表现</th></tr></thead><tbody>${r.candidates.map(x=>{const v=Number(x.metrics[metric]);return`<tr><td><b>${esc(x.model)}</b></td><td>${fmt(v,4)}</td><td>${fmt(x.metrics.wape,4)}</td><td><div class="bar"><i style="width:${Math.max(5,100-v/max*85)}%"></i></div></td></tr>`}).join("")}</tbody></table>`;toast("候选算法比较完成");}catch(error){$("benchmarkResult").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;}finally{setBusy(form,false);}
   };
   $("extractForm").onsubmit=async event=>{event.preventDefault();const form=event.currentTarget,p=formObject(form);p.sources=lines(p.sources);setBusy(form,true);try{const r=await api("/api/extract",{method:"POST",body:JSON.stringify(p)});$("extractResult").innerHTML=`<div class="notice" style="margin-top:16px">成功抽取 <b>${r.count}</b> 项能力，并记录函数入口、依赖与源码证据。</div><div style="max-height:360px;overflow:auto"><table><thead><tr><th>能力</th><th>类型</th><th>入口</th><th>外部依赖</th><th>内部调用</th></tr></thead><tbody>${r.capabilities.map(x=>`<tr><td><b>${esc(x.name)}</b><br><small>${esc(x.description)}</small></td><td>${esc(x.implementation_kind)}</td><td>${esc((x.entrypoints||[]).join(", ")||"-")}</td><td>${esc((x.dependencies||[]).join(", ")||"-")}</td><td>${esc((x.internal_dependencies||[]).join(", ")||"-")}</td></tr>`).join("")}</tbody></table></div>`;toast("能力抽取完成");}catch(error){$("extractResult").innerHTML=`<div class="notice error" style="margin-top:16px">${esc(error.message)}</div>`;}finally{setBusy(form,false);}};
-  $("replicateForm").onsubmit=async event=>{event.preventDefault();const form=event.currentTarget,p=formObject(form);p.sources=lines(p.sources);setBusy(form,true);try{const r=await api("/api/replicate",{method:"POST",body:JSON.stringify(p)});$("replicateResult").innerHTML=`<div class="notice" style="margin-top:16px"><b>${esc(r.capability)}</b> 复刻完成<br>验证：${r.validation.valid?"通过":"失败"} · 状态：${esc(r.review.status)}</div>`;toast("能力复刻与验证完成");}catch(error){$("replicateResult").innerHTML=`<div class="notice error" style="margin-top:16px">${esc(error.message)}</div>`;}finally{setBusy(form,false);}};
+  $("replicateForm").onsubmit=async event=>{event.preventDefault();const form=event.currentTarget,p=formObject(form);p.sources=lines(p.sources);p.candidate_count=Number(p.candidate_count);setBusy(form,true);try{const r=await api("/api/replicate",{method:"POST",body:JSON.stringify(p)}),c=r.implementation_candidates||[];$("replicateResult").innerHTML=`<div class="notice" style="margin-top:16px"><b>${esc(r.capability.name||r.capability)}</b> 复刻完成<br>生成 ${c.length} 个不同源码实现 · 选中 ${esc(r.generation.variant_id||"primary")} · 验证：${r.validation.valid?"通过":"失败"} · 状态：${esc(r.review.status)}<br>平均延迟 ${fmt(r.validation.mean_latency_ms,4)} ms · Python 内存峰值 ${fmt(r.validation.peak_memory_kb,2)} KB</div>${c.length?`<table><thead><tr><th>候选</th><th>生成策略</th><th>验证</th><th>平均延迟</th><th>内存峰值</th><th>结果</th></tr></thead><tbody>${c.map(x=>`<tr><td>${esc(x.variant_id)}</td><td>${esc(x.strategy)}</td><td>${x.validation.valid?"通过":"失败"}</td><td>${fmt(x.validation.mean_latency_ms,4)} ms</td><td>${fmt(x.validation.peak_memory_kb,2)} KB</td><td>${x.selected?'<span class="badge">选中</span>':"—"}</td></tr>`).join("")}</tbody></table>`:""}`;toast("多实现代码生成、验证与资源选优完成");}catch(error){$("replicateResult").innerHTML=`<div class="notice error" style="margin-top:16px">${esc(error.message)}</div>`;}finally{setBusy(form,false);}};
   $("refreshRuns").onclick=loadRuns;
   async function loadVersions() {
     const model=$("versionModel").value; $("versionResult").innerHTML='<div class="empty"><div class="spinner"></div></div>';

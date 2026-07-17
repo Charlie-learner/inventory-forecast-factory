@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-07-17T04:14:36.874276+00:00",
+  "status": "success",
+  "provider": "crossref",
+  "query": "intermittent demand Croston spare parts algorithm validation",
+  "request_excerpt": "为高间歇需求商品1003在仓库2预测未来21天目标库存。请联网检索间歇需求预测与库存控制资料，比较 Croston、移动平均和最近值等方案；由多智能体自动生成并审查多个独立代码实现，执行安全、等价性、性能和库存成本评估，最后结合库存快照给出补货建议和设计依据。",
+  "demand_profile": "intermittent",
+  "records": [
+    {
+      "title": "Intermittent demand forecasting for spare parts: A Critical review",
+      "doi": "10.1016/j.omega.2021.102513",
+      "url": "https://doi.org/10.1016/j.omega.2021.102513",
+      "abstract_excerpt": "",
+      "authors": [
+        "Çerağ Pinçe",
+        "Laura Turrini",
+        "Joern Meissner"
+      ],
+      "year": 2021,
+      "venue": "Omega",
+      "work_type": "journal-article",
+      "citation_count": 64,
+      "license_url": "https://www.elsevier.com/tdm/userlicense/1.0/",
+      "provider": "crossref",
+      "relevance_score": 0.7801,
+      "matched_terms": [
+        "demand",
+        "intermittent",
+        "parts",
+        "spare"
+      ]
+    },
+    {
+      "title": "Intermittent demand forecasting for aircraft inventories: a study of Brazilian’s Boeing 737NG aircraft´s spare parts management",
+      "doi": "10.14295/transportes.v27i2.1600",
+      "url": "https://doi.org/10.14295/transportes.v27i2.1600",
+      "abstract_excerpt": "This paper aims to compare and evaluate five different methods for predicting intermittent demand using spare parts recorded series of the 737 Next Generation aircraft, manufactured by Boeing, of the largest Brazilian air fleet managed by VRG Airline Company S/A. The Winter, Croston, Single Exponential Smoothing, Weight Moving Average and Poisson Distribution Methods were tested on a history data of 53 spare parts, and each one has a demand history of thirty-six months (January 2013 to December 2015). The results showed that the Weight Moving Average, Poisson Distribution and Croston methods presented the best adjustments. Also, it was observed that most of the demands for spare parts presented a smooth pattern unlike the result obtained by the study of Ghobbar and Friend (2003) that presented a lumpy pattern. On the other hand, it showed that the Winter Method presented the worst adjustment in both studies. It was possible, therefore, to conclude that Weight Moving Average and Poisson Distribution methods are the most suitable to evaluate the intermittent demand for the VRG Airline Company S/A case.",
+      "authors": [
+        "Jersone Tasso Moreira Silva",
+        "Luiz Henrique Santos",
+        "Alexandre Teixeira Dias",
+        "Hugo Ferreira Braga Tadeu"
+      ],
+      "year": 2019,
+      "venue": "Transportes",
+      "work_type": "journal-article",
+      "citation_count": 0,
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "provider": "crossref",
+      "relevance_score": 0.7143,
+      "matched_terms": [
+        "croston",
+        "demand",
+        "intermittent",
+        "parts",
+        "spare"
+      ]
+    },
+    {
+      "title": "Forecasting Intermittent Demand for Spare Parts",
+      "doi": "10.5120/13154-0805",
+      "url": "https://doi.org/10.5120/13154-0805",
+      "abstract_excerpt": "",
+      "authors": [
+        "B. Vasumathi",
+        "A. Saradha"
+      ],
+      "year": 2013,
+      "venue": "International Journal of Computer Applications",
+      "work_type": "journal-article",
+      "citation_count": 5,
+      "license_url": "",
+      "provider": "crossref",
+      "relevance_score": 0.661,
+      "matched_terms": [
+        "demand",
+        "intermittent",
+        "parts",
+        "spare"
+      ]
+    },
+    {
+      "title": "A Data Mining Approach for Intermittent Demand Forecasting of Aircraft Spare Parts － Focusing on the E-737(AEW&C: Airborne Early Warning & Control) Spare Parts －",
+      "doi": "10.30529/amsok.2018.16.4.008",
+      "url": "https://doi.org/10.30529/amsok.2018.16.4.008",
+      "abstract_excerpt": "",
+      "authors": [
+        "Taegyu Kim",
+        "마정목"
+      ],
+      "year": 2018,
+      "venue": "Journal of the Aviation Management Society of Korea",
+      "work_type": "journal-article",
+      "citation_count": 1,
+      "license_url": "",
+      "provider": "crossref",
+      "relevance_score": 0.6061,
+      "matched_terms": [
+        "demand",
+        "intermittent",
+        "parts",
+        "spare"
+      ]
+    },
+    {
+      "title": "Cost-Aligned Deep Learning for Intermittent Spare-Parts Demand and Inventory",
+      "doi": "10.2139/ssrn.5554492",
+      "url": "https://doi.org/10.2139/ssrn.5554492",
+      "abstract_excerpt": "",
+      "authors": [
+        "Anton Mikkonen",
+        "Lauri Saarinen"
+      ],
+      "year": 2025,
+      "venue": "",
+      "work_type": "posted-content",
+      "citation_count": 0,
+      "license_url": "",
+      "provider": "crossref",
+      "relevance_score": 0.2857,
+      "matched_terms": [
+        "demand",
+        "intermittent"
+      ]
+    }
+  ],
+  "analysis": {
+    "recommended_models": [
+      "croston",
+      "moving_average"
+    ],
+    "findings": [
+      "给定需求画像为间歇性需求，croston 是候选模型中专门面向非零需求量与需求间隔进行预测的方法，适合作为首选基线。",
+      "2019 年航空备件研究的摘要显示，在 53 种备件、每种 36 个月数据的比较中，Croston 和加权移动平均均表现出较好的拟合效果。",
+      "该摘要进一步认为加权移动平均适合其具体航空公司案例，因此 moving_average 可作为对照模型。",
+      "2021 年文献从标题可判断为间歇性备件需求预测综述，但未提供摘要，无法据此提取具体模型优劣结论。",
+      "其余多篇记录仅从标题显示与间歇性备件需求相关，因摘要缺失，不能支持更具体的模型推荐。",
+      "现有摘要还指出样本中的多数备件需求呈 smooth 模式而非 lumpy 模式，说明即使整体被标记为间歇性，不同物料也可能需要分组评估。"
+    ],
+    "risks": [
+      "核心实证依据主要来自单篇、单一航空公司和仅 36 个月历史的研究，结论可能无法直接推广到其他行业、提前期或需求稀疏程度。",
+      "摘要报告的是拟合表现，未说明是否采用严格的滚动样本外验证，也未给出误差指标和库存成本指标。",
+      "moving_average 可能在大量零需求期间产生滞后或过度平滑；窗口长度需要通过时间序列回测确定。",
+      "经典 croston 可能存在偏差，且其效果受非零需求频率、需求量波动及结构变化影响。",
+      "仅依据标题和所给摘要，无法判断数据是否存在季节性、趋势、促销、替代关系或外生变量，因此不推荐据此优先采用 seasonal_naive 或 ridge_lag。",
+      "2025 年记录属于 posted-content，且没有摘要与引用支持，不能为当前候选模型提供可核验的比较证据。"
+    ],
+    "analysis_mode": "llm_evidence_analysis"
+  },
+  "warnings": [],
+  "safety_policy": "Remote content is treated as untrusted evidence; no downloaded code is executed."
+}

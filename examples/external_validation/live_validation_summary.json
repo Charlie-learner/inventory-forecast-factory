@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "validated_at": "2026-07-17",
+  "llm": {
+    "status": "passed",
+    "provider_type": "openai_compatible",
+    "model": "gpt-5.6-sol",
+    "latency_ms": 2724.53,
+    "expected_marker_received": true,
+    "api_key_exposed": false
+  },
+  "research": {
+    "status": "success",
+    "provider": "crossref",
+    "record_count": 5,
+    "recommended_models": [
+      "croston",
+      "moving_average"
+    ],
+    "source_dois": [
+      "10.1016/j.omega.2021.102513",
+      "10.14295/transportes.v27i2.1600",
+      "10.5120/13154-0805",
+      "10.30529/amsok.2018.16.4.008",
+      "10.2139/ssrn.5554492"
+    ]
+  },
+  "full_workflow": {
+    "status": "passed",
+    "item_id": 1003,
+    "store_code": "1",
+    "selected_model": "croston",
+    "target_inventory": 109.58688811756033,
+    "recommended_order_qty": 66.0,
+    "implementation_candidates": 3,
+    "autonomous_candidates_rejected": 2,
+    "safe_candidate_passed": true,
+    "final_code_validation": true,
+    "research_written_to_graph": true
+  },
+  "secrets_exposed": false,
+  "note": "Sanitized summary only. Re-run the live validation commands to reproduce provider-dependent evidence."
+}

@@ -1,0 +1,778 @@
+{
+  "schema_version": "1.0",
+  "session": "20260717_120418",
+  "created_at": "2026-07-17T12:28:57",
+  "cases": [
+    {
+      "case_id": "case_01_repair_deposition",
+      "purpose": "周季节商品的候选算法比较、代码验证、接口故障注入、自动修复，并把失败指纹、修复策略和能力版本写回知识图谱。",
+      "status": "passed",
+      "run_dir": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830",
+      "request": {
+        "description": "为商品1002在仓库1预测未来14天目标库存，比较至少三种算法，结合现货、在途、欠单和补货约束给出建议，并保存完整验证证据。",
+        "item_id": 1002,
+        "store_code": "1",
+        "horizon": 14,
+        "candidate_count": 3,
+        "task_type": "inventory_target",
+        "objective": "inventory_cost",
+        "constraints": []
+      },
+      "demand_profile": {
+        "observations": 180,
+        "nonzero_observations": 180,
+        "zero_ratio": 0.0,
+        "mean": 13.35,
+        "coefficient_of_variation": 0.27502133139672497,
+        "trend_strength": -0.04378858145010292,
+        "lag_1_correlation": 0.4871720951191424,
+        "lag_7_correlation": 0.8200685801246108,
+        "demand_type": "weekly_seasonal",
+        "history_status": "observed"
+      },
+      "online_research": {
+        "status": "disabled",
+        "provider": "crossref",
+        "record_count": 0,
+        "result_path": null
+      },
+      "algorithm_comparison": [
+        {
+          "model": "seasonal_naive",
+          "inventory_cost": 0.0,
+          "wape": 0.0,
+          "rmse": 0.0
+        },
+        {
+          "model": "croston",
+          "inventory_cost": 5.5730025888947,
+          "wape": 0.2068382869146196,
+          "rmse": 3.2281726839599334
+        },
+        {
+          "model": "last_value",
+          "inventory_cost": 39.0,
+          "wape": 0.22826086956521738,
+          "rmse": 3.722518348798681
+        }
+      ],
+      "selected_model": "seasonal_naive",
+      "target_inventory": 184.0,
+      "implementation_candidates": [
+        {
+          "variant_id": "primary",
+          "strategy": "specification_fidelity",
+          "generation_mode": "spec_template",
+          "valid": true,
+          "selected": true,
+          "review": {
+            "agent": "CodeReviewAgent",
+            "variant_id": "primary",
+            "mode": "deterministic",
+            "approved": true,
+            "findings": [],
+            "revision_applied": false
+          }
+        }
+      ],
+      "code_validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          1.0,
+          2.0,
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          7.0,
+          1.0,
+          2.0,
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          7.0
+        ],
+        "sample_target_inventory": 56.0,
+        "runtime_seconds": 0.9525067000067793,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.7155400002375245,
+        "cpu_time_ms": 15.625,
+        "peak_memory_kb": 26.08984375,
+        "throughput_calls_per_second": 1397.5459089192059
+      },
+      "repairs": [
+        "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=2;best_success_rate=100.00%]"
+      ],
+      "failure_history": [
+        {
+          "category": "interface",
+          "fingerprint": "0b494e8f4d0bcb6f",
+          "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
+          "retryable": true,
+          "severity": "high",
+          "likely_stage": "contract_validation",
+          "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+          "recommended_actions": [
+            "按接口签名重新生成",
+            "补齐返回字段",
+            "运行契约测试"
+          ]
+        }
+      ],
+      "repair_experience_used": [
+        {
+          "category": "interface",
+          "fingerprint": "0b494e8f4d0bcb6f",
+          "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+          "recommended_actions": [
+            "按接口签名重新生成",
+            "补齐返回字段",
+            "运行契约测试"
+          ],
+          "strategy": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=1;best_success_rate=100.00%]",
+          "strategy_fingerprint": "9391a7dc6a98ab59",
+          "attempt_count": 1,
+          "success_count": 1,
+          "success_rate": 1.0,
+          "run_id": "run:54608c30868e",
+          "timestamp": "2026-07-17T04:04:28.698524+00:00"
+        },
+        {
+          "category": "interface",
+          "fingerprint": "0b494e8f4d0bcb6f",
+          "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+          "recommended_actions": [
+            "按接口签名重新生成",
+            "补齐返回字段",
+            "运行契约测试"
+          ],
+          "strategy": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]",
+          "strategy_fingerprint": "4ded2f418bfd5b94",
+          "attempt_count": 1,
+          "success_count": 1,
+          "success_rate": 1.0,
+          "run_id": "run:7dd16ecccf74",
+          "timestamp": "2026-07-17T04:04:23.769806+00:00"
+        }
+      ],
+      "capability_version": {
+        "capability_version": "1.1.0",
+        "generation_mode": "spec_template",
+        "variant_id": "primary",
+        "generation_strategy": "specification_fidelity",
+        "prompt_hash": "89cca1155d66972b3d3d77f0cfac06272c9a733c66918f9dda9a11bf30de743d",
+        "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+        "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+        "generated_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\generated\\forecast_seasonal_naive.py",
+        "collaboration": {
+          "protocol": "architecture-implementation-review-validation",
+          "architecture_mode": "",
+          "review_mode": "",
+          "revision_applied": false
+        },
+        "parent_version": "",
+        "repair_count": 1,
+        "validation_profile": "inventory_target",
+        "performance": {
+          "mean_latency_ms": 0.7155400002375245,
+          "peak_memory_kb": 26.08984375,
+          "throughput_calls_per_second": 1397.5459089192059
+        }
+      },
+      "replenishment": {
+        "available": true,
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\business_data\\inventory_snapshot.csv",
+        "scope": "warehouse",
+        "formula": "max(目标库存 + 安全库存 + 欠单 - 现货 - 在途库存, 0)",
+        "target_inventory": 184.0,
+        "production_target_inventory": 203.0,
+        "inventory_position": 67.0,
+        "on_hand": 52.0,
+        "on_order": 15.0,
+        "backorder": 0.0,
+        "safety_stock": 19.0,
+        "lead_time_days": 5.0,
+        "min_order_qty": 12.0,
+        "pack_size": 6.0,
+        "warehouse_capacity": 650.0,
+        "remaining_capacity": 583.0,
+        "unconstrained_order_qty": 136.0,
+        "rounded_order_qty": 138.0,
+        "recommended_order_qty": 138.0,
+        "capacity_limited": false,
+        "status": "recommended"
+      },
+      "multi_agent_collaboration": {
+        "protocol": "architecture -> parallel implementation -> independent review -> validation",
+        "roles": [
+          "CodeArchitectureAgent",
+          "CodeImplementationAgent",
+          "CodeReviewAgent",
+          "GeneratedCodeValidator"
+        ],
+        "selected_candidate": {},
+        "artifacts": {
+          "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\generated\\implementation_blueprint.json",
+          "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\generated\\multi_agent_collaboration.json"
+        }
+      },
+      "report_paths": {
+        "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\validation_report.json",
+        "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\validation_report.md",
+        "business_markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\business_report.md",
+        "performance": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\performance_analysis.json",
+        "failure_experience": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\failure_experience.json",
+        "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\generated\\implementation_blueprint.json",
+        "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\generated\\multi_agent_collaboration.json"
+      },
+      "trace_paths": {
+        "jsonl": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\detailed_trace.jsonl",
+        "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\detailed_trace.md",
+        "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_01_repair_deposition\\20260717_122847_488830\\run_manifest.json"
+      }
+    },
+    {
+      "case_id": "case_02_experience_reuse",
+      "purpose": "再次触发同类接口失败，验证 RepairAgent 能从共享知识图谱检索上一用例的成功修复经验，并在修复后生成新的版本化验证记录。",
+      "status": "passed",
+      "run_dir": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525",
+      "request": {
+        "description": "再次为商品1002在仓库1预测未来14天库存，要求复用历史失败经验，重新比较算法、验证代码并说明版本变化。",
+        "item_id": 1002,
+        "store_code": "1",
+        "horizon": 14,
+        "candidate_count": 3,
+        "task_type": "inventory_target",
+        "objective": "inventory_cost",
+        "constraints": []
+      },
+      "demand_profile": {
+        "observations": 180,
+        "nonzero_observations": 180,
+        "zero_ratio": 0.0,
+        "mean": 13.35,
+        "coefficient_of_variation": 0.27502133139672497,
+        "trend_strength": -0.04378858145010292,
+        "lag_1_correlation": 0.4871720951191424,
+        "lag_7_correlation": 0.8200685801246108,
+        "demand_type": "weekly_seasonal",
+        "history_status": "observed"
+      },
+      "online_research": {
+        "status": "disabled",
+        "provider": "crossref",
+        "record_count": 0,
+        "result_path": null
+      },
+      "algorithm_comparison": [
+        {
+          "model": "seasonal_naive",
+          "inventory_cost": 0.0,
+          "wape": 0.0,
+          "rmse": 0.0
+        },
+        {
+          "model": "croston",
+          "inventory_cost": 5.5730025888947,
+          "wape": 0.2068382869146196,
+          "rmse": 3.2281726839599334
+        },
+        {
+          "model": "last_value",
+          "inventory_cost": 39.0,
+          "wape": 0.22826086956521738,
+          "rmse": 3.722518348798681
+        }
+      ],
+      "selected_model": "seasonal_naive",
+      "target_inventory": 184.0,
+      "implementation_candidates": [
+        {
+          "variant_id": "primary",
+          "strategy": "specification_fidelity",
+          "generation_mode": "spec_template",
+          "valid": true,
+          "selected": true,
+          "review": {
+            "agent": "CodeReviewAgent",
+            "variant_id": "primary",
+            "mode": "deterministic",
+            "approved": true,
+            "findings": [],
+            "revision_applied": false
+          }
+        }
+      ],
+      "code_validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          1.0,
+          2.0,
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          7.0,
+          1.0,
+          2.0,
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          7.0
+        ],
+        "sample_target_inventory": 56.0,
+        "runtime_seconds": 0.9706889999797568,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.7155049999710172,
+        "cpu_time_ms": 15.625,
+        "peak_memory_kb": 26.0419921875,
+        "throughput_calls_per_second": 1397.6142724935628
+      },
+      "repairs": [
+        "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=3;best_success_rate=100.00%]"
+      ],
+      "failure_history": [
+        {
+          "category": "interface",
+          "fingerprint": "0b494e8f4d0bcb6f",
+          "normalized_error": "interface: forecast returned ndarray instead of required list[float]",
+          "retryable": true,
+          "severity": "high",
+          "likely_stage": "contract_validation",
+          "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+          "recommended_actions": [
+            "按接口签名重新生成",
+            "补齐返回字段",
+            "运行契约测试"
+          ]
+        }
+      ],
+      "repair_experience_used": [
+        {
+          "category": "interface",
+          "fingerprint": "0b494e8f4d0bcb6f",
+          "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+          "recommended_actions": [
+            "按接口签名重新生成",
+            "补齐返回字段",
+            "运行契约测试"
+          ],
+          "strategy": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=2;best_success_rate=100.00%]",
+          "strategy_fingerprint": "9391a7dc6a98ab59",
+          "attempt_count": 2,
+          "success_count": 2,
+          "success_rate": 1.0,
+          "run_id": "run:21e1228bc7b1",
+          "timestamp": "2026-07-17T04:28:52.345810+00:00"
+        },
+        {
+          "category": "interface",
+          "fingerprint": "0b494e8f4d0bcb6f",
+          "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+          "recommended_actions": [
+            "按接口签名重新生成",
+            "补齐返回字段",
+            "运行契约测试"
+          ],
+          "strategy": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f] [reused_successful_repairs=2;best_success_rate=100.00%]",
+          "strategy_fingerprint": "9391a7dc6a98ab59",
+          "attempt_count": 2,
+          "success_count": 2,
+          "success_rate": 1.0,
+          "run_id": "run:54608c30868e",
+          "timestamp": "2026-07-17T04:04:28.698524+00:00"
+        },
+        {
+          "category": "interface",
+          "fingerprint": "0b494e8f4d0bcb6f",
+          "root_cause": "生成模块未满足 forecast/build_inventory_target 统一接口契约。",
+          "recommended_actions": [
+            "按接口签名重新生成",
+            "补齐返回字段",
+            "运行契约测试"
+          ],
+          "strategy": "第 1 轮修复（受约束安全模板回退；错误类型=interface；根因=生成模块未满足 forecast/build_inventory_target 统一接口契约。；建议动作=按接口签名重新生成 / 补齐返回字段 / 运行契约测试）：interface: forecast returned ndarray instead of required list[float] [failure_fingerprint=0b494e8f4d0bcb6f]",
+          "strategy_fingerprint": "4ded2f418bfd5b94",
+          "attempt_count": 1,
+          "success_count": 1,
+          "success_rate": 1.0,
+          "run_id": "run:7dd16ecccf74",
+          "timestamp": "2026-07-17T04:04:23.769806+00:00"
+        }
+      ],
+      "capability_version": {
+        "capability_version": "1.1.0",
+        "generation_mode": "spec_template",
+        "variant_id": "primary",
+        "generation_strategy": "specification_fidelity",
+        "prompt_hash": "89cca1155d66972b3d3d77f0cfac06272c9a733c66918f9dda9a11bf30de743d",
+        "spec_hash": "9d907c2f2b0366447939e3a9c357ccb876915e75cac926605b4c87a588dca9e6",
+        "source_hash": "6c2d6284158f5a5db12d4892b49cedac1066e8de02e3ece054b6e8c225e021ff",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+        "generated_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\forecast_seasonal_naive.py",
+        "collaboration": {
+          "protocol": "architecture-implementation-review-validation",
+          "architecture_mode": "",
+          "review_mode": "",
+          "revision_applied": false
+        },
+        "parent_version": "",
+        "repair_count": 1,
+        "validation_profile": "inventory_target",
+        "performance": {
+          "mean_latency_ms": 0.7155049999710172,
+          "peak_memory_kb": 26.0419921875,
+          "throughput_calls_per_second": 1397.6142724935628
+        }
+      },
+      "replenishment": {
+        "available": true,
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\business_data\\inventory_snapshot.csv",
+        "scope": "warehouse",
+        "formula": "max(目标库存 + 安全库存 + 欠单 - 现货 - 在途库存, 0)",
+        "target_inventory": 184.0,
+        "production_target_inventory": 203.0,
+        "inventory_position": 67.0,
+        "on_hand": 52.0,
+        "on_order": 15.0,
+        "backorder": 0.0,
+        "safety_stock": 19.0,
+        "lead_time_days": 5.0,
+        "min_order_qty": 12.0,
+        "pack_size": 6.0,
+        "warehouse_capacity": 650.0,
+        "remaining_capacity": 583.0,
+        "unconstrained_order_qty": 136.0,
+        "rounded_order_qty": 138.0,
+        "recommended_order_qty": 138.0,
+        "capacity_limited": false,
+        "status": "recommended"
+      },
+      "multi_agent_collaboration": {
+        "protocol": "architecture -> parallel implementation -> independent review -> validation",
+        "roles": [
+          "CodeArchitectureAgent",
+          "CodeImplementationAgent",
+          "CodeReviewAgent",
+          "GeneratedCodeValidator"
+        ],
+        "selected_candidate": {},
+        "artifacts": {
+          "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\implementation_blueprint.json",
+          "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\multi_agent_collaboration.json"
+        }
+      },
+      "report_paths": {
+        "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\validation_report.json",
+        "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\validation_report.md",
+        "business_markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\business_report.md",
+        "performance": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\performance_analysis.json",
+        "failure_experience": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\failure_experience.json",
+        "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\implementation_blueprint.json",
+        "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\multi_agent_collaboration.json"
+      },
+      "trace_paths": {
+        "jsonl": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\detailed_trace.jsonl",
+        "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\detailed_trace.md",
+        "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\run_manifest.json"
+      }
+    },
+    {
+      "case_id": "case_04_live_research_multi_agent",
+      "purpose": "高间歇需求场景中实际调用 Crossref 联网检索和外部 LLM；执行架构、多实现、独立审查、统一验证、资源比较、业务补货和知识图谱沉淀。",
+      "status": "passed",
+      "run_dir": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921",
+      "request": {
+        "description": "为高间歇需求商品1003在仓库2预测未来21天目标库存。请联网检索间歇需求预测与库存控制资料，比较 Croston、移动平均和最近值等方案；由多智能体自动生成并审查多个独立代码实现，执行安全、等价性、性能和库存成本评估，最后结合库存快照给出补货建议和设计依据。",
+        "item_id": 1003,
+        "store_code": "2",
+        "horizon": 21,
+        "candidate_count": 3,
+        "task_type": "intermittent_demand",
+        "objective": "mae",
+        "constraints": []
+      },
+      "demand_profile": {
+        "observations": 180,
+        "nonzero_observations": 36,
+        "zero_ratio": 0.8,
+        "mean": 5.8,
+        "coefficient_of_variation": 2.014501792474845,
+        "trend_strength": -0.017508331896160603,
+        "lag_1_correlation": -0.2452047086618853,
+        "lag_7_correlation": -0.2468735922666519,
+        "demand_type": "intermittent",
+        "history_status": "observed"
+      },
+      "online_research": {
+        "status": "success",
+        "provider": "crossref",
+        "record_count": 5,
+        "result_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\online_knowledge_extraction.json"
+      },
+      "algorithm_comparison": [
+        {
+          "model": "croston",
+          "inventory_cost": 40.114997033931985,
+          "wape": 1.690785523132061,
+          "rmse": 11.452716357996065
+        },
+        {
+          "model": "moving_average",
+          "inventory_cost": 43.499999999999915,
+          "wape": 1.6966616292534717,
+          "rmse": 11.453637065260478
+        },
+        {
+          "model": "seasonal_naive",
+          "inventory_cost": 149.375,
+          "wape": 2.1506293545797934,
+          "rmse": 18.608158594926184
+        }
+      ],
+      "selected_model": "croston",
+      "target_inventory": 124.41663889376699,
+      "implementation_candidates": [
+        {
+          "variant_id": "candidate_1",
+          "strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+          "generation_mode": "spec_template_fallback",
+          "valid": true,
+          "selected": true,
+          "review": {
+            "agent": "CodeReviewAgent",
+            "variant_id": "candidate_1",
+            "mode": "deterministic",
+            "approved": true,
+            "findings": [],
+            "revision_applied": false,
+            "fallback_reason": "APITimeoutError: Request timed out.",
+            "post_review_static_findings": []
+          }
+        }
+      ],
+      "code_validation": {
+        "valid": true,
+        "checks": {
+          "syntax": true,
+          "imports": true,
+          "interface": true,
+          "runtime": true,
+          "stability": true,
+          "equivalence": true
+        },
+        "errors": [],
+        "sample_output": [
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316,
+          4.40823272329316
+        ],
+        "sample_target_inventory": 61.715258126104246,
+        "runtime_seconds": 1.0229048999899533,
+        "equivalence_max_error": 0.0,
+        "equivalence_cases": 4,
+        "performance_iterations": 20,
+        "mean_latency_ms": 0.8815000008326024,
+        "cpu_time_ms": 15.625,
+        "peak_memory_kb": 28.0751953125,
+        "throughput_calls_per_second": 1134.4299478791502
+      },
+      "repairs": [],
+      "failure_history": [],
+      "repair_experience_used": [],
+      "capability_version": {
+        "capability_version": "1.1.0",
+        "generation_mode": "spec_template_fallback",
+        "variant_id": "candidate_1",
+        "generation_strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+        "prompt_hash": "f102e1c620ffe8945a5f3de1a681049d5ae7e38359486c5b8f3c41eb09136b02",
+        "spec_hash": "d356dc7116b4262846c698aad77104431a947ebd915771d751bae6c2227ad7ca",
+        "source_hash": "1c96601ed98f337a3b2438a8bc702ea09e8d4a06aaf9cb4f1f4ee647d7a87202",
+        "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+        "generated_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\forecast_croston_candidate_1.py",
+        "collaboration": {
+          "protocol": "architecture-implementation-review-validation",
+          "architecture_mode": "deterministic",
+          "review_mode": "deterministic",
+          "revision_applied": false
+        },
+        "parent_version": "",
+        "repair_count": 0,
+        "validation_profile": "intermittent_demand",
+        "performance": {
+          "mean_latency_ms": 0.8815000008326024,
+          "peak_memory_kb": 28.0751953125,
+          "throughput_calls_per_second": 1134.4299478791502
+        }
+      },
+      "replenishment": {
+        "available": true,
+        "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\business_data\\inventory_snapshot.csv",
+        "scope": "warehouse",
+        "formula": "max(目标库存 + 安全库存 + 欠单 - 现货 - 在途库存, 0)",
+        "target_inventory": 124.41663889376699,
+        "production_target_inventory": 147.416638893767,
+        "inventory_position": 77.0,
+        "on_hand": 59.0,
+        "on_order": 18.0,
+        "backorder": 0.0,
+        "safety_stock": 23.0,
+        "lead_time_days": 7.0,
+        "min_order_qty": 12.0,
+        "pack_size": 6.0,
+        "warehouse_capacity": 800.0,
+        "remaining_capacity": 723.0,
+        "unconstrained_order_qty": 70.41663889376699,
+        "rounded_order_qty": 72.0,
+        "recommended_order_qty": 72.0,
+        "capacity_limited": false,
+        "status": "recommended"
+      },
+      "multi_agent_collaboration": {
+        "protocol": "architecture -> parallel implementation -> independent review -> validation",
+        "roles": [
+          "CodeArchitectureAgent",
+          "CodeImplementationAgent",
+          "CodeReviewAgent",
+          "GeneratedCodeValidator"
+        ],
+        "selected_candidate": {
+          "architecture": {
+            "agent": "CodeArchitectureAgent",
+            "mode": "deterministic",
+            "algorithm": "croston",
+            "algorithm_steps": [
+              "normalize history to finite non-negative numeric observations",
+              "apply croston semantics using declared parameters",
+              "produce exactly horizon non-negative float values",
+              "sum the daily forecast into target_inventory"
+            ],
+            "required_contracts": [
+              "forecast(history, horizon) -> list[float]",
+              "build_inventory_target(history, horizon) -> dict",
+              "target_inventory == sum(daily_forecast)"
+            ],
+            "edge_cases": [
+              "empty history",
+              "non-positive horizon",
+              "all-zero history"
+            ],
+            "allowed_dependencies": [
+              "pandas"
+            ],
+            "performance_goal": "avoid repeated full-history copies and unnecessary nested loops",
+            "risks": [
+              "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+            ],
+            "fallback_reason": "APITimeoutError: Request timed out."
+          },
+          "implementation": {
+            "agent": "CodeImplementationAgent",
+            "strategy": "specification_fidelity: 优先忠实实现能力规格中的数学语义、参数和边界条件，保持实现直接且可审计。",
+            "variant_id": "candidate_1"
+          },
+          "review": {
+            "agent": "CodeReviewAgent",
+            "variant_id": "candidate_1",
+            "mode": "deterministic",
+            "approved": true,
+            "findings": [],
+            "revision_applied": false,
+            "fallback_reason": "APITimeoutError: Request timed out.",
+            "post_review_static_findings": []
+          }
+        },
+        "artifacts": {
+          "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\implementation_blueprint.json",
+          "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\multi_agent_collaboration.json"
+        }
+      },
+      "report_paths": {
+        "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\validation_report.json",
+        "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\validation_report.md",
+        "business_markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\business_report.md",
+        "performance": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\performance_analysis.json",
+        "failure_experience": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\failure_experience.json",
+        "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\implementation_blueprint.json",
+        "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\multi_agent_collaboration.json"
+      },
+      "trace_paths": {
+        "jsonl": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\detailed_trace.jsonl",
+        "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\detailed_trace.md",
+        "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\run_manifest.json"
+      }
+    }
+  ],
+  "standalone_online_research": {
+    "status": "success",
+    "provider": "crossref",
+    "query": "intermittent demand Croston spare parts algorithm validation",
+    "record_count": 5,
+    "recommended_models": [
+      "croston",
+      "moving_average"
+    ],
+    "result_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\online_knowledge_extraction.json"
+  },
+  "multi_agent_protocol_demo": {
+    "status": "passed",
+    "candidate_count": 3,
+    "selected_variant": "candidate_3",
+    "selected_mode": "llm_multi_agent_generation",
+    "revision_count": 1,
+    "manifest_path": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\protocol_demo\\review_manifest.json"
+  },
+  "knowledge_graph": {
+    "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.json",
+    "graphml": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.graphml",
+    "html": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.html",
+    "node_count": 38,
+    "edge_count": 73,
+    "node_types": {
+      "DemandProfile": 8,
+      "Metric": 5,
+      "Algorithm": 5,
+      "SourceArtifact": 10,
+      "ValidationRun": 5,
+      "CapabilityVersion": 2,
+      "FailureCase": 1,
+      "RepairStrategy": 2
+    }
+  }
+}

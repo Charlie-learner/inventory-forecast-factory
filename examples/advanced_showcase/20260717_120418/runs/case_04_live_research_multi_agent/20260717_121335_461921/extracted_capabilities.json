@@ -1,0 +1,280 @@
+{
+  "schema_version": "1.2",
+  "created_at": "2026-07-17T04:14:22.561581+00:00",
+  "count": 5,
+  "scan_reports": [
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": [],
+      "extracted_by": "llm"
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": [],
+      "extracted_by": "llm"
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": [],
+      "extracted_by": "llm"
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": [],
+      "extracted_by": "llm"
+    },
+    {
+      "source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "source_kind": "file",
+      "files_scanned": 1,
+      "files_matched": 1,
+      "errors": [],
+      "extracted_by": "llm"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "croston",
+      "task_type": "inventory_forecasting",
+      "description": "Estimate non-zero demand size and the interval between demands separately.",
+      "template_name": "croston",
+      "input_contract": "Non-negative daily demand history with possible zero-demand periods.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "intermittent",
+        "many_zeros"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {
+        "alpha": 0.1
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\croston.md",
+      "source_hash": "e7fbe6265bbd3cee49ff37aac67202e025b774d0e59afa08dbb6a6c381dba3b9",
+      "version": "1.1.0",
+      "extracted_by": "llm",
+      "source_title": "Forecasting and Stock Control for Intermittent Demands",
+      "source_url": "https://doi.org/10.1057/jors.1972.50",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Croston 1972 method description",
+        "inventory_agent/forecasting/models.py:52"
+      ],
+      "extraction_warnings": [
+        "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
+      ],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "last_value",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest observed demand as a transparent baseline.",
+      "template_name": "last_value",
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "short_history"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {},
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\last_value.md",
+      "source_hash": "cc24b90807e0ed4eab7186734fcd6a208bc51baa25ce30e19c3993485fc2acc1",
+      "version": "1.1.0",
+      "extracted_by": "llm",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article benchmark discussion",
+        "inventory_agent/forecasting/models.py:12"
+      ],
+      "extraction_warnings": [
+        "The accessed_at date is in the future relative to the extraction date and should be verified.",
+        "The source supports benchmark forecasting context, while implementation-specific contracts and dependencies appear to rely on the referenced code."
+      ],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "moving_average",
+      "task_type": "inventory_forecasting",
+      "description": "Forecast stable demand with the mean of the most recent observations.",
+      "template_name": "moving_average",
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "stable",
+        "short_history"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {
+        "window": 14
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\moving_average.md",
+      "source_hash": "4191b6ea63dffed1ef8738a34e30ad7dc2f17de83b8edd528df5a7abfa735e9d",
+      "version": "1.1.0",
+      "extracted_by": "llm",
+      "source_title": "The accuracy of intermittent demand estimates",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207004000792",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "SMA benchmark description",
+        "inventory_agent/forecasting/models.py:22"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "ridge_lag",
+      "task_type": "inventory_forecasting",
+      "description": "Fit regularized autoregression on recent demand lags and forecast recursively.",
+      "template_name": "ridge_lag",
+      "input_contract": "Dense non-negative daily history with enough observations for lag construction.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "trend",
+        "dense",
+        "volatile"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "numpy",
+        "pandas",
+        "scikit-learn"
+      ],
+      "parameters": {
+        "lags": 14,
+        "alpha": 1.0
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\ridge_lag.md",
+      "source_hash": "a6da8bbaf91c57db44fd01ad410ce6f04189a8b8e891d8faeb0c910f8f6e30cc",
+      "version": "1.1.0",
+      "extracted_by": "llm",
+      "source_title": "scikit-learn Ridge regression API",
+      "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html",
+      "source_license": "BSD-3-Clause documentation and citation metadata",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.9,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "Ridge L2 objective",
+        "inventory_agent/forecasting/models.py:84"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    },
+    {
+      "name": "seasonal_naive",
+      "task_type": "inventory_forecasting",
+      "description": "Repeat the latest weekly pattern over the forecast horizon.",
+      "template_name": "seasonal_naive",
+      "input_contract": "Non-negative daily demand history and a positive forecast horizon.",
+      "output_contract": "Non-negative daily forecast and horizon-total target inventory.",
+      "suitable_for": [
+        "weekly_seasonal",
+        "stable"
+      ],
+      "metrics": [
+        "inventory_cost",
+        "wape",
+        "rmse",
+        "smape",
+        "bias"
+      ],
+      "dependencies": [
+        "pandas"
+      ],
+      "parameters": {
+        "period": 7
+      },
+      "source_type": "document",
+      "source_ref": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\capabilities\\seasonal_naive.md",
+      "source_hash": "0d2b62ba65897f56e5124fb51b582f9f6256947ccdda3e2ef2bbf2c2bb9abcb3",
+      "version": "1.1.0",
+      "extracted_by": "llm",
+      "source_title": "M5 accuracy competition results, findings, and conclusions",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0169207021001874",
+      "source_license": "citation_only",
+      "accessed_at": "2026-07-16",
+      "confidence": 0.95,
+      "review_status": "source_reviewed",
+      "evidence_refs": [
+        "article seasonal-naive benchmark discussion",
+        "inventory_agent/forecasting/models.py:36"
+      ],
+      "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {}
+    }
+  ]
+}

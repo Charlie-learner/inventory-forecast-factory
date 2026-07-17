@@ -38,7 +38,13 @@ class FailureAnalyzer:
             category = "syntax"
         elif checks.get("imports") is False or "unsafe constructs" in lowered:
             category = "safety"
-        elif checks.get("interface") is False or "interface" in lowered:
+        elif (
+            checks.get("interface") is False
+            or "interface" in lowered
+            or "must return python list" in lowered
+            or "build_inventory_target must return" in lowered
+            or "must contain daily_forecast" in lowered
+        ):
             category = "interface"
         elif "timed out" in lowered or "timeout" in lowered:
             category = "timeout"

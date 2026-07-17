@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 import json
+import logging
+import time
 from typing import Any, Protocol
 
 from inventory_agent.config import Settings
+
+
+logger = logging.getLogger(__name__)
 
 
 class LLMClient(Protocol):
@@ -80,7 +85,12 @@ class OpenAICompatibleClient(_TraceableClient):
             raise ValueError("API key is required for API mode")
         from openai import OpenAI
 
-        self._client = OpenAI(api_key=settings.api_key, base_url=settings.base_url)
+        self._client = OpenAI(
+            api_key=settings.api_key,
+            base_url=settings.base_url,
+            timeout=settings.llm_timeout_seconds,
+            max_retries=1,
+        )
         self._model = settings.model
 
     def complete(self, system: str, user: str) -> str:
@@ -98,6 +108,7 @@ class OpenAICompatibleClient(_TraceableClient):
             self._record_completion(system, user, status="success", response=content)
             return content
         except Exception as exc:
+            logger.warning("LLM completion failed: %s", type(exc).__name__)
             self._record_completion(
                 system,
                 user,
@@ -113,3 +124,33 @@ def create_llm(settings: Settings) -> LLMClient:
     if settings.llm_mode == "api":
         return OpenAICompatibleClient(settings)
     return MockLLMClient()
+
+
+def verify_llm_connection(
+    settings: Settings,
+    client: LLMClient | None = None,
+) -> dict[str, Any]:
+    """Make one minimal completion request and return secret-safe evidence."""
+
+    if settings.llm_mode != "api":
+        raise ValueError("Live LLM verification requires LLM_MODE=api")
+    issues = settings.validate()
+    if issues:
+        raise ValueError("; ".join(issues))
+    llm = client or create_llm(settings)
+    started = time.perf_counter()
+    response = llm.complete(
+        "You are a connectivity checker. Follow the response format exactly.",
+        "Reply with exactly: INVENTORY_LLM_OK",
+    )
+    latency_ms = round((time.perf_counter() - started) * 1000, 2)
+    normalized = response.strip()
+    return {
+        "status": "passed" if "INVENTORY_LLM_OK" in normalized else "unexpected_response",
+        "provider_type": "openai_compatible",
+        "model": settings.model,
+        "base_url": settings.base_url,
+        "latency_ms": latency_ms,
+        "response_excerpt": normalized[:120],
+        "api_key_exposed": False,
+    }

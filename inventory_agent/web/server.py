@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import mimetypes
 import threading
 import webbrowser
@@ -12,10 +13,17 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 from inventory_agent.config import Settings
+from inventory_agent.execution import format_byte_limit
+from inventory_agent.web.api_docs import (
+    openapi_document,
+    post_route_handlers,
+    render_api_docs_html,
+)
 from inventory_agent.web.app import WebApplication, WebRequestError
 
 
 ASSET_ROOT = Path(__file__).resolve().parent / "static"
+logger = logging.getLogger(__name__)
 
 
 def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
@@ -27,7 +35,7 @@ def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
         def log_message(self, format: str, *args: object) -> None:
             """Use a compact local-server log format."""
 
-            print(f"[web] {self.address_string()} - {format % args}")
+            logger.info("%s - %s", self.address_string(), format % args)
 
         def _send(
             self,
@@ -54,6 +62,11 @@ def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
         def _payload(self) -> dict:
             try:
                 length = int(self.headers.get("Content-Length", "0"))
+                limit = application.runtime_limits.max_http_body_bytes
+                if length > limit:
+                    raise WebRequestError(
+                        f"请求内容超过 {format_byte_limit(limit)}。", 413
+                    )
                 body = self.rfile.read(length)
                 value = json.loads(body.decode("utf-8")) if body else {}
             except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
@@ -64,10 +77,15 @@ def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
 
         def _handle_error(self, exc: Exception) -> None:
             if isinstance(exc, WebRequestError):
+                logger.warning("Rejected Web request: %s", exc)
                 self._json({"error": str(exc)}, exc.status)
             else:
+                logger.exception("Unhandled Web request error")
                 self._json(
-                    {"error": f"{type(exc).__name__}: {exc}"},
+                    {
+                        "error": "服务器内部错误，请查看服务端日志。",
+                        "error_type": type(exc).__name__,
+                    },
                     HTTPStatus.INTERNAL_SERVER_ERROR,
                 )
 
@@ -99,8 +117,25 @@ def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
                     )
                 elif path == "/api/overview":
                     self._json(application.overview())
+                elif path == "/api/audit":
+                    self._json(application.audit())
+                elif path == "/api/openapi.json":
+                    self._json(openapi_document())
+                elif path == "/api/docs":
+                    self._send(
+                        render_api_docs_html().encode("utf-8"),
+                        "text/html; charset=utf-8",
+                    )
                 elif path == "/api/runs":
                     self._json({"runs": application.list_runs()})
+                elif path.startswith("/api/jobs/"):
+                    self._json(application.job_status(path.rsplit("/", 1)[-1]))
+                elif path.startswith("/api/runs/") and path.count("/") >= 4:
+                    _, _, _, run_id, artifact = path.split("/", 4)
+                    body, content_type = application.run_artifact(
+                        run_id, artifact
+                    )
+                    self._send(body, content_type)
                 elif path.startswith("/api/runs/"):
                     self._json(application.run_detail(path.rsplit("/", 1)[-1]))
                 elif path == "/api/versions":
@@ -126,16 +161,9 @@ def build_handler(application: WebApplication) -> type[BaseHTTPRequestHandler]:
             path = unquote(urlparse(self.path).path)
             try:
                 payload = self._payload()
-                if path == "/api/run":
-                    self._json(application.run_workflow(payload))
-                elif path == "/api/benchmark":
-                    self._json(application.benchmark(payload))
-                elif path == "/api/extract":
-                    self._json(application.extract(payload))
-                elif path == "/api/replicate":
-                    self._json(application.replicate(payload))
-                elif path == "/api/versions":
-                    self._json(application.manage_version(payload))
+                handler_name = post_route_handlers().get(path)
+                if handler_name:
+                    self._json(getattr(application, handler_name)(payload))
                 else:
                     self._json({"error": "接口不存在。"}, HTTPStatus.NOT_FOUND)
             except Exception as exc:

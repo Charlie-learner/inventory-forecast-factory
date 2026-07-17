@@ -2,7 +2,7 @@
   "directed": true,
   "multigraph": false,
   "graph": {
-    "schema_version": "1.4"
+    "schema_version": "1.5"
   },
   "nodes": [
     {
@@ -24,6 +24,11 @@
       "type": "DemandProfile",
       "name": "weekly_seasonal",
       "id": "profile:weekly_seasonal"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "trend",
+      "id": "profile:trend"
     },
     {
       "type": "DemandProfile",
@@ -101,6 +106,10 @@
       "extraction_warnings": [
         "This implementation is classic Croston rather than the Syntetos-Boylan adjustment."
       ],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
       "id": "algorithm:croston"
     },
     {
@@ -145,6 +154,10 @@
         "inventory_agent/forecasting/models.py:12"
       ],
       "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
       "id": "algorithm:last_value"
     },
     {
@@ -191,6 +204,10 @@
         "inventory_agent/forecasting/models.py:22"
       ],
       "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
       "id": "algorithm:moving_average"
     },
     {
@@ -235,12 +252,11 @@
         "inventory_agent/forecasting/models.py:84"
       ],
       "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
       "id": "algorithm:ridge_lag"
-    },
-    {
-      "type": "DemandProfile",
-      "name": "trend",
-      "id": "profile:trend"
     },
     {
       "type": "Algorithm",
@@ -281,6 +297,10 @@
         "inventory_agent/forecasting/models.py:36"
       ],
       "extraction_warnings": [],
+      "implementation_kind": "algorithm",
+      "entrypoints": [],
+      "internal_dependencies": [],
+      "complexity": {},
       "id": "algorithm:seasonal_naive"
     },
     {
@@ -356,21 +376,43 @@
       "status": "success",
       "metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
       "validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
-      "timestamp": "2026-07-16T09:43:16.495916+00:00",
-      "id": "run:be7389b40136"
+      "timestamp": "2026-07-17T02:24:04.433760+00:00",
+      "id": "run:1eb1447350d7"
     },
     {
       "type": "CapabilityVersion",
-      "name": "seasonal_naive@a100b5908799",
-      "created_at": "2026-07-16T09:43:16.495916+00:00",
+      "name": "seasonal_naive@64ea28fef849",
+      "created_at": "2026-07-17T02:24:04.433760+00:00",
       "lifecycle_status": "active",
       "capability_version": "1.1.0",
       "generation_mode": "spec_template",
-      "spec_hash": "e4c75af347c0866373e03ac2e7abc603e1e8c090940f54b929a070ec0e513db2",
-      "source_hash": "a100b590879924e5f86e9377661dd7790355f9623b35555479b3dab5609ef289",
+      "variant_id": "primary",
+      "generation_strategy": "specification_fidelity",
+      "prompt_hash": "c777c5904a44de6636893a621940e1db63480f00e7163b7dbe22ba24e92300f0",
+      "spec_hash": "328a905e3be55180984fbf0a2525c3a1a05aeaadd45d45a315af36d624f93349",
+      "source_hash": "64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b",
       "source_ref": "examples\\capabilities\\seasonal_naive.md",
-      "generated_path": "examples\\repair_run\\20260716_174311_621870\\generated\\forecast_seasonal_naive.py",
-      "id": "version:seasonal_naive:a100b5908799"
+      "generated_path": "examples\\repair_run\\20260717_102359_522951\\generated\\forecast_seasonal_naive.py",
+      "collaboration": {
+        "protocol": "architecture-implementation-review-validation",
+        "architecture_mode": "",
+        "review_mode": "",
+        "revision_applied": false
+      },
+      "parent_version": "",
+      "repair_count": 1,
+      "validation_profile": "inventory_target",
+      "performance": {
+        "mean_latency_ms": 0.7285550003871322,
+        "peak_memory_kb": 25.32421875,
+        "throughput_calls_per_second": 1372.5799692111511
+      },
+      "validation_status": "success",
+      "validation_count": 1,
+      "last_validated_at": "2026-07-17T02:24:04.433760+00:00",
+      "latest_metrics": "{\"bias\": 0.0, \"inventory_cost\": 0.0, \"mae\": 0.0, \"mean_actual_total\": 184.0, \"mean_target_inventory\": 184.0, \"rmse\": 0.0, \"smape\": 0.0, \"wape\": 0.0}",
+      "latest_validation_checks": "{\"equivalence\": true, \"imports\": true, \"interface\": true, \"runtime\": true, \"stability\": true, \"syntax\": true}",
+      "id": "version:seasonal_naive:64ea28fef849"
     },
     {
       "type": "FailureCase",
@@ -379,15 +421,27 @@
       "fingerprint": "4c06ea656e7e460b",
       "normalized_error": "syntax: injected demonstration failure before safe repair",
       "retryable": true,
+      "severity": "high",
+      "likely_stage": "code_generation",
+      "root_cause": "生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。",
+      "recommended_actions": [
+        "重新解析源码语法树",
+        "使用完整安全模板重新生成",
+        "保留失败源码快照"
+      ],
       "occurrence_count": 1,
-      "last_seen": "2026-07-16T09:43:16.495916+00:00",
+      "last_seen": "2026-07-17T02:24:04.433760+00:00",
       "id": "failure:4c06ea656e7e460b"
     },
     {
       "type": "RepairStrategy",
       "name": "修复:seasonal_naive",
-      "description": "第 1 轮修复（受约束安全模板回退，错误类型=syntax）: syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]",
-      "id": "repair:122b7d0db4"
+      "description": "第 1 轮修复（受约束安全模板回退；错误类型=syntax；根因=生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。；建议动作=重新解析源码语法树 / 使用完整安全模板重新生成 / 保留失败源码快照）：syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]",
+      "strategy_fingerprint": "3f402f107f1a2e1c",
+      "attempt_count": 1,
+      "success_count": 1,
+      "last_used": "2026-07-17T02:24:04.433760+00:00",
+      "id": "repair:3f402f107f1a2e1c"
     },
     {
       "type": "VersionEvent",
@@ -395,9 +449,9 @@
       "action": "promote",
       "model": "seasonal_naive",
       "previous_active": "",
-      "selected_version": "version:seasonal_naive:a100b5908799",
-      "timestamp": "2026-07-16T09:43:16.508980+00:00",
-      "id": "version_event:b7a348c7b3aa"
+      "selected_version": "version:seasonal_naive:64ea28fef849",
+      "timestamp": "2026-07-17T02:24:04.446439+00:00",
+      "id": "version_event:9f5eb3c650db"
     }
   ],
   "edges": [
@@ -603,27 +657,27 @@
     },
     {
       "relation": "VALIDATED",
-      "source": "run:be7389b40136",
+      "source": "run:1eb1447350d7",
       "target": "algorithm:seasonal_naive"
     },
     {
       "relation": "VALIDATED_VERSION",
-      "source": "run:be7389b40136",
-      "target": "version:seasonal_naive:a100b5908799"
+      "source": "run:1eb1447350d7",
+      "target": "version:seasonal_naive:64ea28fef849"
     },
     {
       "relation": "OBSERVED_FAILURE",
-      "source": "run:be7389b40136",
+      "source": "run:1eb1447350d7",
       "target": "failure:4c06ea656e7e460b"
     },
     {
       "relation": "REPAIRED_BY",
-      "source": "run:be7389b40136",
-      "target": "repair:122b7d0db4"
+      "source": "run:1eb1447350d7",
+      "target": "repair:3f402f107f1a2e1c"
     },
     {
       "relation": "VERSION_OF",
-      "source": "version:seasonal_naive:a100b5908799",
+      "source": "version:seasonal_naive:64ea28fef849",
       "target": "algorithm:seasonal_naive"
     },
     {
@@ -633,13 +687,13 @@
     },
     {
       "relation": "ADDRESSES",
-      "source": "repair:122b7d0db4",
+      "source": "repair:3f402f107f1a2e1c",
       "target": "failure:4c06ea656e7e460b"
     },
     {
       "relation": "ACTIVATED_VERSION",
-      "source": "version_event:b7a348c7b3aa",
-      "target": "version:seasonal_naive:a100b5908799"
+      "source": "version_event:9f5eb3c650db",
+      "target": "version:seasonal_naive:64ea28fef849"
     }
   ]
 }

@@ -10,8 +10,8 @@ an external JavaScript dependency.
 | Type | Purpose | Key properties |
 |---|---|---|
 | `Algorithm` | Extracted and executable forecast capability | name, version, description, template_name, parameters, dependencies, suitable_for, input_contract, output_contract, source_ref, source_hash, confidence, review_status |
-| `SourceArtifact` | Document, JSON, or Python origin | name, source_type, source_ref, source_hash, source_url, source_license, accessed_at, extracted_by |
-| `CapabilityVersion` | Concrete generated implementation | capability_version, generation_mode, spec_hash, source_hash, generated_path, lifecycle_status |
+| `SourceArtifact` | Document, JSON, Python, or online DOI metadata origin | name, source_type, source_ref, source_hash, source_url, source_license, accessed_at, extracted_by, provider, relevance_score |
+| `CapabilityVersion` | Concrete generated implementation | capability_version, generation_mode, spec_hash, source_hash, generated_path, parent_version, performance, lifecycle_status |
 | `DemandProfile` | Data condition suited to an algorithm | name |
 | `Metric` | Validation or business objective | name |
 | `ValidationRun` | Historical execution evidence | item_id, store_code, status, metrics, validation_checks, timestamp |
@@ -26,6 +26,7 @@ an external JavaScript dependency.
 | `SUITABLE_FOR` | Algorithm -> DemandProfile | Applicability knowledge |
 | `EVALUATED_BY` | Algorithm -> Metric | Required validation metric |
 | `EXTRACTED_FROM` | Algorithm -> SourceArtifact | Auditable source provenance |
+| `SUPPORTED_BY_RESEARCH` | Algorithm -> SourceArtifact | Online evidence that influenced candidate priority; not proof of local performance |
 | `VALIDATED` | ValidationRun -> Algorithm | Model exercised by a run |
 | `VERSION_OF` | CapabilityVersion -> Algorithm | Generated source version of a capability |
 | `VALIDATED_VERSION` | ValidationRun -> CapabilityVersion | Exact generated source checked by a run |
@@ -45,7 +46,9 @@ freshly bootstrapped base graph. During retrieval, suitable algorithms remain th
 within each suitability group, historical validation count, mean inventory cost, and success
 rate provide reusable ranking evidence. Records without history remain available as fallbacks.
 
-Schema version `1.4` adds reviewable source metadata, confidence, evidence references and
+Schema version `1.5` adds bounded online research evidence and the
+`SUPPORTED_BY_RESEARCH` relation. Schema version `1.4` added reviewable source metadata,
+confidence, evidence references and
 capability-level extraction diagnostics. Version `1.3` added reusable failure cases and
 auditable version lifecycle events. Version
 `1.2` added source provenance and content-addressed generated capability versions; version `1.1`

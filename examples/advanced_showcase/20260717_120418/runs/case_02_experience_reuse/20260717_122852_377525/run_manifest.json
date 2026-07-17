@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "success",
+  "started_at": "2026-07-17T04:28:52.378088+00:00",
+  "finished_at": "2026-07-17T04:28:57.263033+00:00",
+  "event_count": 21,
+  "trace": {
+    "jsonl": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\detailed_trace.jsonl",
+    "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\detailed_trace.md"
+  },
+  "artifacts": [
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\extracted_capabilities.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\candidate_solutions\\seasonal_naive\\forecast_seasonal_naive.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\candidate_solutions\\croston\\forecast_croston.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\candidate_solutions\\last_value\\forecast_last_value.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated_versions\\01_initial_seasonal_naive.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\implementation_blueprint.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\multi_agent_collaboration.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\forecast_seasonal_naive.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated_versions\\02_repair_1_seasonal_naive.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.graphml",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.html",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\validation_report.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\validation_report.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\business_report.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\performance_analysis.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\failure_experience.json"
+  ],
+  "summary": {
+    "selected_model": "seasonal_naive",
+    "target_inventory": 184.0,
+    "report_paths": {
+      "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\validation_report.json",
+      "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\validation_report.md",
+      "business_markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\business_report.md",
+      "performance": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\performance_analysis.json",
+      "failure_experience": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\failure_experience.json",
+      "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\implementation_blueprint.json",
+      "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_02_experience_reuse\\20260717_122852_377525\\generated\\multi_agent_collaboration.json"
+    },
+    "candidate_code_solutions": 3
+  }
+}

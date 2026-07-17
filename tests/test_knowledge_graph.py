@@ -6,7 +6,7 @@ from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 
 def test_graph_bootstrap_retrieves_suitable_algorithm():
     graph = CapabilityKnowledgeGraph.bootstrap()
-    assert graph.graph.graph["schema_version"] == "1.4"
+    assert graph.graph.graph["schema_version"] == "1.5"
     records = graph.retrieve_algorithms("intermittent", limit=2)
     assert records[0]["name"] == "croston"
     assert "target inventory" in records[0]["output_contract"]

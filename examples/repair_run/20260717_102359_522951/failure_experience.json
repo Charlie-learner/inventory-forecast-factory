@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run:1eb1447350d7",
+  "model": "seasonal_naive",
+  "failures": [
+    {
+      "category": "syntax",
+      "fingerprint": "4c06ea656e7e460b",
+      "normalized_error": "syntax: injected demonstration failure before safe repair",
+      "retryable": true,
+      "severity": "high",
+      "likely_stage": "code_generation",
+      "root_cause": "生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。",
+      "recommended_actions": [
+        "重新解析源码语法树",
+        "使用完整安全模板重新生成",
+        "保留失败源码快照"
+      ]
+    }
+  ],
+  "repairs_applied": [
+    "第 1 轮修复（受约束安全模板回退；错误类型=syntax；根因=生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。；建议动作=重新解析源码语法树 / 使用完整安全模板重新生成 / 保留失败源码快照）：syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]"
+  ],
+  "prior_experience_reused": [],
+  "indexed_in_knowledge_graph": true
+}

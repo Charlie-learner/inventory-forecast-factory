@@ -1,0 +1,26 @@
+{
+  "agent": "CodeArchitectureAgent",
+  "mode": "llm_architecture",
+  "algorithm": "moving_average",
+  "algorithm_steps": [
+    "clean non-negative numeric history",
+    "average the latest 14 observations",
+    "repeat the estimate for the requested horizon"
+  ],
+  "required_contracts": [
+    "forecast returns built-in list[float]",
+    "target_inventory equals sum(daily_forecast)"
+  ],
+  "edge_cases": [
+    "empty history",
+    "non-positive horizon"
+  ],
+  "allowed_dependencies": [
+    "numpy",
+    "pandas"
+  ],
+  "performance_goal": "linear history cleaning and constant forecast cost",
+  "risks": [
+    "constant-rate forecast does not express daily seasonality"
+  ]
+}

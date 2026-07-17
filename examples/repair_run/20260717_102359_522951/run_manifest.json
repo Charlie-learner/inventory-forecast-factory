@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "success",
+  "started_at": "2026-07-17T02:23:59.523370+00:00",
+  "finished_at": "2026-07-17T02:24:04.444991+00:00",
+  "event_count": 21,
+  "trace": {
+    "jsonl": "examples\\repair_run\\20260717_102359_522951\\detailed_trace.jsonl",
+    "markdown": "examples\\repair_run\\20260717_102359_522951\\detailed_trace.md"
+  },
+  "artifacts": [
+    "examples\\repair_run\\20260717_102359_522951\\extracted_capabilities.json",
+    "examples\\repair_run\\20260717_102359_522951\\candidate_solutions\\seasonal_naive\\forecast_seasonal_naive.py",
+    "examples\\repair_run\\20260717_102359_522951\\candidate_solutions\\croston\\forecast_croston.py",
+    "examples\\repair_run\\20260717_102359_522951\\candidate_solutions\\last_value\\forecast_last_value.py",
+    "examples\\repair_run\\20260717_102359_522951\\generated_versions\\01_initial_seasonal_naive.py",
+    "examples\\repair_run\\20260717_102359_522951\\generated\\implementation_blueprint.json",
+    "examples\\repair_run\\20260717_102359_522951\\generated\\multi_agent_collaboration.json",
+    "examples\\repair_run\\20260717_102359_522951\\generated\\forecast_seasonal_naive.py",
+    "examples\\repair_run\\20260717_102359_522951\\generated_versions\\02_repair_1_seasonal_naive.py",
+    "examples\\knowledge_graph\\complete_capability_graph.json",
+    "examples\\knowledge_graph\\complete_capability_graph.graphml",
+    "examples\\knowledge_graph\\complete_capability_graph.html",
+    "examples\\repair_run\\20260717_102359_522951\\validation_report.json",
+    "examples\\repair_run\\20260717_102359_522951\\validation_report.md",
+    "examples\\repair_run\\20260717_102359_522951\\business_report.md",
+    "examples\\repair_run\\20260717_102359_522951\\performance_analysis.json",
+    "examples\\repair_run\\20260717_102359_522951\\failure_experience.json"
+  ],
+  "summary": {
+    "selected_model": "seasonal_naive",
+    "target_inventory": 184.0,
+    "report_paths": {
+      "json": "examples\\repair_run\\20260717_102359_522951\\validation_report.json",
+      "markdown": "examples\\repair_run\\20260717_102359_522951\\validation_report.md",
+      "business_markdown": "examples\\repair_run\\20260717_102359_522951\\business_report.md",
+      "performance": "examples\\repair_run\\20260717_102359_522951\\performance_analysis.json",
+      "failure_experience": "examples\\repair_run\\20260717_102359_522951\\failure_experience.json",
+      "blueprint": "examples\\repair_run\\20260717_102359_522951\\generated\\implementation_blueprint.json",
+      "manifest": "examples\\repair_run\\20260717_102359_522951\\generated\\multi_agent_collaboration.json"
+    },
+    "candidate_code_solutions": 3
+  }
+}

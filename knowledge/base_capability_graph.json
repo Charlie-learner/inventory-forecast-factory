@@ -2,7 +2,7 @@
   "directed": true,
   "multigraph": false,
   "graph": {
-    "schema_version": "1.4"
+    "schema_version": "1.5"
   },
   "nodes": [
     {
@@ -24,6 +24,11 @@
       "type": "DemandProfile",
       "name": "weekly_seasonal",
       "id": "profile:weekly_seasonal"
+    },
+    {
+      "type": "DemandProfile",
+      "name": "trend",
+      "id": "profile:trend"
     },
     {
       "type": "DemandProfile",
@@ -63,14 +68,13 @@
     {
       "type": "Algorithm",
       "name": "croston",
-      "description": "Classic Croston forecast for intermittent demand.",
+      "task_type": "inventory_forecasting",
+      "description": "Estimates demand size and interval separately.",
+      "template_name": "croston",
       "min_history": 14,
-      "dependencies": [
-        "numpy",
-        "pandas"
-      ],
-      "input_contract": "non-negative daily demand history and positive horizon",
-      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
       "locations": [
         "all",
         "1",
@@ -79,27 +83,12 @@
         "4",
         "5"
       ],
-      "task_type": "inventory_forecasting",
-      "template_name": "croston",
-      "parameters": {
-        "alpha": 0.1
-      },
-      "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:55",
-      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
+      "parameters": {},
+      "source_type": "registry",
+      "source_ref": "inventory_agent.forecasting.registry:default_registry",
+      "source_hash": "8d008209cfff197ed82672c08e2d61d9f19344889709d7a7f8b4137bcadeae35",
       "version": "1.0.0",
-      "extracted_by": "python_ast",
-      "source_title": "models.py",
-      "source_url": "",
-      "source_license": "",
-      "accessed_at": "",
-      "confidence": 0.95,
-      "review_status": "auto_extracted",
-      "evidence_refs": [
-        "inventory_agent\\forecasting\\models.py:55",
-        "inventory_agent\\forecasting\\models.py:85"
-      ],
-      "extraction_warnings": [],
+      "extracted_by": "registry_bootstrap",
       "id": "algorithm:croston"
     },
     {
@@ -110,14 +99,13 @@
     {
       "type": "Algorithm",
       "name": "last_value",
-      "description": "Repeat the latest observed demand as a simple baseline.",
+      "task_type": "inventory_forecasting",
+      "description": "Repeats the last observed demand.",
+      "template_name": "last_value",
       "min_history": 1,
-      "dependencies": [
-        "numpy",
-        "pandas"
-      ],
-      "input_contract": "non-negative daily demand history and positive horizon",
-      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
       "locations": [
         "all",
         "1",
@@ -126,25 +114,12 @@
         "4",
         "5"
       ],
-      "task_type": "inventory_forecasting",
-      "template_name": "last_value",
       "parameters": {},
-      "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:12",
-      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
+      "source_type": "registry",
+      "source_ref": "inventory_agent.forecasting.registry:default_registry",
+      "source_hash": "fa3f89965508818993cb716c6e4a6d8e241ba9c6d7ab0f3532c8d1efb8ab869b",
       "version": "1.0.0",
-      "extracted_by": "python_ast",
-      "source_title": "models.py",
-      "source_url": "",
-      "source_license": "",
-      "accessed_at": "",
-      "confidence": 0.95,
-      "review_status": "auto_extracted",
-      "evidence_refs": [
-        "inventory_agent\\forecasting\\models.py:12",
-        "inventory_agent\\forecasting\\models.py:20"
-      ],
-      "extraction_warnings": [],
+      "extracted_by": "registry_bootstrap",
       "id": "algorithm:last_value"
     },
     {
@@ -155,14 +130,13 @@
     {
       "type": "Algorithm",
       "name": "moving_average",
-      "description": "Forecast with the mean of the most recent demand window.",
+      "task_type": "inventory_forecasting",
+      "description": "Uses the recent 14-day demand average.",
+      "template_name": "moving_average",
       "min_history": 7,
-      "dependencies": [
-        "numpy",
-        "pandas"
-      ],
-      "input_contract": "non-negative daily demand history and positive horizon",
-      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
       "locations": [
         "all",
         "1",
@@ -171,41 +145,26 @@
         "4",
         "5"
       ],
-      "task_type": "inventory_forecasting",
-      "template_name": "moving_average",
-      "parameters": {
-        "window": 14
-      },
-      "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:23",
-      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
+      "parameters": {},
+      "source_type": "registry",
+      "source_ref": "inventory_agent.forecasting.registry:default_registry",
+      "source_hash": "b0ecce8b54b2cc88074e1a67fd99a0b8314f57e9426c51d8f169c0d05794243a",
       "version": "1.0.0",
-      "extracted_by": "python_ast",
-      "source_title": "models.py",
-      "source_url": "",
-      "source_license": "",
-      "accessed_at": "",
-      "confidence": 0.95,
-      "review_status": "auto_extracted",
-      "evidence_refs": [
-        "inventory_agent\\forecasting\\models.py:23",
-        "inventory_agent\\forecasting\\models.py:35"
-      ],
-      "extraction_warnings": [],
+      "extracted_by": "registry_bootstrap",
       "id": "algorithm:moving_average"
     },
     {
       "type": "Algorithm",
       "name": "ridge_lag",
-      "description": "Autoregressive ridge model using leakage-safe lag features.",
+      "task_type": "inventory_forecasting",
+      "description": "Regularized autoregression over the last 14 days.",
+      "template_name": "ridge_lag",
       "min_history": 30,
       "dependencies": [
-        "numpy",
-        "pandas",
-        "sklearn"
+        "scikit-learn"
       ],
-      "input_contract": "non-negative daily demand history and positive horizon",
-      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
       "locations": [
         "all",
         "1",
@@ -214,46 +173,24 @@
         "4",
         "5"
       ],
-      "task_type": "inventory_forecasting",
-      "template_name": "ridge_lag",
-      "parameters": {
-        "lags": 14,
-        "alpha": 1.0
-      },
-      "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:88",
-      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
+      "parameters": {},
+      "source_type": "registry",
+      "source_ref": "inventory_agent.forecasting.registry:default_registry",
+      "source_hash": "8316633ed5af13ac1061f0fee2568af5e26114500f690838d337a16571fe7238",
       "version": "1.0.0",
-      "extracted_by": "python_ast",
-      "source_title": "models.py",
-      "source_url": "",
-      "source_license": "",
-      "accessed_at": "",
-      "confidence": 0.95,
-      "review_status": "auto_extracted",
-      "evidence_refs": [
-        "inventory_agent\\forecasting\\models.py:88",
-        "inventory_agent\\forecasting\\models.py:116"
-      ],
-      "extraction_warnings": [],
+      "extracted_by": "registry_bootstrap",
       "id": "algorithm:ridge_lag"
-    },
-    {
-      "type": "DemandProfile",
-      "name": "trend",
-      "id": "profile:trend"
     },
     {
       "type": "Algorithm",
       "name": "seasonal_naive",
-      "description": "Repeat the latest seasonal pattern over the forecast horizon.",
+      "task_type": "inventory_forecasting",
+      "description": "Repeats the most recent weekly demand pattern.",
+      "template_name": "seasonal_naive",
       "min_history": 14,
-      "dependencies": [
-        "numpy",
-        "pandas"
-      ],
-      "input_contract": "non-negative daily demand history and positive horizon",
-      "output_contract": "non-negative daily forecast and horizon-total target inventory",
+      "dependencies": [],
+      "input_contract": "non-negative daily qty_alipay_njhs history",
+      "output_contract": "daily forecast plus horizon-total target inventory",
       "locations": [
         "all",
         "1",
@@ -262,41 +199,13 @@
         "4",
         "5"
       ],
-      "task_type": "inventory_forecasting",
-      "template_name": "seasonal_naive",
-      "parameters": {
-        "period": 7
-      },
-      "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py:38",
-      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
+      "parameters": {},
+      "source_type": "registry",
+      "source_ref": "inventory_agent.forecasting.registry:default_registry",
+      "source_hash": "802ec5427dc47b8de7c7408e730122aff31a0faac868128d8aaa11dfbd4cffaf",
       "version": "1.0.0",
-      "extracted_by": "python_ast",
-      "source_title": "models.py",
-      "source_url": "",
-      "source_license": "",
-      "accessed_at": "",
-      "confidence": 0.95,
-      "review_status": "auto_extracted",
-      "evidence_refs": [
-        "inventory_agent\\forecasting\\models.py:38",
-        "inventory_agent\\forecasting\\models.py:52"
-      ],
-      "extraction_warnings": [],
+      "extracted_by": "registry_bootstrap",
       "id": "algorithm:seasonal_naive"
-    },
-    {
-      "type": "SourceArtifact",
-      "name": "models.py",
-      "source_type": "python",
-      "source_ref": "inventory_agent\\forecasting\\models.py",
-      "source_hash": "6ae88282402d0c9fc02bab1bbbce991548a76d5f536da92cea7743f4374fa6e5",
-      "extracted_by": "python_ast",
-      "source_url": "",
-      "source_license": "",
-      "accessed_at": "",
-      "review_status": "auto_extracted",
-      "id": "source:6ae88282402d0c9f"
     }
   ],
   "edges": [
@@ -311,6 +220,21 @@
       "target": "metric:wape"
     },
     {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:croston",
+      "target": "metric:bias"
+    },
+    {
       "relation": "SUITABLE_FOR",
       "source": "algorithm:croston",
       "target": "profile:intermittent"
@@ -322,26 +246,6 @@
     },
     {
       "relation": "EVALUATED_BY",
-      "source": "algorithm:croston",
-      "target": "metric:rmse"
-    },
-    {
-      "relation": "EXTRACTED_FROM",
-      "source": "algorithm:croston",
-      "target": "source:6ae88282402d0c9f"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:croston",
-      "target": "metric:smape"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:croston",
-      "target": "metric:bias"
-    },
-    {
-      "relation": "EVALUATED_BY",
       "source": "algorithm:last_value",
       "target": "metric:inventory_cost"
     },
@@ -349,6 +253,21 @@
       "relation": "EVALUATED_BY",
       "source": "algorithm:last_value",
       "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:last_value",
+      "target": "metric:bias"
     },
     {
       "relation": "SUITABLE_FOR",
@@ -357,26 +276,6 @@
     },
     {
       "relation": "EVALUATED_BY",
-      "source": "algorithm:last_value",
-      "target": "metric:rmse"
-    },
-    {
-      "relation": "EXTRACTED_FROM",
-      "source": "algorithm:last_value",
-      "target": "source:6ae88282402d0c9f"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:last_value",
-      "target": "metric:smape"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:last_value",
-      "target": "metric:bias"
-    },
-    {
-      "relation": "EVALUATED_BY",
       "source": "algorithm:moving_average",
       "target": "metric:inventory_cost"
     },
@@ -384,6 +283,21 @@
       "relation": "EVALUATED_BY",
       "source": "algorithm:moving_average",
       "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:moving_average",
+      "target": "metric:bias"
     },
     {
       "relation": "SUITABLE_FOR",
@@ -397,26 +311,6 @@
     },
     {
       "relation": "EVALUATED_BY",
-      "source": "algorithm:moving_average",
-      "target": "metric:rmse"
-    },
-    {
-      "relation": "EXTRACTED_FROM",
-      "source": "algorithm:moving_average",
-      "target": "source:6ae88282402d0c9f"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:moving_average",
-      "target": "metric:smape"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:moving_average",
-      "target": "metric:bias"
-    },
-    {
-      "relation": "EVALUATED_BY",
       "source": "algorithm:ridge_lag",
       "target": "metric:inventory_cost"
     },
@@ -424,6 +318,21 @@
       "relation": "EVALUATED_BY",
       "source": "algorithm:ridge_lag",
       "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:ridge_lag",
+      "target": "metric:bias"
     },
     {
       "relation": "SUITABLE_FOR",
@@ -442,26 +351,6 @@
     },
     {
       "relation": "EVALUATED_BY",
-      "source": "algorithm:ridge_lag",
-      "target": "metric:rmse"
-    },
-    {
-      "relation": "EXTRACTED_FROM",
-      "source": "algorithm:ridge_lag",
-      "target": "source:6ae88282402d0c9f"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:ridge_lag",
-      "target": "metric:smape"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:ridge_lag",
-      "target": "metric:bias"
-    },
-    {
-      "relation": "EVALUATED_BY",
       "source": "algorithm:seasonal_naive",
       "target": "metric:inventory_cost"
     },
@@ -469,6 +358,21 @@
       "relation": "EVALUATED_BY",
       "source": "algorithm:seasonal_naive",
       "target": "metric:wape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:rmse"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:smape"
+    },
+    {
+      "relation": "EVALUATED_BY",
+      "source": "algorithm:seasonal_naive",
+      "target": "metric:bias"
     },
     {
       "relation": "SUITABLE_FOR",
@@ -479,26 +383,6 @@
       "relation": "SUITABLE_FOR",
       "source": "algorithm:seasonal_naive",
       "target": "profile:stable"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:seasonal_naive",
-      "target": "metric:rmse"
-    },
-    {
-      "relation": "EXTRACTED_FROM",
-      "source": "algorithm:seasonal_naive",
-      "target": "source:6ae88282402d0c9f"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:seasonal_naive",
-      "target": "metric:smape"
-    },
-    {
-      "relation": "EVALUATED_BY",
-      "source": "algorithm:seasonal_naive",
-      "target": "metric:bias"
     }
   ]
 }

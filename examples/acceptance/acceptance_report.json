@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "mode": "deterministic_mock",
+  "benchmark_cases": [
+    {
+      "item_id": 1001,
+      "declared_pattern": "stable",
+      "detected_profile": "stable",
+      "selected_model": "ridge_lag",
+      "target_inventory": 190.3259868532229,
+      "recommended_order_qty": 144.0,
+      "inventory_cost": 9.189800675801266,
+      "status": "passed"
+    },
+    {
+      "item_id": 1002,
+      "declared_pattern": "weekly_seasonal",
+      "detected_profile": "weekly_seasonal",
+      "selected_model": "seasonal_naive",
+      "target_inventory": 184.0,
+      "recommended_order_qty": 138.0,
+      "inventory_cost": 0.0,
+      "status": "passed"
+    },
+    {
+      "item_id": 1003,
+      "declared_pattern": "intermittent",
+      "detected_profile": "intermittent",
+      "selected_model": "ridge_lag",
+      "target_inventory": 115.0073377136824,
+      "recommended_order_qty": 72.0,
+      "inventory_cost": 0.2726210709619892,
+      "status": "passed"
+    },
+    {
+      "item_id": 1004,
+      "declared_pattern": "trend",
+      "detected_profile": "trend",
+      "selected_model": "ridge_lag",
+      "target_inventory": 496.80014615949557,
+      "recommended_order_qty": 450.0,
+      "inventory_cost": 1.255731419467935,
+      "status": "passed"
+    },
+    {
+      "item_id": 1005,
+      "declared_pattern": "volatile",
+      "detected_profile": "volatile",
+      "selected_model": "ridge_lag",
+      "target_inventory": 237.16127281978854,
+      "recommended_order_qty": 192.0,
+      "inventory_cost": 15.095652625399126,
+      "status": "passed"
+    },
+    {
+      "item_id": 1006,
+      "declared_pattern": "cold_start",
+      "detected_profile": "intermittent",
+      "selected_model": "last_value",
+      "target_inventory": 280.0,
+      "recommended_order_qty": 234.0,
+      "inventory_cost": 192.0,
+      "status": "passed"
+    }
+  ],
+  "language_cases": {
+    "multiple_items": [
+      [
+        1001,
+        "1"
+      ],
+      [
+        1003,
+        "1"
+      ]
+    ],
+    "all_warehouses": [
+      [
+        1003,
+        "1"
+      ],
+      [
+        1003,
+        "2"
+      ],
+      [
+        1003,
+        "3"
+      ]
+    ]
+  },
+  "cross_component_cases": {
+    "repair_loop": {
+      "status": "success_after_repair",
+      "repair_count": 1,
+      "passed": true
+    },
+    "knowledge_lifecycle": {
+      "required_types": [
+        "CapabilityVersion",
+        "FailureCase",
+        "RepairStrategy",
+        "ValidationRun",
+        "VersionEvent"
+      ],
+      "passed": true
+    },
+    "api_documentation": {
+      "openapi": "3.0.3",
+      "post_routes": [
+        "/api/benchmark",
+        "/api/datasets/map",
+        "/api/extract",
+        "/api/replicate",
+        "/api/run",
+        "/api/run-async",
+        "/api/upload",
+        "/api/versions"
+      ],
+      "passed": true
+    },
+    "capability_replication": {
+      "valid": true,
+      "equivalence_cases": 4,
+      "review_status": "auto_validated",
+      "implementation_candidates": 1,
+      "passed": true
+    }
+  },
+  "summary": {
+    "benchmark_cases": 6,
+    "cross_component_cases": 4,
+    "passed": true
+  }
+}

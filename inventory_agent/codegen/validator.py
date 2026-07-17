@@ -16,6 +16,7 @@ import numpy as np
 import pandas as pd
 
 from inventory_agent.forecasting.registry import default_registry
+from inventory_agent.services.performance import PerformanceBenchmarkConfig
 
 
 @dataclass(frozen=True)
@@ -30,6 +31,11 @@ class CodeValidationResult:
     runtime_seconds: float | None = None
     equivalence_max_error: float | None = None
     equivalence_cases: int = 0
+    performance_iterations: int = 0
+    mean_latency_ms: float | None = None
+    cpu_time_ms: float | None = None
+    peak_memory_kb: float | None = None
+    throughput_calls_per_second: float | None = None
 
 
 class GeneratedCodeValidator:
@@ -81,10 +87,19 @@ class GeneratedCodeValidator:
         "urlopen",
     }
 
-    def __init__(self, timeout_seconds: float = 10.0):
+    def __init__(
+        self,
+        timeout_seconds: float = 10.0,
+        performance_iterations: int = 20,
+        benchmark_config: PerformanceBenchmarkConfig | None = None,
+    ):
         """Configure the maximum runtime allowed for generated code."""
 
         self.timeout_seconds = timeout_seconds
+        if not 1 <= performance_iterations <= 500:
+            raise ValueError("performance_iterations must be between 1 and 500")
+        self.performance_iterations = performance_iterations
+        self.benchmark_config = benchmark_config or PerformanceBenchmarkConfig()
 
     def validate(
         self,
@@ -109,6 +124,7 @@ class GeneratedCodeValidator:
         runtime_seconds: float | None = None
         equivalence_max_error: float | None = None
         equivalence_cases = 0
+        performance: dict = {}
         try:
             source = module_path.read_text(encoding="utf-8")
             tree = ast.parse(source)
@@ -161,15 +177,28 @@ class GeneratedCodeValidator:
             child_env["PYTHONDONTWRITEBYTECODE"] = "1"
             started = time.perf_counter()
             completed = subprocess.run(
-                [sys.executable, "-m", "inventory_agent.codegen.runner", str(module_path)],
-                check=True,
+                [
+                    sys.executable,
+                    "-m",
+                    "inventory_agent.codegen.runner",
+                    str(module_path),
+                    str(self.performance_iterations),
+                    str(self.benchmark_config.history_points),
+                    str(self.benchmark_config.horizon),
+                ],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=self.timeout_seconds,
                 env=child_env,
             )
             runtime_seconds = time.perf_counter() - started
+            if completed.returncode != 0:
+                diagnostic = completed.stderr.strip().splitlines()
+                detail = diagnostic[-1] if diagnostic else "child process failed"
+                raise RuntimeError(detail)
             payload = json.loads(completed.stdout)
+            performance = payload.get("performance", {})
             values = payload["values"]
             if not isinstance(values, list) or len(values) != 14:
                 raise ValueError("forecast must return a list matching horizon")
@@ -243,4 +272,25 @@ class GeneratedCodeValidator:
             runtime_seconds,
             equivalence_max_error,
             equivalence_cases,
+            int(performance.get("iterations", 0)),
+            (
+                float(performance["mean_latency_ms"])
+                if performance.get("mean_latency_ms") is not None
+                else None
+            ),
+            (
+                float(performance["cpu_time_ms"])
+                if performance.get("cpu_time_ms") is not None
+                else None
+            ),
+            (
+                float(performance["peak_memory_kb"])
+                if performance.get("peak_memory_kb") is not None
+                else None
+            ),
+            (
+                float(performance["throughput_calls_per_second"])
+                if performance.get("throughput_calls_per_second") is not None
+                else None
+            ),
         )

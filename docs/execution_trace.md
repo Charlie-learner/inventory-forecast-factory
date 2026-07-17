@@ -72,6 +72,11 @@ YYYYMMDD_HHMMSS_microseconds/
 
 需要长期保留的运行可以复制到 `examples/` 或改成非时间戳目录名。仓库附带的完整示例位于 `examples/detailed_run/`。
 
+若需要在提交前统一清除本地上传副本、运行产物、测试缓存和覆盖率文件，可先运行
+`uv run python scripts/clean_workspace.py` 预览，再运行
+`uv run python scripts/clean_workspace.py --apply` 执行。该脚本不会删除 `data/`、
+`examples/`、虚拟环境或 Git 元数据。
+
 ## 信息安全边界
 
 追踪文件会记录模型提示词、响应、用户需求和文件路径，但不会主动记录 API Key。真实业务使用时仍应避免把客户隐私、商业机密或凭据写入自然语言描述和模型提示词；提交前应人工检查追踪文件。

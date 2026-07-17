@@ -21,6 +21,122 @@ from inventory_agent.data.schema import (
 )
 
 
+PANEL_COLUMN_ALIASES = {
+    "date": ("date", "ds", "day", "timestamp", "日期", "时间", "业务日期"),
+    "item_id": (
+        "item_id",
+        "sku_id",
+        "sku",
+        "item",
+        "product_id",
+        "商品id",
+        "商品_id",
+        "商品编号",
+        "sku编号",
+    ),
+    "store_code": (
+        "store_code",
+        "warehouse_id",
+        "warehouse",
+        "store_id",
+        "location_id",
+        "仓库id",
+        "仓库_id",
+        "仓库编号",
+        "仓库",
+        "门店id",
+    ),
+    TARGET_COLUMN: (
+        TARGET_COLUMN,
+        "demand",
+        "sales",
+        "sale_qty",
+        "qty",
+        "quantity",
+        "target",
+        "y",
+        "需求",
+        "需求量",
+        "销量",
+        "销售量",
+        "数量",
+    ),
+}
+
+
+def _read_csv_flexible(
+    source: str | Path,
+    *,
+    header: int | None | str = "infer",
+) -> pd.DataFrame:
+    """Read common UTF-8/GB18030 CSV files and detect non-comma delimiters."""
+
+    path = Path(source)
+    last_error: Exception | None = None
+    for encoding in ("utf-8-sig", "utf-8", "gb18030"):
+        try:
+            frame = pd.read_csv(path, header=header, encoding=encoding)
+            if frame.shape[1] == 1:
+                frame = pd.read_csv(
+                    path,
+                    header=header,
+                    encoding=encoding,
+                    sep=None,
+                    engine="python",
+                )
+            return frame
+        except (UnicodeError, pd.errors.ParserError) as exc:
+            last_error = exc
+    raise ValueError(f"无法读取 CSV 编码或分隔符：{last_error}")
+
+
+def load_cost_csv(path: str | Path) -> pd.DataFrame:
+    """Load a standalone headerless Cainiao config2 cost table."""
+
+    return _normalize_costs(_read_csv_flexible(path, header=None))
+
+
+def inspect_csv(path: str | Path, preview_rows: int = 5) -> dict:
+    """Return columns and a small JSON-safe preview for field mapping."""
+
+    frame = _read_csv_flexible(path)
+    preview = frame.head(preview_rows).copy()
+    preview = preview.where(pd.notna(preview), None)
+    return {
+        "columns": [str(column) for column in frame.columns],
+        "preview": preview.astype(object).to_dict(orient="records"),
+        "rows": len(frame),
+    }
+
+
+def normalize_mapped_panel_csv(
+    source: str | Path,
+    output: str | Path,
+    mapping: dict[str, str],
+) -> pd.DataFrame:
+    """Normalize a user-selected date/item/store/target column mapping."""
+
+    frame = _read_csv_flexible(source)
+    required = {"date", "item_id", TARGET_COLUMN}
+    missing_mapping = required.difference(mapping)
+    if missing_mapping:
+        raise ValueError(f"字段映射缺少：{sorted(missing_mapping)}")
+    rename = {}
+    for canonical, source_column in mapping.items():
+        if source_column not in frame.columns:
+            raise ValueError(f"映射字段不存在：{source_column}")
+        rename[source_column] = canonical
+    normalized = frame.rename(columns=rename)
+    selected = ["date", "item_id"]
+    if "store_code" in normalized.columns:
+        selected.append("store_code")
+    selected.append(TARGET_COLUMN)
+    destination = Path(output)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    normalized[selected].to_csv(destination, index=False)
+    return load_panel_csv(destination)
+
+
 @dataclass
 class CainiaoDataBundle:
     """Normalized national, warehouse, and inventory-cost tables."""
@@ -28,6 +144,69 @@ class CainiaoDataBundle:
     national: pd.DataFrame
     store: pd.DataFrame
     costs: pd.DataFrame
+
+
+def load_panel_csv(path: str | Path) -> pd.DataFrame:
+    """Load a user CSV and normalize common inventory time-series field aliases."""
+
+    source = Path(path)
+    frame = _read_csv_flexible(source)
+    # Cainiao's official item_feature2/item_store_feature2 files are headerless.
+    # After a normal read, their first data row appears as numeric column names.
+    numeric_like_headers = sum(
+        bool(str(column).strip().replace(".", "", 1).lstrip("-").isdigit())
+        for column in frame.columns
+    )
+    headerless_ratio = numeric_like_headers / max(len(frame.columns), 1)
+    if headerless_ratio >= 0.8 and len(frame.columns) in {
+        len(NATIONAL_COLUMNS),
+        len(STORE_COLUMNS),
+    }:
+        raw = _read_csv_flexible(source, header=None)
+        if raw.shape[1] == len(NATIONAL_COLUMNS):
+            result = _normalize_features(raw, NATIONAL_COLUMNS)
+            result.insert(2, "store_code", NATIONAL_SCOPE)
+            return result
+        return _normalize_features(raw, STORE_COLUMNS)
+
+    lowered = {str(column).strip().lower(): column for column in frame.columns}
+    rename = {}
+    for canonical, aliases in PANEL_COLUMN_ALIASES.items():
+        if canonical in frame.columns:
+            continue
+        match = next((lowered[alias] for alias in aliases if alias in lowered), None)
+        if match is not None:
+            rename[match] = canonical
+    result = frame.rename(columns=rename).copy()
+    required = {"date", "item_id", TARGET_COLUMN}
+    missing = required.difference(result.columns)
+    if missing:
+        raise ValueError(
+            "CSV 缺少库存预测必需字段："
+            f"{sorted(missing)}。支持的常见别名为 {PANEL_COLUMN_ALIASES}"
+        )
+    if "store_code" not in result.columns:
+        result["store_code"] = "all"
+    date_text = result["date"].astype(str).str.strip()
+    numeric_date = date_text.str.fullmatch(r"\d{8}")
+    if numeric_date.all():
+        result["date"] = pd.to_datetime(date_text, format="%Y%m%d", errors="raise")
+    else:
+        result["date"] = pd.to_datetime(result["date"], errors="raise")
+    try:
+        result["item_id"] = pd.to_numeric(
+            result["item_id"], errors="raise"
+        ).astype(int)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "商品 ID 当前必须是整数或纯数字文本；"
+            "请先将字母型 SKU 映射为稳定的数字 ID 后再运行。"
+        ) from exc
+    result["store_code"] = result["store_code"].astype(str).str.strip()
+    result[TARGET_COLUMN] = pd.to_numeric(
+        result[TARGET_COLUMN], errors="raise"
+    ).clip(lower=0)
+    return result.sort_values(["item_id", "store_code", "date"])
 
 
 def _normalize_features(frame: pd.DataFrame, columns: list[str]) -> pd.DataFrame:

@@ -1,28 +1,53 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key id="d52" for="edge" attr.name="relation" attr.type="string" />
-  <key id="d51" for="node" attr.name="selected_version" attr.type="string" />
-  <key id="d50" for="node" attr.name="previous_active" attr.type="string" />
-  <key id="d49" for="node" attr.name="model" attr.type="string" />
-  <key id="d48" for="node" attr.name="action" attr.type="string" />
-  <key id="d47" for="node" attr.name="last_seen" attr.type="string" />
-  <key id="d46" for="node" attr.name="occurrence_count" attr.type="long" />
-  <key id="d45" for="node" attr.name="retryable" attr.type="boolean" />
-  <key id="d44" for="node" attr.name="normalized_error" attr.type="string" />
-  <key id="d43" for="node" attr.name="fingerprint" attr.type="string" />
-  <key id="d42" for="node" attr.name="category" attr.type="string" />
-  <key id="d41" for="node" attr.name="generated_path" attr.type="string" />
-  <key id="d40" for="node" attr.name="spec_hash" attr.type="string" />
-  <key id="d39" for="node" attr.name="generation_mode" attr.type="string" />
-  <key id="d38" for="node" attr.name="capability_version" attr.type="string" />
-  <key id="d37" for="node" attr.name="lifecycle_status" attr.type="string" />
-  <key id="d36" for="node" attr.name="created_at" attr.type="string" />
-  <key id="d35" for="node" attr.name="timestamp" attr.type="string" />
-  <key id="d34" for="node" attr.name="validation_checks" attr.type="string" />
-  <key id="d33" for="node" attr.name="metrics" attr.type="string" />
-  <key id="d32" for="node" attr.name="status" attr.type="string" />
-  <key id="d31" for="node" attr.name="store_code" attr.type="string" />
-  <key id="d30" for="node" attr.name="item_id" attr.type="long" />
+  <key id="d77" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d76" for="node" attr.name="selected_version" attr.type="string" />
+  <key id="d75" for="node" attr.name="previous_active" attr.type="string" />
+  <key id="d74" for="node" attr.name="model" attr.type="string" />
+  <key id="d73" for="node" attr.name="action" attr.type="string" />
+  <key id="d72" for="node" attr.name="last_used" attr.type="string" />
+  <key id="d71" for="node" attr.name="success_count" attr.type="long" />
+  <key id="d70" for="node" attr.name="attempt_count" attr.type="long" />
+  <key id="d69" for="node" attr.name="strategy_fingerprint" attr.type="string" />
+  <key id="d68" for="node" attr.name="last_seen" attr.type="string" />
+  <key id="d67" for="node" attr.name="occurrence_count" attr.type="long" />
+  <key id="d66" for="node" attr.name="recommended_actions" attr.type="string" />
+  <key id="d65" for="node" attr.name="root_cause" attr.type="string" />
+  <key id="d64" for="node" attr.name="likely_stage" attr.type="string" />
+  <key id="d63" for="node" attr.name="severity" attr.type="string" />
+  <key id="d62" for="node" attr.name="retryable" attr.type="boolean" />
+  <key id="d61" for="node" attr.name="normalized_error" attr.type="string" />
+  <key id="d60" for="node" attr.name="fingerprint" attr.type="string" />
+  <key id="d59" for="node" attr.name="category" attr.type="string" />
+  <key id="d58" for="node" attr.name="latest_validation_checks" attr.type="string" />
+  <key id="d57" for="node" attr.name="latest_metrics" attr.type="string" />
+  <key id="d56" for="node" attr.name="last_validated_at" attr.type="string" />
+  <key id="d55" for="node" attr.name="validation_count" attr.type="long" />
+  <key id="d54" for="node" attr.name="validation_status" attr.type="string" />
+  <key id="d53" for="node" attr.name="performance" attr.type="string" />
+  <key id="d52" for="node" attr.name="validation_profile" attr.type="string" />
+  <key id="d51" for="node" attr.name="repair_count" attr.type="long" />
+  <key id="d50" for="node" attr.name="parent_version" attr.type="string" />
+  <key id="d49" for="node" attr.name="collaboration" attr.type="string" />
+  <key id="d48" for="node" attr.name="generated_path" attr.type="string" />
+  <key id="d47" for="node" attr.name="spec_hash" attr.type="string" />
+  <key id="d46" for="node" attr.name="prompt_hash" attr.type="string" />
+  <key id="d45" for="node" attr.name="generation_strategy" attr.type="string" />
+  <key id="d44" for="node" attr.name="variant_id" attr.type="string" />
+  <key id="d43" for="node" attr.name="generation_mode" attr.type="string" />
+  <key id="d42" for="node" attr.name="capability_version" attr.type="string" />
+  <key id="d41" for="node" attr.name="lifecycle_status" attr.type="string" />
+  <key id="d40" for="node" attr.name="created_at" attr.type="string" />
+  <key id="d39" for="node" attr.name="timestamp" attr.type="string" />
+  <key id="d38" for="node" attr.name="validation_checks" attr.type="string" />
+  <key id="d37" for="node" attr.name="metrics" attr.type="string" />
+  <key id="d36" for="node" attr.name="status" attr.type="string" />
+  <key id="d35" for="node" attr.name="store_code" attr.type="string" />
+  <key id="d34" for="node" attr.name="item_id" attr.type="long" />
+  <key id="d33" for="node" attr.name="complexity" attr.type="string" />
+  <key id="d32" for="node" attr.name="internal_dependencies" attr.type="string" />
+  <key id="d31" for="node" attr.name="entrypoints" attr.type="string" />
+  <key id="d30" for="node" attr.name="implementation_kind" attr.type="string" />
   <key id="d29" for="node" attr.name="extraction_warnings" attr.type="string" />
   <key id="d28" for="node" attr.name="evidence_refs" attr.type="string" />
   <key id="d27" for="node" attr.name="review_status" attr.type="string" />
@@ -69,6 +94,10 @@
     <node id="profile:weekly_seasonal">
       <data key="d1">DemandProfile</data>
       <data key="d2">weekly_seasonal</data>
+    </node>
+    <node id="profile:trend">
+      <data key="d1">DemandProfile</data>
+      <data key="d2">trend</data>
     </node>
     <node id="profile:dense">
       <data key="d1">DemandProfile</data>
@@ -124,6 +153,10 @@
       <data key="d27">source_reviewed</data>
       <data key="d28">["Croston 1972 method description", "inventory_agent/forecasting/models.py:52"]</data>
       <data key="d29">["This implementation is classic Croston rather than the Syntetos-Boylan adjustment."]</data>
+      <data key="d30">algorithm</data>
+      <data key="d31">[]</data>
+      <data key="d32">[]</data>
+      <data key="d33">{}</data>
     </node>
     <node id="profile:many_zeros">
       <data key="d1">DemandProfile</data>
@@ -154,6 +187,10 @@
       <data key="d27">source_reviewed</data>
       <data key="d28">["article benchmark discussion", "inventory_agent/forecasting/models.py:12"]</data>
       <data key="d29">[]</data>
+      <data key="d30">algorithm</data>
+      <data key="d31">[]</data>
+      <data key="d32">[]</data>
+      <data key="d33">{}</data>
     </node>
     <node id="profile:short_history">
       <data key="d1">DemandProfile</data>
@@ -184,6 +221,10 @@
       <data key="d27">source_reviewed</data>
       <data key="d28">["SMA benchmark description", "inventory_agent/forecasting/models.py:22"]</data>
       <data key="d29">[]</data>
+      <data key="d30">algorithm</data>
+      <data key="d31">[]</data>
+      <data key="d32">[]</data>
+      <data key="d33">{}</data>
     </node>
     <node id="algorithm:ridge_lag">
       <data key="d1">Algorithm</data>
@@ -210,10 +251,10 @@
       <data key="d27">source_reviewed</data>
       <data key="d28">["Ridge L2 objective", "inventory_agent/forecasting/models.py:84"]</data>
       <data key="d29">[]</data>
-    </node>
-    <node id="profile:trend">
-      <data key="d1">DemandProfile</data>
-      <data key="d2">trend</data>
+      <data key="d30">algorithm</data>
+      <data key="d31">[]</data>
+      <data key="d32">[]</data>
+      <data key="d33">{}</data>
     </node>
     <node id="algorithm:seasonal_naive">
       <data key="d1">Algorithm</data>
@@ -240,6 +281,10 @@
       <data key="d27">source_reviewed</data>
       <data key="d28">["article seasonal-naive benchmark discussion", "inventory_agent/forecasting/models.py:36"]</data>
       <data key="d29">[]</data>
+      <data key="d30">algorithm</data>
+      <data key="d31">[]</data>
+      <data key="d32">[]</data>
+      <data key="d33">{}</data>
     </node>
     <node id="source:e7fbe6265bbd3cee">
       <data key="d1">SourceArtifact</data>
@@ -301,196 +346,217 @@
       <data key="d25">2026-07-16</data>
       <data key="d27">source_reviewed</data>
     </node>
-    <node id="run:be7389b40136">
+    <node id="run:1eb1447350d7">
       <data key="d1">ValidationRun</data>
       <data key="d2">验证:seasonal_naive@1</data>
-      <data key="d30">1002</data>
-      <data key="d31">1</data>
-      <data key="d32">success</data>
-      <data key="d33">{"bias": 0.0, "inventory_cost": 0.0, "mae": 0.0, "mean_actual_total": 184.0, "mean_target_inventory": 184.0, "rmse": 0.0, "smape": 0.0, "wape": 0.0}</data>
-      <data key="d34">{"equivalence": true, "imports": true, "interface": true, "runtime": true, "stability": true, "syntax": true}</data>
-      <data key="d35">2026-07-16T09:43:16.495916+00:00</data>
+      <data key="d34">1002</data>
+      <data key="d35">1</data>
+      <data key="d36">success</data>
+      <data key="d37">{"bias": 0.0, "inventory_cost": 0.0, "mae": 0.0, "mean_actual_total": 184.0, "mean_target_inventory": 184.0, "rmse": 0.0, "smape": 0.0, "wape": 0.0}</data>
+      <data key="d38">{"equivalence": true, "imports": true, "interface": true, "runtime": true, "stability": true, "syntax": true}</data>
+      <data key="d39">2026-07-17T02:24:04.433760+00:00</data>
     </node>
-    <node id="version:seasonal_naive:a100b5908799">
+    <node id="version:seasonal_naive:64ea28fef849">
       <data key="d1">CapabilityVersion</data>
-      <data key="d2">seasonal_naive@a100b5908799</data>
-      <data key="d36">2026-07-16T09:43:16.495916+00:00</data>
-      <data key="d37">active</data>
-      <data key="d38">1.1.0</data>
-      <data key="d39">spec_template</data>
-      <data key="d40">e4c75af347c0866373e03ac2e7abc603e1e8c090940f54b929a070ec0e513db2</data>
-      <data key="d19">a100b590879924e5f86e9377661dd7790355f9623b35555479b3dab5609ef289</data>
+      <data key="d2">seasonal_naive@64ea28fef849</data>
+      <data key="d40">2026-07-17T02:24:04.433760+00:00</data>
+      <data key="d41">active</data>
+      <data key="d42">1.1.0</data>
+      <data key="d43">spec_template</data>
+      <data key="d44">primary</data>
+      <data key="d45">specification_fidelity</data>
+      <data key="d46">c777c5904a44de6636893a621940e1db63480f00e7163b7dbe22ba24e92300f0</data>
+      <data key="d47">328a905e3be55180984fbf0a2525c3a1a05aeaadd45d45a315af36d624f93349</data>
+      <data key="d19">64ea28fef8494050fe2567f49286d526fd3ca8fe4755748fc0a985a3ed077b1b</data>
       <data key="d18">examples\capabilities\seasonal_naive.md</data>
-      <data key="d41">examples\repair_run\20260716_174311_621870\generated\forecast_seasonal_naive.py</data>
+      <data key="d48">examples\repair_run\20260717_102359_522951\generated\forecast_seasonal_naive.py</data>
+      <data key="d49">{"protocol": "architecture-implementation-review-validation", "architecture_mode": "", "review_mode": "", "revision_applied": false}</data>
+      <data key="d50" />
+      <data key="d51">1</data>
+      <data key="d52">inventory_target</data>
+      <data key="d53">{"mean_latency_ms": 0.7285550003871322, "peak_memory_kb": 25.32421875, "throughput_calls_per_second": 1372.5799692111511}</data>
+      <data key="d54">success</data>
+      <data key="d55">1</data>
+      <data key="d56">2026-07-17T02:24:04.433760+00:00</data>
+      <data key="d57">{"bias": 0.0, "inventory_cost": 0.0, "mae": 0.0, "mean_actual_total": 184.0, "mean_target_inventory": 184.0, "rmse": 0.0, "smape": 0.0, "wape": 0.0}</data>
+      <data key="d58">{"equivalence": true, "imports": true, "interface": true, "runtime": true, "stability": true, "syntax": true}</data>
     </node>
     <node id="failure:4c06ea656e7e460b">
       <data key="d1">FailureCase</data>
       <data key="d2">syntax:4c06ea656e7e460b</data>
-      <data key="d42">syntax</data>
-      <data key="d43">4c06ea656e7e460b</data>
-      <data key="d44">syntax: injected demonstration failure before safe repair</data>
-      <data key="d45">True</data>
-      <data key="d46">1</data>
-      <data key="d47">2026-07-16T09:43:16.495916+00:00</data>
+      <data key="d59">syntax</data>
+      <data key="d60">4c06ea656e7e460b</data>
+      <data key="d61">syntax: injected demonstration failure before safe repair</data>
+      <data key="d62">True</data>
+      <data key="d63">high</data>
+      <data key="d64">code_generation</data>
+      <data key="d65">生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。</data>
+      <data key="d66">["\u91cd\u65b0\u89e3\u6790\u6e90\u7801\u8bed\u6cd5\u6811", "\u4f7f\u7528\u5b8c\u6574\u5b89\u5168\u6a21\u677f\u91cd\u65b0\u751f\u6210", "\u4fdd\u7559\u5931\u8d25\u6e90\u7801\u5feb\u7167"]</data>
+      <data key="d67">1</data>
+      <data key="d68">2026-07-17T02:24:04.433760+00:00</data>
     </node>
-    <node id="repair:122b7d0db4">
+    <node id="repair:3f402f107f1a2e1c">
       <data key="d1">RepairStrategy</data>
       <data key="d2">修复:seasonal_naive</data>
-      <data key="d9">第 1 轮修复（受约束安全模板回退，错误类型=syntax）: syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]</data>
+      <data key="d9">第 1 轮修复（受约束安全模板回退；错误类型=syntax；根因=生成源码不符合 Python 语法，常见于代码截断、缩进或括号不完整。；建议动作=重新解析源码语法树 / 使用完整安全模板重新生成 / 保留失败源码快照）：syntax: injected demonstration failure before safe repair [failure_fingerprint=4c06ea656e7e460b]</data>
+      <data key="d69">3f402f107f1a2e1c</data>
+      <data key="d70">1</data>
+      <data key="d71">1</data>
+      <data key="d72">2026-07-17T02:24:04.433760+00:00</data>
     </node>
-    <node id="version_event:b7a348c7b3aa">
+    <node id="version_event:9f5eb3c650db">
       <data key="d1">VersionEvent</data>
       <data key="d2">promote:seasonal_naive</data>
-      <data key="d48">promote</data>
-      <data key="d49">seasonal_naive</data>
-      <data key="d50" />
-      <data key="d51">version:seasonal_naive:a100b5908799</data>
-      <data key="d35">2026-07-16T09:43:16.508980+00:00</data>
+      <data key="d73">promote</data>
+      <data key="d74">seasonal_naive</data>
+      <data key="d75" />
+      <data key="d76">version:seasonal_naive:64ea28fef849</data>
+      <data key="d39">2026-07-17T02:24:04.446439+00:00</data>
     </node>
     <edge source="algorithm:croston" target="metric:inventory_cost">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:wape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:smape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="metric:bias">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:croston" target="profile:intermittent">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:croston" target="profile:many_zeros">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:croston" target="source:e7fbe6265bbd3cee">
-      <data key="d52">EXTRACTED_FROM</data>
+      <data key="d77">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:inventory_cost">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:wape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:smape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="metric:bias">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:last_value" target="profile:short_history">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:last_value" target="source:cc24b90807e0ed4e">
-      <data key="d52">EXTRACTED_FROM</data>
+      <data key="d77">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:inventory_cost">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:wape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:smape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="metric:bias">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:moving_average" target="profile:stable">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:moving_average" target="profile:short_history">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:moving_average" target="source:4191b6ea63dffed1">
-      <data key="d52">EXTRACTED_FROM</data>
+      <data key="d77">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:inventory_cost">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:wape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:smape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="metric:bias">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="profile:trend">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="profile:dense">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="profile:volatile">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:ridge_lag" target="source:a6da8bbaf91c57db">
-      <data key="d52">EXTRACTED_FROM</data>
+      <data key="d77">EXTRACTED_FROM</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:inventory_cost">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:wape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:rmse">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:smape">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="metric:bias">
-      <data key="d52">EVALUATED_BY</data>
+      <data key="d77">EVALUATED_BY</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="profile:weekly_seasonal">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="profile:stable">
-      <data key="d52">SUITABLE_FOR</data>
+      <data key="d77">SUITABLE_FOR</data>
     </edge>
     <edge source="algorithm:seasonal_naive" target="source:0d2b62ba65897f56">
-      <data key="d52">EXTRACTED_FROM</data>
+      <data key="d77">EXTRACTED_FROM</data>
     </edge>
-    <edge source="run:be7389b40136" target="algorithm:seasonal_naive">
-      <data key="d52">VALIDATED</data>
+    <edge source="run:1eb1447350d7" target="algorithm:seasonal_naive">
+      <data key="d77">VALIDATED</data>
     </edge>
-    <edge source="run:be7389b40136" target="version:seasonal_naive:a100b5908799">
-      <data key="d52">VALIDATED_VERSION</data>
+    <edge source="run:1eb1447350d7" target="version:seasonal_naive:64ea28fef849">
+      <data key="d77">VALIDATED_VERSION</data>
     </edge>
-    <edge source="run:be7389b40136" target="failure:4c06ea656e7e460b">
-      <data key="d52">OBSERVED_FAILURE</data>
+    <edge source="run:1eb1447350d7" target="failure:4c06ea656e7e460b">
+      <data key="d77">OBSERVED_FAILURE</data>
     </edge>
-    <edge source="run:be7389b40136" target="repair:122b7d0db4">
-      <data key="d52">REPAIRED_BY</data>
+    <edge source="run:1eb1447350d7" target="repair:3f402f107f1a2e1c">
+      <data key="d77">REPAIRED_BY</data>
     </edge>
-    <edge source="version:seasonal_naive:a100b5908799" target="algorithm:seasonal_naive">
-      <data key="d52">VERSION_OF</data>
+    <edge source="version:seasonal_naive:64ea28fef849" target="algorithm:seasonal_naive">
+      <data key="d77">VERSION_OF</data>
     </edge>
     <edge source="failure:4c06ea656e7e460b" target="algorithm:seasonal_naive">
-      <data key="d52">FAILURE_OF</data>
+      <data key="d77">FAILURE_OF</data>
     </edge>
-    <edge source="repair:122b7d0db4" target="failure:4c06ea656e7e460b">
-      <data key="d52">ADDRESSES</data>
+    <edge source="repair:3f402f107f1a2e1c" target="failure:4c06ea656e7e460b">
+      <data key="d77">ADDRESSES</data>
     </edge>
-    <edge source="version_event:b7a348c7b3aa" target="version:seasonal_naive:a100b5908799">
-      <data key="d52">ACTIVATED_VERSION</data>
+    <edge source="version_event:9f5eb3c650db" target="version:seasonal_naive:64ea28fef849">
+      <data key="d77">ACTIVATED_VERSION</data>
     </edge>
-    <data key="d0">1.4</data>
+    <data key="d0">1.5</data>
   </graph>
 </graphml>

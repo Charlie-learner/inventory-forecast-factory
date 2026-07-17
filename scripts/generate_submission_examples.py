@@ -13,6 +13,7 @@ from inventory_agent.codegen.validator import (
 )
 from inventory_agent.config import Settings
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
+from inventory_agent.agents.report import ReportAgent
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
 
 
@@ -20,6 +21,12 @@ ROOT = Path(__file__).resolve().parents[1]
 CAPABILITY_DIR = Path("examples/capabilities")
 REPAIR_OUTPUT = Path("examples/repair_run")
 GRAPH_OUTPUT = Path("examples/knowledge_graph")
+REPORT_EXAMPLE_ROOTS = (
+    Path("examples/complete_run"),
+    Path("examples/detailed_run"),
+    Path("examples/extraction_run"),
+    Path("examples/repair_run"),
+)
 
 
 class _FailFinalCodeOnceValidator:
@@ -122,6 +129,21 @@ def _generate_repair_and_graph_example(capability_sources: list[Path]) -> dict:
     return index
 
 
+def _refresh_committed_reports() -> int:
+    """Regenerate human-readable reports from committed machine reports."""
+
+    refreshed = 0
+    report_agent = ReportAgent()
+    for root in REPORT_EXAMPLE_ROOTS:
+        if not root.exists():
+            continue
+        for json_path in root.rglob("validation_report.json"):
+            payload = json.loads(json_path.read_text(encoding="utf-8"))
+            report_agent.create(payload, json_path.parent)
+            refreshed += 1
+    return refreshed
+
+
 def main() -> int:
     """Generate all submission evidence from tracked source materials."""
 
@@ -130,11 +152,13 @@ def main() -> int:
     index = _generate_repair_and_graph_example(
         sorted(CAPABILITY_DIR.glob("*.md"))
     )
+    refreshed_reports = _refresh_committed_reports()
     print(
         "Generated submission evidence:",
         f"external_capabilities={len(capabilities)}",
         f"selected_model={index['selected_model']}",
         f"repairs={index['repair_count']}",
+        f"reports={refreshed_reports}",
     )
     return 0
 

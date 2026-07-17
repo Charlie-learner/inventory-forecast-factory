@@ -18,7 +18,6 @@ python scripts/generate_business_demo.py
 - `demand_events.csv`：促销、节假日、价格和新品事件；
 - `source_metadata.json`：来源、许可和生成方法。
 
-当前预测工作流可以直接读取 `demand_history.csv`，因为它保留了
-`date/item_id/store_code/qty_alipay_njhs` 四个兼容字段。其他表用于说明生产化库存决策还需
-哪些业务输入。
-
+当前工作流直接读取 `demand_history.csv`；如果同目录存在 `inventory_snapshot.csv` 和
+`replenishment_policy.csv`，会自动使用真实库存位置、订货约束和缺货/积压成本计算建议补货量。
+商品主数据与需求事件用于解释生产化还需补充的层级、促销、新品和断货信息。

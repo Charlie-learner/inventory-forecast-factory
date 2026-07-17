@@ -12,6 +12,9 @@ from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
 
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
 class _AlwaysInvalidValidator:
     def validate(
         self,
@@ -71,24 +74,53 @@ def test_end_to_end_mock_workflow(tmp_path: Path):
         settings=Settings(llm_mode="mock"),
         knowledge_path=tmp_path / "knowledge.json",
     )
+    progress_events = []
     result = workflow.run(
         "为商品 42 在仓库 1 预测未来14天需求",
         data_path,
         tmp_path / "runs",
         trace_level="full",
         keep_runs=2,
+        progress_callback=progress_events.append,
     )
     assert result["code_validation"].valid
     assert Path(result["report_paths"]["json"]).exists()
     assert Path(result["report_paths"]["markdown"]).exists()
+    business_report = Path(result["report_paths"]["business_markdown"])
+    assert business_report.exists()
+    business_text = business_report.read_text(encoding="utf-8")
+    assert "库存预测业务建议" in business_text
+    assert "建议补货量" in business_text
+    assert "当前可用库存" in business_text
     assert (tmp_path / "knowledge.graphml").exists()
     assert (tmp_path / "knowledge.html").exists()
     assert result["report"]["validation_profile"]["name"] == "inventory_target"
     assert result["code_validation"].checks["equivalence"]
     assert result["generated"].generation_mode == "spec_template"
     assert result["generated"].source_hash
+    assert result["code_validation"].mean_latency_ms is not None
+    assert Path(result["report_paths"]["performance"]).exists()
+    assert Path(result["report_paths"]["failure_experience"]).exists()
+    assert result["report"]["performance_analysis"]["recommendations"]
+    assert result["report"]["design_explanation"]["summary"]
+    assert result["report"]["selection_explanation"]["data_facts"]
+    assert result["report"]["capability_version"]["capability_version"] == "1.0.0"
+    assert len(result["implementation_candidates"]) == 1
+    assert result["implementation_candidates"][0]["selected"]
     assert len(result["candidate_code_solutions"]) == 3
     assert result["trace_paths"] is not None
+    assert len(result["execution_tasks"]) == 9
+    assert all(
+        1 <= event["task_index"] <= event["task_total"] == 9
+        for event in progress_events
+    )
+    generation_progress = next(
+        event for event in progress_events if event["stage"] == "code_generation"
+    )
+    assert generation_progress["task_index"] == 7
+    assert generation_progress["task_title"] == "生成并审查独立代码实现"
+    assert generation_progress["percent"] >= 66
+    assert generation_progress["stage_percent"] == 58
     trace_events = [
         json.loads(line)
         for line in Path(result["trace_paths"]["jsonl"])
@@ -116,6 +148,126 @@ def test_end_to_end_mock_workflow(tmp_path: Path):
     ]
     assert len(versions) == 1
     assert versions[0]["source_hash"] == result["generated"].source_hash
+
+
+def test_workflow_optional_online_research_is_persisted(tmp_path: Path):
+    data = pd.DataFrame(
+        {
+            "date": pd.date_range("2024-01-01", periods=70, freq="D"),
+            "item_id": 42,
+            "store_code": 1,
+            "qty_alipay_njhs": np.tile([1, 2, 3, 4, 5, 6, 7], 10),
+        }
+    )
+    data_path = tmp_path / "panel.csv"
+    data.to_csv(data_path, index=False)
+
+    class FakeResearchAgent:
+        def research(self, description, profile, output, limit=5):
+            del description, profile, limit
+            payload = {
+                "schema_version": "1.0",
+                "created_at": "2026-07-17T00:00:00+00:00",
+                "status": "success",
+                "provider": "crossref",
+                "query": "inventory forecasting",
+                "records": [
+                    {
+                        "title": "Seasonal inventory forecasting",
+                        "doi": "10.1000/workflow-demo",
+                        "url": "https://doi.org/10.1000/workflow-demo",
+                        "relevance_score": 1.0,
+                    }
+                ],
+                "analysis": {
+                    "recommended_models": ["seasonal_naive"],
+                    "findings": ["seasonality evidence"],
+                    "risks": [],
+                    "analysis_mode": "deterministic",
+                },
+                "warnings": [],
+                "safety_policy": "evidence only",
+            }
+            Path(output).write_text(json.dumps(payload), encoding="utf-8")
+            payload["result_path"] = str(output)
+            return payload
+
+    workflow = InventoryCapabilityWorkflow(
+        settings=Settings(llm_mode="mock"),
+        knowledge_path=tmp_path / "knowledge.json",
+    )
+    workflow.research_agent = FakeResearchAgent()
+    result = workflow.run(
+        "为商品 42 在仓库 1 预测未来14天库存",
+        data_path,
+        tmp_path / "runs",
+        online_research=True,
+    )
+
+    research = result["report"]["online_research"]
+    assert research["status"] == "success"
+    assert Path(research["result_path"]).exists()
+    assert result["plan"].design_basis["online_research"]["record_count"] == 1
+    assert any(
+        attributes.get("source_type") == "online_research"
+        for _, attributes in workflow.knowledge.graph.nodes(data=True)
+    )
+
+
+def test_all_zero_history_is_reported_as_data_warning(tmp_path: Path):
+    dates = pd.date_range("2024-01-01", periods=90, freq="D")
+    data_path = tmp_path / "zero-panel.csv"
+    pd.DataFrame(
+        {
+            "date": dates,
+            "item_id": 42,
+            "store_code": 1,
+            "qty_alipay_njhs": 0,
+        }
+    ).to_csv(data_path, index=False)
+    workflow = InventoryCapabilityWorkflow(
+        settings=Settings(llm_mode="mock"),
+        knowledge_path=tmp_path / "knowledge.json",
+    )
+
+    result = workflow.run(
+        "为商品 42 在仓库 1 预测未来7天需求",
+        data_path,
+        tmp_path / "runs",
+        trace_level="basic",
+    )
+
+    assert result["profile"]["history_status"] == "all_zero_history"
+    business_text = Path(
+        result["report_paths"]["business_markdown"]
+    ).read_text(encoding="utf-8")
+    assert "历史目标销量全部为 0" in business_text
+    assert "不是高准确率证明" in business_text
+
+
+def test_workflow_uses_companion_inventory_tables_for_real_order_advice(
+    tmp_path: Path,
+):
+    workflow = InventoryCapabilityWorkflow(
+        settings=Settings(llm_mode="mock"),
+        knowledge_path=tmp_path / "knowledge.json",
+    )
+
+    result = workflow.run(
+        "为商品 1001 在仓库 1 预测未来14天需求并给出补货量",
+        ROOT / "examples/business_data/demand_history.csv",
+        tmp_path / "runs",
+        trace_level="basic",
+    )
+
+    assert result["benchmark"]["costs"]["source"] == "replenishment_policy.csv"
+    advice = result["report"]["replenishment"]
+    assert advice["available"] is True
+    assert advice["recommended_order_qty"] > 0
+    business_text = Path(
+        result["report_paths"]["business_markdown"]
+    ).read_text(encoding="utf-8")
+    assert "应用最小订货量、包装倍数和仓容后" in business_text
 
 
 def test_workflow_extracts_source_before_replication(tmp_path: Path):

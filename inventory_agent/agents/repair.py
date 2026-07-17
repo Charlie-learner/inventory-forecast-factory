@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 from pathlib import Path
 
 from inventory_agent.codegen.generator import GeneratedCapability, SafeCodeGenerator
 from inventory_agent.domain import CapabilitySpec
 from inventory_agent.llm.client import LLMClient, MockLLMClient
 from inventory_agent.validation.failures import FailureAnalysis, FailureAnalyzer
+
+
+logger = logging.getLogger(__name__)
 
 
 class RepairAgent:
@@ -54,6 +58,7 @@ class RepairAgent:
         current: GeneratedCapability | None = None,
         capability_spec: CapabilitySpec | None = None,
         prior_experience: list[dict] | None = None,
+        research_guidance: dict | None = None,
     ) -> tuple[GeneratedCapability, str]:
         """Repair one generated version and return an auditable strategy description."""
 
@@ -61,6 +66,7 @@ class RepairAgent:
             raise ValueError("repair attempt must be positive")
         analysis = self.analyze(errors)
         prior_experience = prior_experience or []
+        research_guidance = research_guidance or {}
         use_llm_repair = attempt == 1 and current is not None and not isinstance(
             self.llm, MockLLMClient
         )
@@ -84,6 +90,9 @@ class RepairAgent:
                 f" [reused_successful_repairs={len(prior_experience)};"
                 f"best_success_rate={best_rate:.2%}]"
             )
+        research_records = research_guidance.get("records", [])
+        if research_records:
+            reason += f" [online_research_evidence={len(research_records)}]"
         if use_llm_repair:
             try:
                 response = self.llm.complete(
@@ -100,6 +109,18 @@ class RepairAgent:
                             "errors": errors,
                             "failure": analysis.__dict__,
                             "prior_successful_repairs": prior_experience,
+                            "research_constraints": {
+                                "findings": research_guidance.get("analysis", {}).get(
+                                    "findings", []
+                                ),
+                                "risks": research_guidance.get("analysis", {}).get(
+                                    "risks", []
+                                ),
+                                "source_titles": [
+                                    item.get("title", "")
+                                    for item in research_records[:5]
+                                ],
+                            },
                             "source": current.source,
                         },
                         ensure_ascii=False,
@@ -121,6 +142,12 @@ class RepairAgent:
                     reason,
                 )
             except Exception as exc:  # Provider failure must not break the loop.
+                logger.warning(
+                    "LLM repair failed for model=%s attempt=%s: %s",
+                    model,
+                    attempt,
+                    type(exc).__name__,
+                )
                 reason += (
                     f"；LLM 修复不可用（{type(exc).__name__}），改用安全模板"
                 )

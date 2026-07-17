@@ -7,9 +7,8 @@ import json
 import logging
 from pathlib import Path
 
-import pandas as pd
-
 from inventory_agent.agents.extraction import CapabilityExtractionAgent
+from inventory_agent.agents.research import IndustryResearchAgent
 from inventory_agent.codegen.replication import CapabilityReplicator
 from inventory_agent.config import Settings
 from inventory_agent.data.costs import UNIT_COSTS, resolve_inventory_costs
@@ -17,17 +16,25 @@ from inventory_agent.data.loader import (
     CainiaoZipLoader,
     create_cainiao_loader,
     load_location_frame,
+    load_panel_csv,
 )
+from inventory_agent.execution import DEFAULT_RUNTIME_LIMITS
 from inventory_agent.services.benchmark import benchmark_series
+from inventory_agent.services.audit import (
+    audit_as_markdown,
+    audit_as_text,
+    build_submission_audit,
+)
+from inventory_agent.services.replenishment import load_business_costs
 from inventory_agent.knowledge.graph import CapabilityKnowledgeGraph
-from inventory_agent.llm.client import create_llm
+from inventory_agent.llm.client import create_llm, verify_llm_connection
 from inventory_agent.plugins import load_plugins, plugin_manifest
 from inventory_agent.workflow.factory import InventoryCapabilityWorkflow
 from inventory_agent.validation.metrics import default_metric_registry
 from inventory_agent.validation.profiles import default_validation_profiles
 
 
-def _doctor(settings: Settings) -> int:
+def _doctor(settings: Settings, live_llm: bool = False) -> int:
     """Print a secret-safe environment diagnosis and return its exit code."""
 
     report = {
@@ -38,6 +45,16 @@ def _doctor(settings: Settings) -> int:
         "cainiao_zip": str(settings.cainiao_zip_path) if settings.cainiao_zip_path else None,
         "issues": settings.validate(),
     }
+    if live_llm:
+        try:
+            report["live_llm"] = verify_llm_connection(settings)
+        except Exception as exc:
+            report["live_llm"] = {
+                "status": "failed",
+                "error": f"{type(exc).__name__}: {exc}",
+                "api_key_exposed": False,
+            }
+            report["issues"].append("External LLM live verification failed.")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 1 if report["issues"] else 0
 
@@ -78,7 +95,7 @@ def _benchmark(args: argparse.Namespace) -> int:
     )
     source = Path(args.data)
     is_raw_source = source.is_dir() or source.suffix.lower() == ".zip"
-    # Raw sources provide real A/B costs; standalone panel CSVs use neutral unit costs.
+    # Raw sources provide config2 costs; business panels may provide a companion policy.
     if is_raw_source:
         frame = load_location_frame(source, args.store)
         costs = resolve_inventory_costs(
@@ -87,8 +104,8 @@ def _benchmark(args: argparse.Namespace) -> int:
             args.store,
         )
     else:
-        frame = pd.read_csv(source, parse_dates=["date"])
-        costs = UNIT_COSTS
+        frame = load_panel_csv(source)
+        costs = load_business_costs(source, args.item, args.store) or UNIT_COSTS
     report = benchmark_series(
         frame,
         item_id=args.item,
@@ -123,6 +140,8 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
         trace_level=args.trace_level,
         keep_runs=args.keep_runs,
         task_type_override=args.task_type,
+        online_research=args.online_research,
+        execution_mode=args.execution_mode,
     )
     print(
         json.dumps(
@@ -147,6 +166,33 @@ def _run_factory(args: argparse.Namespace, settings: Settings) -> int:
         )
     )
     return 0
+
+
+def _research_industry(args: argparse.Namespace, settings: Settings) -> int:
+    """Search industry literature and write a source-traceable result file."""
+
+    result = IndustryResearchAgent(create_llm(settings)).research(
+        args.query,
+        {"demand_type": args.profile},
+        args.output,
+        limit=args.limit,
+    )
+    print(
+        json.dumps(
+            {
+                "status": result["status"],
+                "provider": result["provider"],
+                "query": result["query"],
+                "records": len(result["records"]),
+                "recommended_models": result["analysis"]["recommended_models"],
+                "result_path": result["result_path"],
+                "warnings": result["warnings"],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0 if result["status"] == "success" else 1
 
 
 def _inspect_plugins(args: argparse.Namespace) -> int:
@@ -255,6 +301,7 @@ def _replicate_capability(args: argparse.Namespace, settings: Settings) -> int:
         llm=llm,
         reference_model=args.reference_model,
         approved=args.approve,
+        candidate_count=args.candidates,
     )
     print(
         json.dumps(
@@ -262,6 +309,9 @@ def _replicate_capability(args: argparse.Namespace, settings: Settings) -> int:
                 "capability": spec.capability_id,
                 "generated": manifest["generation"]["path"],
                 "generation_mode": manifest["generation"]["mode"],
+                "implementation_candidates": len(
+                    manifest.get("implementation_candidates", [])
+                ),
                 "valid": manifest["validation"]["valid"],
                 "reference_model": manifest["reference_model"],
                 "review": manifest["review"],
@@ -326,6 +376,39 @@ def _manage_versions(args: argparse.Namespace) -> int:
     return 0
 
 
+def _audit_submission(args: argparse.Namespace) -> int:
+    """Audit the written-test requirements from inspectable repository evidence."""
+
+    audit = build_submission_audit(Path.cwd())
+    if args.format == "json":
+        rendered = json.dumps(audit, ensure_ascii=False, indent=2)
+    elif args.format == "markdown":
+        rendered = audit_as_markdown(audit)
+    else:
+        rendered = audit_as_text(audit)
+
+    if args.output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(rendered, encoding="utf-8")
+        print(
+            json.dumps(
+                {
+                    "audit_output": str(output.resolve()),
+                    "summary": audit["summary"],
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    else:
+        print(rendered, end="" if rendered.endswith("\n") else "\n")
+
+    summary = audit["summary"]
+    has_required_gap = bool(summary["partial"] or summary["missing"])
+    return 2 if args.strict and has_required_gap else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the root parser and all supported CLI subcommands."""
 
@@ -335,7 +418,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--verbose", action="store_true", help="Show workflow progress logs")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers.add_parser("doctor", help="Check local configuration without exposing secrets")
+    doctor = subparsers.add_parser(
+        "doctor", help="Check local configuration without exposing secrets"
+    )
+    doctor.add_argument(
+        "--live-llm",
+        action="store_true",
+        help="Make one minimal external completion request and report latency",
+    )
 
     prepare_sample = subparsers.add_parser(
         "prepare-sample",
@@ -400,7 +490,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--keep-runs",
         type=int,
-        default=10,
+        default=DEFAULT_RUNTIME_LIMITS.default_keep_runs,
         help="Keep only the newest N timestamped run directories",
     )
     run.add_argument(
@@ -408,6 +498,32 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         default=[],
         help="Optional document, Python file, or local repository to extract before planning",
+    )
+    run.add_argument(
+        "--online-research",
+        action="store_true",
+        help="Search DOI-backed industry literature and use it as planning evidence",
+    )
+    run.add_argument(
+        "--execution-mode",
+        choices=["fast", "balanced", "thorough"],
+        default="balanced",
+        help="Balance latency against implementation count and resource benchmark depth",
+    )
+
+    research = subparsers.add_parser(
+        "research-industry",
+        help="Search and extract source-traceable inventory research evidence",
+    )
+    research.add_argument("--query", required=True, help="Business or algorithm question")
+    research.add_argument(
+        "--profile",
+        choices=["stable", "volatile", "intermittent", "weekly_seasonal", "trend"],
+        default="stable",
+    )
+    research.add_argument("--limit", type=int, choices=range(1, 11), default=5)
+    research.add_argument(
+        "--output", default="artifacts/research/online_knowledge_extraction.json"
     )
 
     extract = subparsers.add_parser(
@@ -456,6 +572,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--approve",
         action="store_true",
         help="Record explicit human approval after automated checks pass",
+    )
+    replicate.add_argument(
+        "--candidates",
+        type=int,
+        default=3,
+        choices=range(1, 6),
+        metavar="1-5",
+        help="Independent implementation candidates requested in API mode",
     )
 
     versions = subparsers.add_parser(
@@ -506,6 +630,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="Trusted module:callable or path.py:callable registration plugin",
     )
 
+    audit = subparsers.add_parser(
+        "audit",
+        help="Audit written-test requirements and print inspectable evidence",
+    )
+    audit.add_argument(
+        "--format",
+        choices=["text", "json", "markdown"],
+        default="text",
+        help="Choose a terminal, machine-readable, or repository-document report",
+    )
+    audit.add_argument(
+        "--output",
+        help="Optional output file; parent directories are created automatically",
+    )
+    audit.add_argument(
+        "--strict",
+        action="store_true",
+        help="Return exit code 2 when any required item is partial or missing",
+    )
+
     web = subparsers.add_parser(
         "web",
         help="Start the local visual dashboard and JSON API",
@@ -535,13 +679,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     settings = Settings.from_env()
     if args.command == "doctor":
-        return _doctor(settings)
+        return _doctor(settings, args.live_llm)
     if args.command == "prepare-sample":
         return _prepare_sample(args, settings)
     if args.command == "benchmark":
         return _benchmark(args)
     if args.command == "run":
         return _run_factory(args, settings)
+    if args.command == "research-industry":
+        return _research_industry(args, settings)
     if args.command == "extract-capability":
         return _extract_capabilities(args, settings)
     if args.command == "replicate-capability":
@@ -552,6 +698,8 @@ def main(argv: list[str] | None = None) -> int:
         return _visualize_graph(args)
     if args.command == "plugins":
         return _inspect_plugins(args)
+    if args.command == "audit":
+        return _audit_submission(args)
     if args.command == "web":
         return _serve_web(args, settings)
     raise SystemExit(f"Unknown command: {args.command}")

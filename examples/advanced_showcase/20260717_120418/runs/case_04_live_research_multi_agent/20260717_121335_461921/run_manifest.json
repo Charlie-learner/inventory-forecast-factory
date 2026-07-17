@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "success",
+  "started_at": "2026-07-17T04:13:35.462944+00:00",
+  "finished_at": "2026-07-17T04:18:41.067176+00:00",
+  "event_count": 31,
+  "trace": {
+    "jsonl": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\detailed_trace.jsonl",
+    "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\detailed_trace.md"
+  },
+  "artifacts": [
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\extracted_capabilities.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\online_knowledge_extraction.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\candidate_solutions\\croston\\forecast_croston.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\candidate_solutions\\moving_average\\forecast_moving_average.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\candidate_solutions\\seasonal_naive\\forecast_seasonal_naive.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated_versions\\01_initial_croston.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\implementation_blueprint.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\multi_agent_collaboration.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\forecast_croston_candidate_1.py",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.graphml",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\capability_graph.html",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\validation_report.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\validation_report.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\business_report.md",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\performance_analysis.json",
+    "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\failure_experience.json"
+  ],
+  "summary": {
+    "selected_model": "croston",
+    "target_inventory": 124.41663889376699,
+    "report_paths": {
+      "json": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\validation_report.json",
+      "markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\validation_report.md",
+      "business_markdown": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\business_report.md",
+      "performance": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\performance_analysis.json",
+      "failure_experience": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\failure_experience.json",
+      "blueprint": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\implementation_blueprint.json",
+      "manifest": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\runs\\case_04_live_research_multi_agent\\20260717_121335_461921\\generated\\multi_agent_collaboration.json"
+    },
+    "candidate_code_solutions": 3
+  }
+}

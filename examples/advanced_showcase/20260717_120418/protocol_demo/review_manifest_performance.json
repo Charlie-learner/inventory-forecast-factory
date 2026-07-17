@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "measurement_scope": "Isolated deterministic micro-benchmark; tracemalloc covers Python allocations and may not include all native-library memory.",
+  "selected_source": "F:\\AgentProjects\\TimeSeriesScientist\\examples\\advanced_showcase\\20260717_120418\\protocol_demo\\generated\\forecast_moving_average_candidate_3.py",
+  "source_bytes": 455,
+  "source_lines": 11,
+  "ast_loop_count": 0,
+  "ast_call_count": 11,
+  "measurements": {
+    "iterations": 20,
+    "mean_latency_ms": 0.020234999828971922,
+    "cpu_time_ms": 0.0,
+    "peak_memory_kb": 3.5859375,
+    "throughput_calls_per_second": 49419.32337297217
+  },
+  "policy": {
+    "latency_warning_ms": 5.0,
+    "peak_memory_warning_kb": 32768.0,
+    "minimum_throughput": 100.0
+  },
+  "recommendations": [
+    "当前基准未触发资源告警；继续保留回归基准，避免无证据的过早优化。"
+  ],
+  "candidate_profiles": [
+    {
+      "variant_id": "candidate_1",
+      "selected": false,
+      "valid": true,
+      "mean_latency_ms": 0.6722449994413182,
+      "peak_memory_kb": 25.603515625,
+      "throughput_calls_per_second": 1487.552902336304
+    },
+    {
+      "variant_id": "candidate_2",
+      "selected": false,
+      "valid": true,
+      "mean_latency_ms": 0.044674999662674963,
+      "peak_memory_kb": 9.515625,
+      "throughput_calls_per_second": 22383.883772818004
+    },
+    {
+      "variant_id": "candidate_3",
+      "selected": true,
+      "valid": true,
+      "mean_latency_ms": 0.020234999828971922,
+      "peak_memory_kb": 3.5859375,
+      "throughput_calls_per_second": 49419.32337297217
+    }
+  ]
+}
