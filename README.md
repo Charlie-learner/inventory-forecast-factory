@@ -27,6 +27,8 @@ uv run python -m inventory_agent doctor
 uv run python -m inventory_agent web --open-browser
 ```
 
+未安装 `uv` 也可以运行该项目。可直接使用 Python 自带的 `venv` 和 `pip`，具体命令见[环境配置与运行](#5-环境配置与运行)；虚拟环境激活后，将上述命令中的 `uv run` 去掉即可。
+
 默认使用可完全离线复现的 Mock LLM。Web 默认地址为 `http://127.0.0.1:8000`，API 文档位于 `http://127.0.0.1:8000/api/docs`。
 
 ## README 导航
@@ -147,7 +149,7 @@ Agent 工作流图见 [docs/architecture_diagrams.md](docs/architecture_diagrams
 分层布局，支持搜索、类型筛选、缩放拖动、关系名称开关、关联边高亮和节点属性侧栏：
 
 ```bash
-uv run python -m inventory_agent visualize-graph \
+python -m inventory_agent visualize-graph \
   --knowledge knowledge/base_capability_graph.json \
   --output artifacts/knowledge/capability_graph.html
 ```
@@ -196,34 +198,125 @@ Mock 模式仍只生成一份模板实现，以保证离线测试完全可复现
 
 ### 5.1 安装依赖
 
-要求 Python 3.10-3.13，推荐使用 `uv`：
+运行环境要求：
+
+- Python `3.10`—`3.13`，推荐 `3.11` 或 `3.12`；
+- Git；
+- Windows PowerShell、Windows CMD、macOS Terminal 或 Linux Shell；
+- 外部 LLM 和联网研究是可选功能，离线 Mock 模式不需要 API Key。
+
+首先进入项目根目录，即包含 `pyproject.toml` 和 `README.md` 的目录：
+
+```bash
+cd TimeSeriesScientist
+```
+
+#### 方式 A：使用 uv
+
+已经安装 `uv` 时，可以让它自动创建环境并按锁文件安装依赖：
 
 ```bash
 uv sync --extra dev
 ```
 
-也可以使用 pip：
+之后通过 `uv run` 执行命令，无需手动激活虚拟环境：
 
 ```bash
-python -m venv .venv
-pip install -r requirements.txt
+uv run python -m inventory_agent doctor
 ```
+
+如果系统还没有 `uv`，可以按照 [uv 官方安装说明](https://docs.astral.sh/uv/getting-started/installation/)
+安装，也可以直接采用下面的标准 `venv + pip` 方式。
+
+#### 方式 B：使用 venv + pip
+
+Windows PowerShell：
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+Windows CMD：
+
+```bat
+py -3.11 -m venv .venv
+.venv\Scripts\activate.bat
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+macOS / Linux：
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+`-e ".[dev]"` 会以可编辑模式安装项目及测试工具，修改源码后不需要重复安装。如果只想安装
+运行依赖，可以执行：
+
+```bash
+python -m pip install -e .
+```
+
+仓库同时保留了 `requirements.txt`，不使用 `pyproject.toml` 扩展依赖时也可以执行：
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+使用 pip 时，后续命令应在虚拟环境已经激活的终端中运行。也可以不激活环境，直接使用
+Windows 的 `.venv\Scripts\python.exe` 或 macOS/Linux 的 `.venv/bin/python`。
+
+#### 命令写法对照
+
+除最短体验路径和 uv 专用示例外，README 后续主要使用标准 `python -m` 写法。使用 uv 时，
+只需在命令前增加 `uv run`。两种环境的等价命令如下：
+
+| 操作 | uv | 已激活的 venv |
+|---|---|---|
+| 环境诊断 | `uv run python -m inventory_agent doctor` | `python -m inventory_agent doctor` |
+| 启动 Web | `uv run python -m inventory_agent web` | `python -m inventory_agent web` |
+| 运行测试 | `uv run pytest` | `pytest` |
+| 运行自检脚本 | `uv run python scripts/validate_project.py` | `python scripts/validate_project.py` |
+
+完成可编辑安装后，也可以用控制台命令 `inventory-agent` 代替
+`python -m inventory_agent`，例如 `inventory-agent doctor`。
 
 ### 5.2 配置 LLM
 
-复制环境模板：
+项目会直接读取根目录下的 `.env`，不需要额外安装 `python-dotenv`。复制环境模板：
+
+Windows PowerShell：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Windows CMD：
+
+```bat
+copy .env.example .env
+```
+
+macOS / Linux：
 
 ```bash
 cp .env.example .env
 ```
 
-离线模式：
+默认离线模式适合首次运行和自动测试：
 
 ```dotenv
 LLM_MODE=mock
 ```
 
-OpenAI 兼容接口模式：
+需要使用外部 OpenAI 兼容接口时，再修改为：
 
 ```dotenv
 LLM_MODE=api
@@ -232,26 +325,29 @@ BASE_URL=https://your-provider.example/v1
 API_KEY=your-new-api-key
 ```
 
-`.env` 已被 Git 忽略。不要把真实密钥写入 README、源码、命令行或提交记录。
+`BASE_URL` 应包含服务商要求的 API 根路径，常见形式为 `https://host/v1`。
+`LLM_TIMEOUT_SECONDS` 默认是 30 秒，可在 1—300 秒之间调整。
+
+`.env` 已被 Git 忽略。不要把真实密钥写入 README、源码、命令行、截图或 Git 提交记录。
 
 ### 5.3 环境诊断与 Web
 
 环境诊断：
 
 ```bash
-uv run python -m inventory_agent doctor
+python -m inventory_agent doctor
 ```
 
 检查核心代码、示例和文档是否齐全；发现必需文件缺失时返回非零退出码：
 
 ```bash
-uv run python -m inventory_agent audit --strict
+python -m inventory_agent audit --strict
 ```
 
 同一结果也显示在 Web 的“项目自检”页面。需要重新生成 Markdown 检查报告时：
 
 ```bash
-uv run python -m inventory_agent audit \
+python -m inventory_agent audit \
   --format markdown \
   --output docs/evaluation_acceptance_matrix.md \
   --strict
@@ -260,7 +356,7 @@ uv run python -m inventory_agent audit \
 启动本地 Web 工作台：
 
 ```bash
-uv run python -m inventory_agent web --open-browser
+python -m inventory_agent web --open-browser
 ```
 
 默认访问地址与自动接口文档：
@@ -280,14 +376,14 @@ Web 使用方式见 [`docs/web_interface.md`](docs/web_interface.md)，自然语
 实际验证外部 LLM，而不只是检查环境变量：
 
 ```bash
-uv run python -m inventory_agent doctor --live-llm
+python -m inventory_agent doctor --live-llm
 ```
 
 可选联网行业研究会从 Crossref 检索 DOI 元数据，生成
 `online_knowledge_extraction.json`，并将证据用于候选规划、代码生成与修复上下文：
 
 ```bash
-uv run python -m inventory_agent run --description "为商品 1003 在仓库 1 预测未来14天间歇需求" --data examples/business_data/demand_history.csv --online-research
+python -m inventory_agent run --description "为商品 1003 在仓库 1 预测未来14天间歇需求" --data examples/business_data/demand_history.csv --online-research
 ```
 
 CLI 支持 `doctor`、`audit`、`prepare-sample`、`research-industry`、`extract-capability`、`replicate-capability`、`versions`、`benchmark`、`run`、`visualize-graph`、`plugins` 和 `web`。使用 `--verbose` 可查看不包含密钥的工作流进度日志。
@@ -297,7 +393,7 @@ CLI 支持 `doctor`、`audit`、`prepare-sample`、`research-industry`、`extrac
 递归扫描当前本地代码仓库，抽取五个预测能力、输出扫描诊断并更新知识图谱：
 
 ```bash
-uv run python -m inventory_agent extract-capability \
+python -m inventory_agent extract-capability \
   --source . \
   --output knowledge/extracted_capabilities.json \
   --knowledge knowledge/base_capability_graph.json
@@ -306,7 +402,7 @@ uv run python -m inventory_agent extract-capability \
 不运行完整库存业务流程，也可以单独复刻一个能力并生成 JSON/Markdown 审核清单：
 
 ```bash
-uv run python -m inventory_agent replicate-capability \
+python -m inventory_agent replicate-capability \
   --source examples/capabilities/moving_average.md \
   --output-dir artifacts/replication/generated \
   --manifest artifacts/replication/review_manifest.json \
@@ -318,11 +414,11 @@ uv run python -m inventory_agent replicate-capability \
 查看、比较、发布或回滚验证后的能力版本：
 
 ```bash
-uv run python -m inventory_agent versions list \
+python -m inventory_agent versions list \
   --knowledge artifacts/knowledge/capability_graph.json \
   --model moving_average
 
-uv run python -m inventory_agent versions promote \
+python -m inventory_agent versions promote \
   --knowledge artifacts/knowledge/capability_graph.json \
   --model moving_average \
   --version SOURCE_HASH_PREFIX
@@ -335,7 +431,7 @@ uv run python -m inventory_agent versions promote \
 完整打印并保存一次 Agent 工作流的所有主要中间过程：
 
 ```bash
-uv run python -m inventory_agent run \
+python -m inventory_agent run \
   --description "为商品 3424 在仓库 1 预测未来14天目标库存" \
   --data examples/data/cainiao_demo.csv \
   --capability-source examples/capabilities/moving_average.md \
@@ -345,6 +441,64 @@ uv run python -m inventory_agent run \
 ```
 
 `full` 模式会额外生成每个候选算法的独立代码并逐一验证。每次运行输出 `detailed_trace.jsonl`、`detailed_trace.md`、`run_manifest.json`、候选代码目录、最终代码、修复版本快照和验证报告。`--keep-runs` 只会清理输出根目录下符合时间戳命名规则的旧任务目录，不会删除手工命名目录或其他项目文件。
+
+### 5.7 常见问题
+
+#### PowerShell 无法激活虚拟环境
+
+如果出现“禁止运行脚本”，可以只对当前 PowerShell 会话临时放开策略：
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+关闭当前终端后该设置即失效。也可以不激活，直接执行：
+
+```powershell
+.\.venv\Scripts\python.exe -m inventory_agent doctor
+```
+
+#### 出现 `No module named inventory_agent`
+
+请确认当前目录是项目根目录，并执行过以下任一安装命令：
+
+```bash
+uv sync --extra dev
+# 或者在已激活的虚拟环境中：
+python -m pip install -e ".[dev]"
+```
+
+#### PowerShell 不识别示例中的 `\`
+
+README 中多行命令使用的是 bash 风格续行符 `\`。在 PowerShell 中可以把命令写成一行，
+或者把每行末尾的 `\` 改成反引号 `` ` ``。不要直接复制带 `\` 的多行命令到 PowerShell。
+
+#### 8000 端口已被占用
+
+可以改用其他端口：
+
+```bash
+python -m inventory_agent web --port 8080 --open-browser
+```
+
+然后访问 `http://127.0.0.1:8080`。
+
+#### 浏览器没有自动打开
+
+去掉 `--open-browser` 不会影响服务启动。终端出现启动信息后，可以手动访问
+`http://127.0.0.1:8000`。停止服务时在终端按 `Ctrl+C`。
+
+#### 外部 LLM 调用失败
+
+先运行 `python -m inventory_agent doctor --live-llm` 检查模型名、接口地址、密钥和超时设置。
+如果只需要运行本地示例，将 `.env` 中的 `LLM_MODE` 改回 `mock` 即可；库存回测、代码安全检查、
+报告和知识图谱仍可离线运行。
+
+#### 依赖环境出现冲突
+
+建议删除并重新创建项目自己的 `.venv`，不要把依赖直接安装到系统 Python 或 Conda 的 base
+环境中。使用 `python --version` 和 `python -m pip --version` 可以确认当前实际使用的解释器与 pip。
 
 ## 6. 库存场景示例数据和测试任务
 
@@ -362,7 +516,7 @@ uv run python -m inventory_agent run \
 原始 ZIP 和解压后的大 CSV 均不提交 Git。当前支持原始 ZIP、解压目录和带表头的演示面板 CSV。已经在 `data/` 放置解压文件时可直接运行工作流，无需执行数据准备命令；只有原始 ZIP 或需要轻量样本时，才使用可选命令：
 
 ```bash
-uv run python -m inventory_agent prepare-sample \
+python -m inventory_agent prepare-sample \
   --zip-path "C:/Users/you/Downloads/CAINIAO Part II Data_20160509.zip" \
   --items 20 \
   --output data/processed/cainiao_sample.csv
@@ -387,13 +541,13 @@ uv run python -m inventory_agent prepare-sample \
 重新生成并校验这套业务材料：
 
 ```bash
-uv run python scripts/generate_business_demo.py
+python scripts/generate_business_demo.py
 ```
 
 直接在合成多仓数据上运行：
 
 ```bash
-uv run python -m inventory_agent run \
+python -m inventory_agent run \
   --description "为商品 1002 在仓库 1 预测未来14天目标库存" \
   --data examples/business_data/demand_history.csv \
   --trace-level full
@@ -402,7 +556,7 @@ uv run python -m inventory_agent run \
 直接使用解压后的真实数据运行分仓任务：
 
 ```bash
-uv run python -m inventory_agent run \
+python -m inventory_agent run \
   --description "为商品 3424 在仓库 1 预测未来14天目标库存" \
   --data data
 ```
@@ -410,7 +564,7 @@ uv run python -m inventory_agent run \
 全国任务使用 `all`，系统会读取全国表而不是分仓表：
 
 ```bash
-uv run python -m inventory_agent run \
+python -m inventory_agent run \
   --description "为商品 3424 预测全国未来14天目标库存" \
   --data data
 ```
@@ -420,7 +574,7 @@ uv run python -m inventory_agent run \
 从能力文档到可运行代码的完整任务：
 
 ```bash
-uv run python -m inventory_agent run \
+python -m inventory_agent run \
   --description "为商品 3424 在仓库 1 预测未来14天目标库存，并复刻能力文档中的算法" \
   --data examples/data/cainiao_demo.csv \
   --capability-source examples/capabilities/moving_average.md
@@ -446,7 +600,7 @@ def build_inventory_target(history: list[float], horizon: int) -> dict:
 重新生成外部知识抽取、修复闭环和完整图谱证据：
 
 ```bash
-uv run python scripts/generate_submission_examples.py
+python scripts/generate_submission_examples.py
 ```
 
 生成接口保留 14 个日预测用于解释和精度诊断；对外目标库存为这些日预测之和 `target_inventory`。
@@ -475,7 +629,7 @@ uv run python scripts/generate_submission_examples.py
 运行完整项目自检：
 
 ```bash
-uv run python scripts/validate_project.py
+python scripts/validate_project.py
 ```
 
 该脚本会执行完整测试、Ruff、至少 80% 的覆盖率门禁、真实本地仓库能力抽取、独立代码复刻、
@@ -484,7 +638,7 @@ uv run python scripts/validate_project.py
 单独重新生成多场景测试报告：
 
 ```bash
-uv run python scripts/run_acceptance_cases.py
+python scripts/run_acceptance_cases.py
 ```
 
 生成结果见 `examples/acceptance/acceptance_report.{json,md}`，覆盖六类需求画像、约束补货、
@@ -493,8 +647,8 @@ uv run python scripts/run_acceptance_cases.py
 或者分别运行：
 
 ```bash
-uv run pytest --cov=inventory_agent --cov-report=term-missing
-uv run ruff check inventory_agent tests scripts
+pytest --cov=inventory_agent --cov-report=term-missing
+ruff check inventory_agent tests scripts
 ```
 
 ## 9. 遇到的挑战和解决方案

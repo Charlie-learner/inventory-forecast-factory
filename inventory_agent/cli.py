@@ -632,7 +632,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     audit = subparsers.add_parser(
         "audit",
-        help="Audit written-test requirements and print inspectable evidence",
+        help="Check project features and print inspectable implementation evidence",
     )
     audit.add_argument(
         "--format",
